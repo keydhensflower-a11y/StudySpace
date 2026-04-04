@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudySpace</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #080b1a;
+  --surface: rgba(255,255,255,0.05);
+  --surface2: rgba(255,255,255,0.08);
+  --surface3: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.1);
+  --border2: rgba(255,255,255,0.18);
+  --text: #e8e8f0;
+  --muted: #8888aa;
+  --hint: #4a4a6a;
+  --green: #1D9E75;
+  --green-light: rgba(29,158,117,0.15);
+  --green-glow: rgba(29,158,117,0.3);
+  --purple: #9060ff;
+  --purple-light: rgba(144,96,255,0.15);
+  --purple-glow: rgba(144,96,255,0.25);
+  --amber: #ffb450;
+  --amber-light: rgba(255,180,80,0.15);
+  --red: #ff6464;
+  --red-light: rgba(255,100,100,0.12);
+  --blue: #64a0ff;
+  --blue-light: rgba(100,160,255,0.15);
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* STARS */
+.stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 38% 8%, rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 52% 58%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 22%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 82% 42%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 14% 68%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 28% 82%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 58% 78%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 68%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 4% 48%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 73% 88%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 43% 33%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 18% 18%, rgba(200,200,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 63% 53%, rgba(255,220,200,0.6) 0%, transparent 100%),
+    radial-gradient(2px 2px at 78% 4%, rgba(200,220,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 35%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 92%, rgba(255,255,255,0.5) 0%, transparent 100%);
+}
+.nebula {
+  position: fixed; top: -20%; right: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse, rgba(100,60,180,0.12) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.nebula2 {
+  position: fixed; bottom: -10%; left: -5%;
+  width: 40%; height: 40%;
+  background: radial-gradient(ellipse, rgba(29,158,117,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* TOPBAR */
+.topbar {
+  background: rgba(8,11,26,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+  position: sticky; top: 0; z-index: 50;
+}
+.logo {
+  font-size: 16px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  letter-spacing: -0.02em;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--purple), var(--green));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.nav-tabs { display: flex; gap: 2px; }
+.tab {
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none;
+  background: transparent; color: var(--muted);
+  transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.tab.active { background: var(--surface2); color: var(--text); }
+.tab:hover:not(.active) { background: var(--surface); color: var(--text); }
+
+/* LAYOUT */
+.page { display: none; max-width: 860px; margin: 0 auto; padding: 28px 20px; position: relative; z-index: 1; }
+.page.active { display: block; }
+.page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 4px; }
+.page-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hint); margin-bottom: 10px; margin-top: 28px; font-family: 'Space Mono', monospace; }
+.section-label:first-child { margin-top: 0; }
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px; margin-bottom: 14px;
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(144,96,255,0.3), transparent);
+}
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 600; }
+
+/* COURSE GRID */
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 12px; margin-bottom: 6px; }
+.course-card {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px; cursor: pointer;
+  transition: all 0.15s; position: relative; overflow: hidden;
+}
+.course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.2), transparent); }
+.course-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.course-card.selected { border: 1.5px solid var(--purple); box-shadow: 0 0 20px var(--purple-glow); }
+.course-icon { width: 40px; height: 40px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+.course-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.course-meta { font-size: 12px; color: var(--muted); }
+.course-progress { height: 3px; background: var(--surface2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.course-progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--green)); border-radius: 2px; }
+.add-course-card {
+  background: transparent; border: 1px dashed var(--border2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; color: var(--muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; min-height: 120px; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.add-course-card:hover { background: var(--surface); color: var(--text); border-color: var(--purple); }
+.plus-circle { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); }
+
+/* BUTTONS */
+.btn {
+  padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 0.5px solid var(--border2); background: transparent;
+  color: var(--text); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--surface2); }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: linear-gradient(135deg, rgba(144,96,255,0.3), rgba(29,158,117,0.3)); border-color: var(--purple); color: var(--text); }
+.btn-primary:hover { background: linear-gradient(135deg, rgba(144,96,255,0.45), rgba(29,158,117,0.45)); box-shadow: 0 0 16px var(--purple-glow); }
+.btn-green { background: rgba(29,158,117,0.2); border-color: var(--green); color: var(--text); }
+.btn-green:hover { background: rgba(29,158,117,0.35); box-shadow: 0 0 16px var(--green-glow); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* INPUTS */
+input[type=text], input[type=date], textarea, select {
+  width: 100%; padding: 9px 13px; border: 0.5px solid var(--border2);
+  border-radius: 8px; font-size: 14px; background: rgba(255,255,255,0.04);
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  margin-bottom: 12px; outline: none; transition: border-color 0.15s;
+}
+input[type=text]:focus, input[type=date]:focus, textarea:focus, select:focus {
+  border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-light);
+}
+input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+label { font-size: 11px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 5px; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'Space Mono', monospace; }
+select option { background: #1a1a2e; color: var(--text); }
+
+/* HINT BOX */
+.hint-box {
+  background: var(--blue-light); border: 0.5px solid rgba(100,160,255,0.2);
+  border-radius: var(--radius); padding: 12px 14px; font-size: 13px;
+  color: var(--blue); margin-bottom: 16px; line-height: 1.5;
+}
+.hint-box code { font-family: 'Space Mono', monospace; font-size: 11px; background: rgba(100,160,255,0.15); padding: 2px 5px; border-radius: 4px; }
+
+/* QUIZ */
+.question-block { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; background: var(--surface3); }
+.question-text { font-size: 14px; font-weight: 500; margin-bottom: 12px; line-height: 1.5; }
+.question-num { display: inline-block; background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; font-family: 'Space Mono', monospace; }
+.options { display: flex; flex-direction: column; gap: 7px; }
+.option { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); padding: 9px 13px; border-radius: 8px; border: 0.5px solid var(--border); cursor: pointer; transition: all 0.12s; background: var(--surface3); }
+.option:hover { border-color: var(--purple); background: var(--purple-light); color: var(--text); }
+.option.correct { border-color: var(--green); background: var(--green-light); color: #9fefd4; }
+.option.wrong { border-color: var(--red); background: var(--red-light); color: #ffaaaa; }
+.opt-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; background: var(--surface); }
+.option.correct .opt-circle { border-color: var(--green); background: var(--green); color: white; }
+.option.wrong .opt-circle { border-color: var(--red); background: var(--red); color: white; }
+.result-banner { padding: 18px 20px; border-radius: var(--radius); text-align: center; margin-top: 16px; font-size: 15px; font-weight: 500; }
+.result-good { background: var(--green-light); color: #9fefd4; border: 0.5px solid var(--green); }
+.result-ok { background: var(--amber-light); color: var(--amber); border: 0.5px solid rgba(255,180,80,0.3); }
+
+/* FLASHCARDS */
+.flash-wrap { perspective: 900px; height: 210px; cursor: pointer; margin-bottom: 16px; }
+.flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+.flashcard.flipped { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; border: 0.5px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; background: var(--surface); backdrop-filter: blur(10px); }
+.face-back { transform: rotateY(180deg); background: var(--green-light); border-color: var(--green); }
+.face-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--hint); margin-bottom: 14px; font-family: 'Space Mono', monospace; }
+.face-back .face-label { color: var(--green); }
+.face-text { font-size: 16px; line-height: 1.55; color: var(--text); }
+.face-back .face-text { color: #9fefd4; }
+.flip-hint { font-size: 11px; color: var(--hint); text-align: center; margin-bottom: 10px; font-family: 'Space Mono', monospace; }
+.flash-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.flash-counter { font-size: 13px; color: var(--muted); font-weight: 500; font-family: 'Space Mono', monospace; }
+
+/* PROGRESS */
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.stat-val { font-size: 26px; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 2px; }
+.stat-lbl { font-size: 12px; color: var(--muted); }
+.prog-row { margin-bottom: 18px; }
+.prog-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 7px; }
+.prog-meta span:last-child { color: var(--muted); }
+.prog-bar { height: 6px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--green)); border-radius: 4px; transition: width 0.4s; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+.badge-green { background: var(--green-light); color: #9fefd4; border: 0.5px solid rgba(29,158,117,0.3); }
+.badge-amber { background: var(--amber-light); color: var(--amber); border: 0.5px solid rgba(255,180,80,0.3); }
+.badge-purple { background: var(--purple-light); color: #c8b0ff; border: 0.5px solid rgba(144,96,255,0.3); }
+
+/* SESSION ITEMS */
+.session-item { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 0.5px solid var(--border); }
+.session-item:last-child { border-bottom: none; padding-bottom: 0; }
+.session-icon { font-size: 22px; }
+.session-info { flex: 1; }
+.session-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.session-meta { font-size: 12px; color: var(--muted); }
+
+/* BITÁCORA */
+.bita-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 22px; margin-bottom: 16px; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
+.bita-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.4), transparent); }
+.bita-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.bita-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.bi-purple { background: rgba(144,96,255,0.2); border: 0.5px solid rgba(144,96,255,0.3); }
+.bi-blue { background: rgba(100,160,255,0.2); border: 0.5px solid rgba(100,160,255,0.3); }
+.bi-teal { background: rgba(29,158,117,0.2); border: 0.5px solid rgba(29,158,117,0.3); }
+.bi-amber { background: rgba(255,180,80,0.2); border: 0.5px solid rgba(255,180,80,0.3); }
+.bi-pink { background: rgba(255,120,180,0.2); border: 0.5px solid rgba(255,120,180,0.3); }
+.bita-sec-title { font-size: 15px; font-weight: 600; }
+.bita-sec-sub { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.field-row.single { grid-template-columns: 1fr; }
+.field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field input, .field textarea, .field select { margin-bottom: 0; }
+.divider { height: 0.5px; background: var(--border); margin: 16px 0; }
+.rating-row { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+.star { font-size: 22px; cursor: pointer; transition: transform 0.1s; filter: grayscale(1) opacity(0.3); }
+.star:hover, .star.active { filter: none; transform: scale(1.15); }
+.diff-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.diff-btn { padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; border: 0.5px solid var(--border2); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.diff-btn:hover { border-color: var(--border2); color: var(--text); }
+.diff-btn.sel-easy { background: rgba(29,158,117,0.2); border-color: var(--green); color: #9fefd4; }
+.diff-btn.sel-mid { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+.diff-btn.sel-hard { background: var(--red-light); border-color: var(--red); color: #ffaaaa; }
+.tags-area { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.etag { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid rgba(144,96,255,0.3); background: rgba(144,96,255,0.1); color: #c8b0ff; transition: all 0.15s; }
+.etag:hover { background: rgba(144,96,255,0.2); }
+.etag.sel { background: rgba(144,96,255,0.3); border-color: rgba(144,96,255,0.6); }
+.emoji-pick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.ep-btn { font-size: 22px; padding: 7px; border-radius: 8px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.12s; background: var(--surface2); line-height: 1; }
+.ep-btn:hover { background: var(--surface); border-color: var(--border2); }
+.ep-btn.picked { border-color: var(--purple); background: var(--purple-light); }
+.mission-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface3); border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+.mission-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.mission-check.done { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.mission-text { font-size: 13px; background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; color: var(--text); flex: 1; margin-bottom: 0; width: auto; padding: 0; }
+.mission-text::placeholder { color: rgba(255,255,255,0.2); }
+.saved-banner { background: var(--green-light); border: 0.5px solid var(--green); border-radius: var(--radius); padding: 10px 16px; font-size: 13px; color: #9fefd4; text-align: center; margin-bottom: 14px; display: none; font-family: 'Space Mono', monospace; }
+.bita-list-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--surface3); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+.bita-list-item:hover { border-color: var(--purple); background: var(--purple-light); }
+.bita-planet { font-size: 28px; }
+.bita-info { flex: 1; }
+.bita-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.bita-meta { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.btn-danger { border-color: rgba(255,100,100,0.3); color: var(--red); }
+.btn-danger:hover { background: var(--red-light); }
+
+/* MODAL */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.overlay.open { display: flex; }
+.modal { background: #0d1028; border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; position: relative; }
+.modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.5), transparent); }
+.modal-title { font-size: 17px; font-weight: 600; margin-bottom: 18px; letter-spacing: -0.02em; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .nav-tabs .tab { padding: 7px 8px; font-size: 12px; }
+  .topbar { padding: 0 14px; }
+  .page { padding: 20px 14px; }
+  .field-row { grid-template-columns: 1fr; }
+  .field-row.triple { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="nebula"></div>
+<div class="nebula2"></div>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">🚀</div>
+    StudySpace
+  </div>
+  <div class="nav-tabs">
+    <button class="tab active" onclick="goTab('cursos')">Cursos</button>
+    <button class="tab" onclick="goTab('quiz')">Quizzes</button>
+    <button class="tab" onclick="goTab('flash')">Flashcards</button>
+    <button class="tab" onclick="goTab('bitacora')">Bitácora</button>
+    <button class="tab" onclick="goTab('progreso')">Progreso</button>
+  </div>
+</div>
+
+<!-- CURSOS -->
+<div id="tab-cursos" class="page active">
+  <div class="page-title">Mis cursos</div>
+  <div class="page-sub">Organiza tus materias y lleva el control de cada sesión.</div>
+  <div class="course-grid" id="course-grid"></div>
+  <div class="section-label" style="margin-top:28px">Sesiones recientes</div>
+  <div class="card" style="padding:0 20px;" id="sessions-list"></div>
+</div>
+
+<!-- QUIZZES -->
+<div id="tab-quiz" class="page">
+  <div class="page-title">Quizzes</div>
+  <div class="page-sub">Practica con preguntas de cada sesión.</div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+    <select id="quiz-course-sel" style="width:auto;margin:0;" onchange="filterQuiz()"></select>
+    <button class="btn btn-primary" onclick="openModal('modal-paste-quiz')">+ Pegar quiz de IA</button>
+    <button class="btn btn-sm" onclick="resetQuiz()">Reiniciar</button>
+  </div>
+  <div class="hint-box">Pídeme: <strong>"Genera 5 preguntas sobre [tema] en formato JSON"</strong> y pega el resultado aquí.</div>
+  <div id="quiz-area"></div>
+  <div id="quiz-result"></div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="tab-flash" class="page">
+  <div class="page-title">Flashcards</div>
+  <div class="page-sub">Tarjetas de memoria para repasar conceptos clave.</div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+    <select id="flash-course-sel" style="width:auto;margin:0;" onchange="filterFlash()"></select>
+    <button class="btn btn-primary" onclick="openModal('modal-paste-flash')">+ Agregar tarjetas</button>
+  </div>
+  <div class="hint-box">Pídeme: <strong>"Genera 6 flashcards sobre [tema] en formato JSON"</strong> y pégalas aquí.</div>
+  <p class="flip-hint">Haz clic en la tarjeta para voltearla</p>
+  <div class="flash-wrap" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="face"><div class="face-label">Concepto</div><div class="face-text" id="card-front">Selecciona un curso y agrega tarjetas para empezar.</div></div>
+      <div class="face face-back"><div class="face-label">Respuesta</div><div class="face-text" id="card-back">—</div></div>
+    </div>
+  </div>
+  <div class="flash-nav">
+    <button class="btn btn-sm" onclick="prevCard()">← Anterior</button>
+    <span class="flash-counter" id="card-counter">— / —</span>
+    <button class="btn btn-sm" onclick="nextCard()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- BITÁCORA -->
+<div id="tab-bitacora" class="page">
+  <div class="page-title">Bitácora de Viaje 🪐</div>
+  <div class="page-sub">Registra cada sesión como un planeta por descubrir.</div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="showBitaForm()">+ Nueva bitácora</button>
+    <button class="btn btn-sm" onclick="showBitaList()">Ver mis bitácoras</button>
+  </div>
+
+  <!-- SAVED BANNER -->
+  <div class="saved-banner" id="saved-banner">✓ Bitácora guardada correctamente</div>
+
+  <!-- FORM -->
+  <div id="bita-form">
+
+    <!-- DATOS DEL PLANETA -->
+    <div class="bita-section">
+      <div class="bita-header">
+        <div class="bita-icon bi-purple">🛸</div>
+        <div><div class="bita-sec-title">Datos del Planeta</div><div class="bita-sec-sub">Identificación de la misión</div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Curso / Materia</label><input type="text" id="b-curso" placeholder="Ej: Filosofía, Biología..."></div>
+        <div class="field"><label>Nombre del planeta (tema)</label><input type="text" id="b-planeta" placeholder="Ej: Planeta Mitosis"></div>
+      </div>
+      <div class="field-row triple">
+        <div class="field"><label>Fecha</label><input type="date" id="b-fecha"></div>
+        <div class="field"><label>Número de sesión</label><input type="text" id="b-sesion" placeholder="Ej: Sesión 3"></div>
+        <div class="field"><label>Duración</label><input type="text" id="b-duracion" placeholder="Ej: 90 min"></div>
+      </div>
+      <div class="field"><label>Ícono del planeta</label>
+        <div class="emoji-pick" id="planet-pick">
+          <span class="ep-btn picked" onclick="pickPlanet('🪐',this)">🪐</span>
+          <span class="ep-btn" onclick="pickPlanet('🌍',this)">🌍</span>
+          <span class="ep-btn" onclick="pickPlanet('🌙',this)">🌙</span>
+          <span class="ep-btn" onclick="pickPlanet('⭐',this)">⭐</span>
+          <span class="ep-btn" onclick="pickPlanet('🌌',this)">🌌</span>
+          <span class="ep-btn" onclick="pickPlanet('☄️',this)">☄️</span>
+          <span class="ep-btn" onclick="pickPlanet('🔭',this)">🔭</span>
+          <span class="ep-btn" onclick="pickPlanet('🚀',this)">🚀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="bita-section">
+      <div class="bita-header">
+        <div class="bita-icon bi-blue">🌐</div>
+        <div><div class="bita-sec-title">Descripción del Planeta</div><div class="bita-sec-sub">Resumen de la sesión</div></div>
+      </div>
+      <div class="field field-row single"><label>¿De qué trató la clase?</label><textarea id="b-resumen" placeholder="Narra con tus propias palabras de qué trató la sesión..."></textarea></div>
+      <div class="field field-row single"><label>¿Qué fue lo más importante?</label><textarea id="b-importante" placeholder="Los 2 o 3 puntos clave que no puedes olvidar..."></textarea></div>
+      <div class="field field-row single"><label>¿Algo que te sorprendió o costó entender?</label><textarea id="b-sorpresa" placeholder="Lo que te generó curiosidad, dudas o confusión..."></textarea></div>
+    </div>
+
+    <!-- HABITANTES -->
+    <div class="bita-section">
+      <div class="bita-header">
+        <div class="bita-icon bi-teal">🧬</div>
+        <div><div class="bita-sec-title">Habitantes y Ecosistema</div><div class="bita-sec-sub">Conceptos y términos clave</div></div>
+      </div>
+      <div class="field field-row single"><label>Conceptos y términos principales</label><textarea id="b-conceptos" placeholder="Lista los conceptos clave de esta sesión..."></textarea></div>
+      <div class="field field-row single"><label>¿Cómo se relacionan entre sí?</label><textarea id="b-relaciones" placeholder="Conexiones entre conceptos, como un mini mapa mental..."></textarea></div>
+      <div class="field field-row single"><label>Ejemplo o aplicación real</label><textarea id="b-ejemplo" placeholder="¿Dónde se ve esto en la vida real?"></textarea></div>
+    </div>
+
+    <!-- CLIMA -->
+    <div class="bita-section">
+      <div class="bita-header">
+        <div class="bita-icon bi-amber">🌤️</div>
+        <div><div class="bita-sec-title">El Clima del Planeta</div><div class="bita-sec-sub">Tu experiencia en la sesión</div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>¿Cómo te sentiste?</label>
+          <div class="rating-row" id="feeling-stars">
+            <span class="star" onclick="setStar(1)">😴</span>
+            <span class="star" onclick="setStar(2)">😕</span>
+            <span class="star" onclick="setStar(3)">😐</span>
+            <span class="star" onclick="setStar(4)">🙂</span>
+            <span class="star" onclick="setStar(5)">🤩</span>
+          </div>
+        </div>
+        <div class="field"><label>¿Qué tan difícil fue?</label>
+          <div class="diff-row">
+            <button class="diff-btn" onclick="setDiff('easy',this)">Fácil 🟢</button>
+            <button class="diff-btn" onclick="setDiff('mid',this)">Regular 🟡</button>
+            <button class="diff-btn" onclick="setDiff('hard',this)">Difícil 🔴</button>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field field-row single"><label>¿Qué podrías mejorar para la próxima?</label><textarea id="b-mejora" placeholder="Reflexión personal: atención, repaso previo, preguntar más..."></textarea></div>
+      <div class="field"><label>Etiquetas de estado</label>
+        <div class="tags-area">
+          <span class="etag" onclick="this.classList.toggle('sel')">Bien entendido ✅</span>
+          <span class="etag" onclick="this.classList.toggle('sel')">Necesito repasar 🔁</span>
+          <span class="etag" onclick="this.classList.toggle('sel')">Tengo dudas ❓</span>
+          <span class="etag" onclick="this.classList.toggle('sel')">Muy interesante 💡</span>
+          <span class="etag" onclick="this.classList.toggle('sel')">Difícil 🧩</span>
+          <span class="etag" onclick="this.classList.toggle('sel')">Para el examen ⚠️</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISIÓN PENDIENTE -->
+    <div class="bita-section">
+      <div class="bita-header">
+        <div class="bita-icon bi-pink">🎯</div>
+        <div><div class="bita-sec-title">Misión Pendiente</div><div class="bita-sec-sub">Tareas y próximos pasos</div></div>
+      </div>
+      <div id="mission-list">
+        <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar los conceptos de la sesión..."></div>
+        <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz de esta sesión..."></div>
+        <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Investigar más sobre..."></div>
+      </div>
+      <button class="btn btn-sm" onclick="addMission()" style="margin-top:4px">+ Agregar tarea</button>
+      <div class="divider"></div>
+      <div class="field field-row single"><label>¿Qué viene en la próxima sesión?</label><input type="text" id="b-proxima" placeholder="Tema de la próxima clase..."></div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-green" style="flex:1;justify-content:center;padding:14px;" onclick="saveBitacora()">💾 Guardar bitácora</button>
+      <button class="btn" style="padding:14px 18px;" onclick="printBitacora()">🖨️ Exportar PDF</button>
+    </div>
+    <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:10px;font-family:'Space Mono',monospace;">Los datos se guardan automáticamente en tu navegador</p>
+  </div>
+
+  <!-- LISTA DE BITÁCORAS -->
+  <div id="bita-list" style="display:none;">
+    <div class="section-label">Bitácoras guardadas</div>
+    <div id="bita-saved-list"></div>
+    <div class="empty" id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
+      <div style="font-size:36px;margin-bottom:10px">🪐</div>
+      Aún no tienes bitácoras guardadas. ¡Crea una nueva!
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+<div id="tab-progreso" class="page">
+  <div class="page-title">Mi progreso</div>
+  <div class="page-sub">Resumen de tu desempeño en quizzes y sesiones.</div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Preguntas respondidas</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-correct">0</div><div class="stat-lbl">Respuestas correctas</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-pct">—</div><div class="stat-lbl">Precisión global</div></div>
+  </div>
+  <div class="section-label">Por curso</div>
+  <div class="card" id="prog-courses"></div>
+  <div class="section-label">Bitácoras registradas</div>
+  <div class="card" id="prog-bitacoras" style="padding:16px 20px;"></div>
+</div>
+
+<!-- MODAL: nuevo curso -->
+<div class="overlay" id="modal-curso">
+  <div class="modal">
+    <div class="modal-title">Nuevo curso</div>
+    <label>Nombre del curso</label>
+    <input type="text" id="cn-name" placeholder="Ej: Biología, Historia...">
+    <label>Elige un ícono</label>
+    <div class="emoji-pick" id="emoji-row"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-curso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCourse()">Guardar curso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: pegar quiz -->
+<div class="overlay" id="modal-paste-quiz">
+  <div class="modal">
+    <div class="modal-title">Pegar quiz generado por IA</div>
+    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code><br><br><code>ans</code> = índice de la opción correcta (0 = primera).</div>
+    <label>Curso</label><select id="quiz-paste-course"></select>
+    <label>Nombre de la sesión</label><input type="text" id="quiz-session-name" placeholder="Ej: Sesión 3 — Mitosis">
+    <label>JSON del quiz</label><textarea id="quiz-json" placeholder='[{"q":"¿Cuántas fases tiene la mitosis?","opts":["2","4","6","8"],"ans":1}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-paste-quiz')">Cancelar</button>
+      <button class="btn btn-primary" onclick="loadQuiz()">Cargar quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: pegar flashcards -->
+<div class="overlay" id="modal-paste-flash">
+  <div class="modal">
+    <div class="modal-title">Agregar flashcards</div>
+    <div class="hint-box">Formato JSON:<br><code>[{"front":"Concepto","back":"Definición"}]</code></div>
+    <label>Curso</label><select id="flash-paste-course"></select>
+    <label>JSON de las tarjetas</label><textarea id="flash-json" placeholder='[{"front":"Mitosis","back":"División celular que produce 2 células idénticas"}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-paste-flash')">Cancelar</button>
+      <button class="btn btn-primary" onclick="loadFlash()">Cargar tarjetas</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EMOJIS = ['🧬','⚗️','📐','📖','🌍','💡','🔬','📊','🎨','🏛️','🧮','📝','🌱','⚡','🎵','🧠'];
+let pickedEmoji = '📖';
+let planetEmoji = '🪐';
+let feelingVal = 0;
+let diffVal = '';
+let editingBitaId = null;
+
+// ── STATE ──
+let state = JSON.parse(localStorage.getItem('ss_state') || 'null') || {
+  courses: [
+    {id:'c1',name:'Biología',emoji:'🧬',sessions:5,done:3},
+    {id:'c2',name:'Química',emoji:'⚗️',sessions:6,done:2},
+    {id:'c3',name:'Matemáticas',emoji:'📐',sessions:4,done:4}
+  ],
+  quizzes: [{id:'q1',courseId:'c1',session:'Sesión 3 — Mitosis',questions:[
+    {q:'¿Cuántas fases principales tiene la mitosis?',opts:['2','4','6','8'],ans:1},
+    {q:'¿Qué estructura guía la separación de cromosomas?',opts:['Membrana celular','Ribosoma','Huso mitótico','Vacuola'],ans:2},
+    {q:'¿En qué fase los cromosomas se alinean en el ecuador?',opts:['Profase','Metafase','Anafase','Telofase'],ans:1}
+  ]}],
+  flashDecks: [{id:'f1',courseId:'c1',cards:[
+    {front:'¿Qué es la mitosis?',back:'Proceso de división celular que produce dos células hijas genéticamente idénticas.'},
+    {front:'¿Cuántas fases tiene la mitosis?',back:'4 fases: Profase, Metafase, Anafase y Telofase.'},
+    {front:'¿Qué es la citocinesis?',back:'División del citoplasma al final de la mitosis.'}
+  ]}],
+  stats:{total:0,correct:0},
+  sessions:[
+    {courseId:'c1',name:'Sesión 3 — Mitosis',done:true,questions:8},
+    {courseId:'c2',name:'Sesión 5 — Enlace iónico',done:false,questions:10}
+  ],
+  bitacoras:[]
+};
+
+function save() { localStorage.setItem('ss_state',JSON.stringify(state)); }
+
+// ── TABS ──
+function goTab(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const tabs = ['cursos','quiz','flash','bitacora','progreso'];
+  document.querySelectorAll('.tab').forEach((t,i)=>{ if(tabs[i]===name) t.classList.add('active'); });
+  if(name==='quiz') renderQuizTab();
+  if(name==='flash') renderFlashTab();
+  if(name==='progreso') renderProgreso();
+  if(name==='bitacora') { showBitaForm(); resetBitaForm(); }
+}
+
+// ── COURSES ──
+function renderCourses() {
+  const grid = document.getElementById('course-grid');
+  grid.innerHTML = state.courses.map(c=>{
+    const pct = c.sessions>0?Math.round(c.done/c.sessions*100):0;
+    return `<div class="course-card" onclick="selectCourse('${c.id}',this)">
+      <div class="course-icon">${c.emoji}</div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-meta">${c.sessions} sesiones · ${c.done} completadas</div>
+      <div class="course-progress"><div class="course-progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('')+`<button class="course-card add-course-card" onclick="openModal('modal-curso')"><div class="plus-circle">+</div>Nuevo curso</button>`;
+  const sl = document.getElementById('sessions-list');
+  sl.innerHTML = state.sessions.length===0
+    ? '<div style="text-align:center;padding:40px;color:var(--hint);font-size:14px;">🪐 Sin sesiones aún</div>'
+    : state.sessions.map(s=>{
+      const c=state.courses.find(x=>x.id===s.courseId)||{};
+      return `<div class="session-item"><div class="session-icon">${c.emoji||'📝'}</div><div class="session-info"><div class="session-name">${c.name||''} — ${s.name}</div><div class="session-meta">${s.questions} preguntas</div></div><span class="badge ${s.done?'badge-green':'badge-amber'}">${s.done?'Completado':'Pendiente'}</span></div>`;
+    }).join('');
+}
+function selectCourse(id,el) {
+  document.querySelectorAll('.course-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function saveCourse() {
+  const name=document.getElementById('cn-name').value.trim();
+  if(!name) return;
+  state.courses.push({id:'c'+Date.now(),name,emoji:pickedEmoji,sessions:0,done:0});
+  save(); renderCourses(); populateSelects();
+  document.getElementById('cn-name').value='';
+  closeModal('modal-curso');
+}
+function buildEmojiRow() {
+  document.getElementById('emoji-row').innerHTML=EMOJIS.map(e=>`<span class="ep-btn${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}',this)">${e}</span>`).join('');
+}
+function pickEmoji(e,el) {
+  pickedEmoji=e;
+  document.querySelectorAll('#emoji-row .ep-btn').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
+}
+function populateSelects() {
+  const opts=state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=opts;
+  });
+}
+
+// ── QUIZ ──
+let answered={}, quizList=[], activeQuiz=null;
+function renderQuizTab() { populateSelects(); filterQuiz(); }
+function filterQuiz() {
+  const cid=document.getElementById('quiz-course-sel').value;
+  quizList=state.quizzes.filter(q=>q.courseId===cid);
+  activeQuiz=quizList[0]||null; answered={};
+  renderQuizArea();
+}
+function renderQuizArea() {
+  const area=document.getElementById('quiz-area');
+  document.getElementById('quiz-result').innerHTML='';
+  if(!activeQuiz) { area.innerHTML='<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso. Pega uno con el botón de arriba.</div>'; return; }
+  area.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px;font-family:\'Space Mono\',monospace;">${activeQuiz.session}</div>`+
+    activeQuiz.questions.map((q,qi)=>`<div class="question-block"><div class="question-num">Pregunta ${qi+1}</div><div class="question-text">${q.q}</div><div class="options">${q.opts.map((o,oi)=>`<div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})"><div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}</div>`).join('')}</div></div>`).join('');
+}
+function selectOpt(qi,oi) {
+  if(answered[qi]!==undefined) return;
+  answered[qi]=oi;
+  const correct=activeQuiz.questions[qi].ans;
+  activeQuiz.questions[qi].opts.forEach((_,i)=>{
+    const el=document.getElementById(`opt-${qi}-${i}`); if(!el) return;
+    if(i===correct){el.classList.add('correct');el.querySelector('.opt-circle').textContent='✓';}
+    else if(i===oi&&oi!==correct){el.classList.add('wrong');el.querySelector('.opt-circle').textContent='✗';}
+  });
+  if(oi===correct) state.stats.correct++;
+  state.stats.total++; save();
+  if(Object.keys(answered).length===activeQuiz.questions.length) showQuizResult();
+}
+function showQuizResult() {
+  const total=activeQuiz.questions.length;
+  const correct=Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length;
+  const pct=Math.round(correct/total*100);
+  document.getElementById('quiz-result').innerHTML=`<div class="result-banner ${pct>=70?'result-good':'result-ok'}"><strong>${correct}/${total} correctas (${pct}%)</strong><br>${pct>=70?'¡Excelente trabajo! Sigue así 🚀':'Sigue repasando, cada intento cuenta 💪'}</div>`;
+  const s=state.sessions.find(x=>x.name===activeQuiz.session&&x.courseId===activeQuiz.courseId);
+  if(s) s.done=pct>=60; save(); renderCourses();
+}
+function resetQuiz() { answered={}; renderQuizArea(); }
+function loadQuiz() {
+  try {
+    const qs=JSON.parse(document.getElementById('quiz-json').value.trim());
+    if(!Array.isArray(qs)||!qs[0].q) throw new Error();
+    const cid=document.getElementById('quiz-paste-course').value;
+    const session=document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre';
+    state.quizzes.push({id:'q'+Date.now(),courseId:cid,session,questions:qs});
+    const c=state.courses.find(x=>x.id===cid); if(c) c.sessions++;
+    state.sessions.unshift({courseId:cid,name:session,done:false,questions:qs.length});
+    save(); renderCourses(); renderQuizTab();
+    document.getElementById('quiz-json').value='';
+    document.getElementById('quiz-session-name').value='';
+    closeModal('modal-paste-quiz');
+  } catch(e) { alert('Formato incorrecto. Revisa el JSON.'); }
+}
+
+// ── FLASHCARDS ──
+let flashCards=[], flashIdx=0, flashFlipped=false;
+function renderFlashTab() { populateSelects(); filterFlash(); }
+function filterFlash() {
+  const cid=document.getElementById('flash-course-sel').value;
+  const deck=state.flashDecks.find(d=>d.courseId===cid);
+  flashCards=deck?deck.cards:[]; flashIdx=0; flashFlipped=false; showCard();
+}
+function showCard() {
+  const fc=document.getElementById('flashcard');
+  fc.classList.remove('flipped'); flashFlipped=false;
+  if(!flashCards.length){
+    document.getElementById('card-front').textContent='Sin tarjetas. Agrega algunas con el botón de arriba.';
+    document.getElementById('card-back').textContent='—';
+    document.getElementById('card-counter').textContent='— / —'; return;
+  }
+  const card=flashCards[flashIdx];
+  document.getElementById('card-front').textContent=card.front;
+  document.getElementById('card-back').textContent=card.back;
+  document.getElementById('card-counter').textContent=`${flashIdx+1} / ${flashCards.length}`;
+}
+function flipCard() { flashFlipped=!flashFlipped; document.getElementById('flashcard').classList.toggle('flipped',flashFlipped); }
+function nextCard() { if(!flashCards.length) return; flashIdx=(flashIdx+1)%flashCards.length; showCard(); }
+function prevCard() { if(!flashCards.length) return; flashIdx=(flashIdx-1+flashCards.length)%flashCards.length; showCard(); }
+function loadFlash() {
+  try {
+    const cards=JSON.parse(document.getElementById('flash-json').value.trim());
+    if(!Array.isArray(cards)||!cards[0].front) throw new Error();
+    const cid=document.getElementById('flash-paste-course').value;
+    const existing=state.flashDecks.find(d=>d.courseId===cid);
+    if(existing) existing.cards.push(...cards);
+    else state.flashDecks.push({id:'f'+Date.now(),courseId:cid,cards});
+    save(); renderFlashTab();
+    document.getElementById('flash-json').value='';
+    closeModal('modal-paste-flash');
+  } catch(e) { alert('Formato incorrecto. Revisa el JSON.'); }
+}
+
+// ── BITÁCORA ──
+function showBitaForm() {
+  document.getElementById('bita-form').style.display='block';
+  document.getElementById('bita-list').style.display='none';
+}
+function showBitaList() {
+  document.getElementById('bita-form').style.display='none';
+  document.getElementById('bita-list').style.display='block';
+  renderBitaList();
+}
+function pickPlanet(e,el) {
+  planetEmoji=e;
+  document.querySelectorAll('#planet-pick .ep-btn').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
+}
+function setStar(val) {
+  feelingVal=val;
+  document.querySelectorAll('#feeling-stars .star').forEach((s,i)=>s.classList.toggle('active',i<val));
+}
+function setDiff(val,el) {
+  diffVal=val;
+  document.querySelectorAll('.diff-btn').forEach(b=>{ b.className='diff-btn'; });
+  el.classList.add('sel-'+val);
+}
+function toggleMission(el) {
+  el.classList.toggle('done');
+  el.textContent=el.classList.contains('done')?'✓':'';
+}
+function addMission() {
+  const div=document.createElement('div');
+  div.className='mission-item';
+  div.innerHTML=`<div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Nueva tarea...">`;
+  document.getElementById('mission-list').appendChild(div);
+}
+function saveBitacora() {
+  const curso=document.getElementById('b-curso').value.trim();
+  const planeta=document.getElementById('b-planeta').value.trim();
+  if(!curso||!planeta) { alert('Por favor completa al menos el curso y el nombre del planeta.'); return; }
+  const missions=[];
+  document.querySelectorAll('#mission-list .mission-item').forEach(item=>{
+    const text=item.querySelector('.mission-text').value.trim();
+    const done=item.querySelector('.mission-check').classList.contains('done');
+    if(text) missions.push({text,done});
+  });
+  const tags=[];
+  document.querySelectorAll('.etag.sel').forEach(t=>tags.push(t.textContent));
+  const bita = {
+    id: editingBitaId || 'b'+Date.now(),
+    planeta: planetEmoji,
+    curso, planeta_nombre: planeta,
+    fecha: document.getElementById('b-fecha').value,
+    sesion: document.getElementById('b-sesion').value,
+    duracion: document.getElementById('b-duracion').value,
+    resumen: document.getElementById('b-resumen').value,
+    importante: document.getElementById('b-importante').value,
+    sorpresa: document.getElementById('b-sorpresa').value,
+    conceptos: document.getElementById('b-conceptos').value,
+    relaciones: document.getElementById('b-relaciones').value,
+    ejemplo: document.getElementById('b-ejemplo').value,
+    feeling: feelingVal, diff: diffVal,
+    mejora: document.getElementById('b-mejora').value,
+    tags, missions,
+    proxima: document.getElementById('b-proxima').value,
+    savedAt: new Date().toISOString()
+  };
+  if(editingBitaId) {
+    const idx=state.bitacoras.findIndex(b=>b.id===editingBitaId);
+    if(idx>=0) state.bitacoras[idx]=bita;
+  } else {
+    state.bitacoras.unshift(bita);
+  }
+  save();
+  const banner=document.getElementById('saved-banner');
+  banner.style.display='block';
+  setTimeout(()=>banner.style.display='none',3000);
+  editingBitaId=null;
+}
+function resetBitaForm() {
+  editingBitaId=null;
+  document.querySelectorAll('#bita-form input[type=text], #bita-form textarea').forEach(el=>el.value='');
+  document.getElementById('b-fecha').valueAsDate=new Date();
+  planetEmoji='🪐';
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((b,i)=>b.classList.toggle('picked',i===0));
+  feelingVal=0;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('active'));
+  diffVal='';
+  document.querySelectorAll('.diff-btn').forEach(b=>b.className='diff-btn');
+  document.querySelectorAll('.etag').forEach(t=>t.classList.remove('sel'));
+  const ml=document.getElementById('mission-list');
+  ml.innerHTML=`<div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar los conceptos de la sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz de esta sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Investigar más sobre..."></div>`;
+}
+function renderBitaList() {
+  const list=document.getElementById('bita-saved-list');
+  const empty=document.getElementById('bita-empty');
+  if(!state.bitacoras.length) { list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML=state.bitacoras.map(b=>`
+    <div class="bita-list-item" onclick="loadBitacora('${b.id}')">
+      <div class="bita-planet">${b.planeta}</div>
+      <div class="bita-info">
+        <div class="bita-name">${b.planeta_nombre}</div>
+        <div class="bita-meta">${b.curso} · ${b.sesion||'Sin sesión'} · ${b.fecha||'Sin fecha'}</div>
+        ${b.tags&&b.tags.length?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${b.tags.map(t=>`<span class="etag sel" style="font-size:11px;padding:2px 8px;">${t}</span>`).join('')}</div>`:''}
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteBita('${b.id}')">🗑️</button>
+    </div>`).join('');
+}
+function loadBitacora(id) {
+  const b=state.bitacoras.find(x=>x.id===id); if(!b) return;
+  editingBitaId=id;
+  showBitaForm();
+  document.getElementById('b-curso').value=b.curso||'';
+  document.getElementById('b-planeta').value=b.planeta_nombre||'';
+  document.getElementById('b-fecha').value=b.fecha||'';
+  document.getElementById('b-sesion').value=b.sesion||'';
+  document.getElementById('b-duracion').value=b.duracion||'';
+  document.getElementById('b-resumen').value=b.resumen||'';
+  document.getElementById('b-importante').value=b.importante||'';
+  document.getElementById('b-sorpresa').value=b.sorpresa||'';
+  document.getElementById('b-conceptos').value=b.conceptos||'';
+  document.getElementById('b-relaciones').value=b.relaciones||'';
+  document.getElementById('b-ejemplo').value=b.ejemplo||'';
+  document.getElementById('b-mejora').value=b.mejora||'';
+  document.getElementById('b-proxima').value=b.proxima||'';
+  pickPlanet(b.planeta, document.querySelector(`#planet-pick .ep-btn:nth-child(${['🪐','🌍','🌙','⭐','🌌','☄️','🔭','🚀'].indexOf(b.planeta)+1})`)||document.querySelector('#planet-pick .ep-btn'));
+  if(b.feeling) setStar(b.feeling);
+  if(b.diff) { const btn=document.querySelector(`.diff-btn`); setDiff(b.diff, document.querySelector(`.diff-btn[onclick*="${b.diff}"]`)||document.querySelector('.diff-btn')); }
+  document.querySelectorAll('.etag').forEach(t=>t.classList.toggle('sel', b.tags&&b.tags.includes(t.textContent)));
+  if(b.missions&&b.missions.length) {
+    const ml=document.getElementById('mission-list');
+    ml.innerHTML=b.missions.map(m=>`<div class="mission-item"><div class="mission-check${m.done?' done':''}" onclick="toggleMission(this)">${m.done?'✓':''}</div><input class="mission-text" type="text" value="${m.text.replace(/"/g,'&quot;')}"></div>`).join('');
+  }
+}
+function deleteBita(id) {
+  if(!confirm('¿Eliminar esta bitácora?')) return;
+  state.bitacoras=state.bitacoras.filter(b=>b.id!==id);
+  save(); renderBitaList();
+}
+function printBitacora() { window.print(); }
+
+// ── PROGRESO ──
+function renderProgreso() {
+  const {total,correct}=state.stats;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-correct').textContent=correct;
+  document.getElementById('s-pct').textContent=total>0?Math.round(correct/total*100)+'%':'—';
+  const pc=document.getElementById('prog-courses');
+  pc.innerHTML=state.courses.map(c=>{
+    const pct=c.sessions>0?Math.round(c.done/c.sessions*100):0;
+    return `<div class="prog-row"><div class="prog-meta"><span>${c.emoji} ${c.name}</span><span>${c.done} / ${c.sessions} sesiones</span></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('')||'<div style="text-align:center;padding:24px;color:var(--hint);">Agrega cursos para ver tu progreso.</div>';
+  const pb=document.getElementById('prog-bitacoras');
+  pb.innerHTML=state.bitacoras.length===0
+    ? '<div style="text-align:center;padding:16px;color:var(--hint);font-size:13px;">🪐 Aún no tienes bitácoras guardadas.</div>'
+    : state.bitacoras.slice(0,5).map(b=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);"><span style="font-size:20px">${b.planeta}</span><div style="flex:1"><div style="font-size:13px;font-weight:500">${b.planeta_nombre}</div><div style="font-size:11px;color:var(--muted);font-family:\'Space Mono\',monospace">${b.curso} · ${b.fecha||''}</div></div><span class="badge badge-purple">${b.diff==='easy'?'Fácil':b.diff==='mid'?'Regular':b.diff==='hard'?'Difícil':'—'}</span></div>`).join('');
+}
+
+// ── MODALS ──
+function openModal(id) {
+  if(id==='modal-curso') buildEmojiRow();
+  if(id==='modal-paste-quiz'||id==='modal-paste-flash') populateSelects();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+// ── INIT ──
+document.getElementById('b-fecha').valueAsDate=new Date();
+populateSelects();
+renderCourses();
+</script>
+</body>
+</html>
