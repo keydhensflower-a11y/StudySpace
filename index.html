@@ -721,19 +721,28 @@ function showQuizResult() {
 }
 function resetQuiz() { answered={}; renderQuizArea(); }
 function loadQuiz() {
-  try {
-    const qs=JSON.parse(document.getElementById('quiz-json').value.trim());
-    if(!Array.isArray(qs)||!qs[0].q) throw new Error();
-    const cid=document.getElementById('quiz-paste-course').value;
-    const session=document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre';
-    state.quizzes.push({id:'q'+Date.now(),courseId:cid,session,questions:qs});
-    const c=state.courses.find(x=>x.id===cid); if(c) c.sessions++;
-    state.sessions.unshift({courseId:cid,name:session,done:false,questions:qs.length});
-    save(); renderCourses(); renderQuizTab();
-    document.getElementById('quiz-json').value='';
-    document.getElementById('quiz-session-name').value='';
-    closeModal('modal-paste-quiz');
-  } catch(e) { alert('Formato incorrecto. Revisa el JSON.'); }
+  const raw = document.getElementById('quiz-json').value.trim();
+  if(!raw) { alert('Por favor pega el JSON del quiz.'); return; }
+  let qs;
+  try { qs = JSON.parse(raw); } catch(e) { alert('El JSON tiene un error. Asegurate de copiarlo completo sin espacios extras.'); return; }
+  if(!Array.isArray(qs)||qs.length===0||!qs[0].q||!qs[0].opts||qs[0].ans===undefined) {
+    alert('Formato incorrecto. Cada pregunta necesita q, opts y ans.'); return;
+  }
+  const cid = document.getElementById('quiz-paste-course').value;
+  if(!cid) { alert('Selecciona un curso.'); return; }
+  const session = document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre';
+  state.quizzes.push({id:'q'+Date.now(), courseId:cid, session, questions:qs});
+  const c = state.courses.find(x=>x.id===cid);
+  if(c) c.sessions++;
+  state.sessions.unshift({courseId:cid, name:session, done:false, questions:qs.length});
+  save();
+  renderCourses();
+  document.getElementById('quiz-json').value='';
+  document.getElementById('quiz-session-name').value='';
+  closeModal('modal-paste-quiz');
+  document.getElementById('quiz-course-sel').value = cid;
+  filterQuiz();
+  alert('Quiz cargado con ' + qs.length + ' preguntas!');
 }
 
 // ── FLASHCARDS ──
