@@ -320,6 +320,55 @@ select option { background: #1a1a2e; color: var(--text); }
   .field-row { grid-template-columns: 1fr; }
   .field-row.triple { grid-template-columns: 1fr 1fr; }
 }
+
+.sim-type-btn {
+  padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 0.5px solid var(--border2); background: transparent;
+  color: var(--muted); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.sim-type-btn.active { background: var(--purple-light); border-color: var(--purple); color: #c8b0ff; }
+.sim-type-btn:hover:not(.active) { background: var(--surface2); color: var(--text); }
+.sim-mode-selected { border: 1.5px solid var(--purple) !important; box-shadow: 0 0 16px var(--purple-glow); }
+.feedback-card {
+  background: var(--surface3); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+}
+.feedback-score { font-size:18px;font-weight:600;float:right; }
+.feedback-good { color: #9fefd4; }
+.feedback-ok { color: var(--amber); }
+.feedback-bad { color: #ffaaaa; }
+
+.accordion-item {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden;
+  transition: all 0.2s;
+}
+.accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer; transition: background 0.15s;
+}
+.accordion-header:hover { background: var(--surface2); }
+.accordion-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.accordion-meta { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.accordion-arrow { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+.accordion-arrow.open { transform: rotate(180deg); }
+.accordion-body { display: none; padding: 0 18px 18px; border-top: 0.5px solid var(--border); }
+.accordion-body.open { display: block; }
+.quiz-result-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300; backdrop-filter: blur(8px);
+}
+.quiz-result-card {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 20px; padding: 40px; text-align: center;
+  max-width: 400px; width: 90%;
+  animation: pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -338,6 +387,7 @@ select option { background: #1a1a2e; color: var(--text); }
     <button class="tab" onclick="goTab('quiz')">Quizzes</button>
     <button class="tab" onclick="goTab('flash')">Flashcards</button>
     <button class="tab" onclick="goTab('bitacora')">Bitácora</button>
+    <button class="tab" onclick="goTab('simulacro')">Simulacro 🧪</button>
     <button class="tab" onclick="goTab('progreso')">Progreso</button>
   </div>
 </div>
@@ -356,12 +406,12 @@ select option { background: #1a1a2e; color: var(--text); }
   <div class="page-title">Quizzes</div>
   <div class="page-sub">Practica con preguntas de cada sesión.</div>
   <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
-    <select id="quiz-course-sel" style="width:auto;margin:0;" onchange="filterQuiz()"></select>
+    <select id="quiz-course-sel" style="width:auto;margin:0;" onchange="renderQuizAccordion()"></select>
     <button class="btn btn-primary" onclick="openModal('modal-paste-quiz')">+ Pegar quiz de IA</button>
-    <button class="btn btn-sm" onclick="resetQuiz()">Reiniciar</button>
   </div>
   <div class="hint-box">Pídeme: <strong>"Genera 5 preguntas sobre [tema] en formato JSON"</strong> y pega el resultado aquí.</div>
-  <div id="quiz-area"></div>
+  <div id="quiz-accordion"></div>
+  <div id="quiz-area" style="margin-top:16px;"></div>
   <div id="quiz-result"></div>
 </div>
 
@@ -370,21 +420,28 @@ select option { background: #1a1a2e; color: var(--text); }
   <div class="page-title">Flashcards</div>
   <div class="page-sub">Tarjetas de memoria para repasar conceptos clave.</div>
   <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
-    <select id="flash-course-sel" style="width:auto;margin:0;" onchange="filterFlash()"></select>
+    <select id="flash-course-sel" style="width:auto;margin:0;" onchange="renderFlashAccordion()"></select>
     <button class="btn btn-primary" onclick="openModal('modal-paste-flash')">+ Agregar tarjetas</button>
   </div>
   <div class="hint-box">Pídeme: <strong>"Genera 6 flashcards sobre [tema] en formato JSON"</strong> y pégalas aquí.</div>
-  <p class="flip-hint">Haz clic en la tarjeta para voltearla</p>
-  <div class="flash-wrap" onclick="flipCard()">
-    <div class="flashcard" id="flashcard">
-      <div class="face"><div class="face-label">Concepto</div><div class="face-text" id="card-front">Selecciona un curso y agrega tarjetas para empezar.</div></div>
-      <div class="face face-back"><div class="face-label">Respuesta</div><div class="face-text" id="card-back">—</div></div>
+  <div id="flash-accordion"></div>
+  <div id="flash-player" style="display:none;margin-top:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:600;" id="flash-player-title"></div>
+      <button class="btn btn-sm" onclick="closeFlashPlayer()">✕ Cerrar</button>
     </div>
-  </div>
-  <div class="flash-nav">
-    <button class="btn btn-sm" onclick="prevCard()">← Anterior</button>
-    <span class="flash-counter" id="card-counter">— / —</span>
-    <button class="btn btn-sm" onclick="nextCard()">Siguiente →</button>
+    <p class="flip-hint">Haz clic en la tarjeta para voltearla</p>
+    <div class="flash-wrap" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="face"><div class="face-label">Concepto</div><div class="face-text" id="card-front">Selecciona una sesión para empezar.</div></div>
+        <div class="face face-back"><div class="face-label">Respuesta</div><div class="face-text" id="card-back">—</div></div>
+      </div>
+    </div>
+    <div class="flash-nav">
+      <button class="btn btn-sm" onclick="prevCard()">← Anterior</button>
+      <span class="flash-counter" id="card-counter">— / —</span>
+      <button class="btn btn-sm" onclick="nextCard()">Siguiente →</button>
+    </div>
   </div>
 </div>
 
@@ -394,8 +451,9 @@ select option { background: #1a1a2e; color: var(--text); }
   <div class="page-sub">Registra cada sesión como un planeta por descubrir.</div>
 
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-    <button class="btn btn-primary" onclick="showBitaForm()">+ Nueva bitácora</button>
+    <button class="btn btn-primary" onclick="showBitaForm();resetBitaForm()">+ Nueva bitácora</button>
     <button class="btn btn-sm" onclick="showBitaList()">Ver mis bitácoras</button>
+    <button class="btn btn-sm" onclick="confirmClearBita()" style="border-color:rgba(255,180,80,0.4);color:var(--amber);">🧹 Limpiar plantilla</button>
   </div>
 
   <!-- SAVED BANNER -->
@@ -529,6 +587,111 @@ select option { background: #1a1a2e; color: var(--text); }
 </div>
 
 <!-- PROGRESO -->
+
+<!-- SIMULACRO -->
+<div id="tab-simulacro" class="page">
+  <div class="page-title">Simulacro de Examen 🧪</div>
+  <div class="page-sub">Practica con casos clínicos, respuesta libre y cronómetro real.</div>
+
+  <!-- SETUP SCREEN -->
+  <div id="sim-setup">
+    <div class="section-label">Configurar examen</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('4x10')" id="mode-4x10">
+        <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen corto</div>
+        <div style="font-size:12px;color:var(--muted);">4 preguntas · 10 minutos</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 5 pts</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('5x30')" id="mode-5x30">
+        <div style="font-size:28px;margin-bottom:8px;">📋</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen mediano</div>
+        <div style="font-size:12px;color:var(--muted);">5 casos · 2 preguntas c/u · 30 min</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 2 pts</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('20x60')" id="mode-20x60">
+        <div style="font-size:28px;margin-bottom:8px;">🎓</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen final</div>
+        <div style="font-size:12px;color:var(--muted);">20 preguntas · 1 hora</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Mezcla de todos los tipos</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('custom')" id="mode-custom">
+        <div style="font-size:28px;margin-bottom:8px;">⚙️</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Personalizado</div>
+        <div style="font-size:12px;color:var(--muted);">Tú decides tiempo y preguntas</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Control total</div>
+      </div>
+    </div>
+
+    <div class="section-label">Tipo de preguntas</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="sim-type-btn active" onclick="toggleType('libre',this)" id="type-libre">✍️ Respuesta libre</button>
+      <button class="sim-type-btn" onclick="toggleType('marcada',this)" id="type-marcada">🔘 Respuesta marcada</button>
+      <button class="sim-type-btn" onclick="toggleType('caso',this)" id="type-caso">🏥 Caso clínico</button>
+    </div>
+
+    <div class="section-label">Curso</div>
+    <select id="sim-course" style="margin-bottom:16px;"></select>
+
+    <div class="section-label">Fuente de preguntas</div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="startSimWithLibrary()">📚 Usar biblioteca</button>
+      <button class="btn btn-green" onclick="openModal('modal-sim-code')">🔑 Ingresar código</button>
+      <button class="btn" onclick="openModal('modal-sim-custom')">✏️ Ingresar mis casos</button>
+    </div>
+  </div>
+
+  <!-- EXAM SCREEN -->
+  <div id="sim-exam" style="display:none;">
+    <!-- Timer bar -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:13px;color:var(--muted);" id="sim-mode-label">Examen corto</div>
+        <span class="badge badge-purple" id="sim-q-counter">Pregunta 1/4</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:22px;font-weight:600;font-family:'Space Mono',monospace;color:var(--text);" id="sim-timer">10:00</div>
+        <button class="btn btn-sm btn-danger" onclick="endExam()">Terminar</button>
+      </div>
+    </div>
+    <div style="height:4px;background:var(--surface2);border-radius:2px;margin-bottom:20px;overflow:hidden;">
+      <div id="timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:2px;transition:width 1s linear;width:100%;"></div>
+    </div>
+
+    <!-- Question -->
+    <div class="card" id="sim-question-card">
+      <div id="sim-case-box" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:16px;margin-bottom:16px;font-size:14px;line-height:1.7;color:var(--text);border-left:3px solid var(--purple);"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;font-family:'Space Mono',monospace;" id="sim-q-label">Pregunta 1</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:16px;line-height:1.5;" id="sim-q-text"></div>
+      <!-- Free response -->
+      <div id="sim-free-area">
+        <textarea id="sim-answer" style="min-height:120px;" placeholder="Escribe tu respuesta aquí..."></textarea>
+        <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sé preciso/a. Usa los términos correctos del tema.</div>
+      </div>
+      <!-- Multiple choice -->
+      <div id="sim-choice-area" style="display:none;">
+        <div id="sim-choices"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="nextSimQuestion()">
+        Siguiente pregunta →
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="sim-results" style="display:none;">
+    <div class="card" style="text-align:center;padding:32px 20px;">
+      <div style="font-size:56px;margin-bottom:12px;" id="sim-result-emoji">🎉</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:8px;font-family:'Space Mono',monospace;">CALIFICACIÓN FINAL</div>
+      <div style="font-size:52px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;" id="sim-result-score">18/20</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:20px;" id="sim-result-msg"></div>
+      <button class="btn btn-primary" style="margin:0 auto;" onclick="resetSimulacro()">Nuevo simulacro</button>
+    </div>
+    <div class="section-label" style="margin-top:24px;">Retroalimentación por pregunta</div>
+    <div id="sim-feedback-list"></div>
+  </div>
+</div>
+
 <div id="tab-progreso" class="page">
   <div class="page-title">Mi progreso</div>
   <div class="page-sub">Resumen de tu desempeño en quizzes y sesiones.</div>
@@ -579,6 +742,12 @@ select option { background: #1a1a2e; color: var(--text); }
     <div class="modal-title">Agregar flashcards</div>
     <div class="hint-box">Formato JSON:<br><code>[{"front":"Concepto","back":"Definición"}]</code></div>
     <label>Curso</label><select id="flash-paste-course"></select>
+    <label>Número de sesión</label>
+    <input type="text" id="flash-session-num" placeholder="Ej: Sesión 01">
+    <label>Nombre de la sesión</label>
+    <input type="text" id="flash-session-name-inp" placeholder="Ej: Bioseguridad — Niveles BSL">
+    <label>Fecha</label>
+    <input type="date" id="flash-session-date">
     <label>JSON de las tarjetas</label><textarea id="flash-json" placeholder='[{"front":"Mitosis","back":"División celular que produce 2 células idénticas"}]'></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-paste-flash')">Cancelar</button>
@@ -627,12 +796,13 @@ function goTab(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  const tabs = ['cursos','quiz','flash','bitacora','progreso'];
+  const tabs = ['cursos','quiz','flash','bitacora','simulacro','progreso'];
   document.querySelectorAll('.tab').forEach((t,i)=>{ if(tabs[i]===name) t.classList.add('active'); });
   if(name==='quiz') renderQuizTab();
   if(name==='flash') renderFlashTab();
   if(name==='progreso') renderProgreso();
   if(name==='bitacora') { showBitaForm(); resetBitaForm(); }
+  if(name==='simulacro') { populateSimCourse(); }
 }
 
 // ── COURSES ──
@@ -675,6 +845,12 @@ function pickEmoji(e,el) {
   document.querySelectorAll('#emoji-row .ep-btn').forEach(b=>b.classList.remove('picked'));
   el.classList.add('picked');
 }
+function populateSimCourse() {
+  const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  const el = document.getElementById('sim-course');
+  if(el) el.innerHTML = opts;
+}
+
 function populateSelects() {
   const opts=state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
   ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id=>{
@@ -684,26 +860,87 @@ function populateSelects() {
 
 // ── QUIZ ──
 let answered={}, quizList=[], activeQuiz=null;
-function renderQuizTab() { populateSelects(); filterQuiz(); }
-function filterQuiz() {
-  const cid=document.getElementById('quiz-course-sel').value;
-  quizList=state.quizzes.filter(q=>q.courseId===cid);
-  activeQuiz=quizList[0]||null; answered={};
-  renderQuizArea();
+
+function renderQuizTab() { populateSelects(); renderQuizAccordion(); }
+
+function renderQuizAccordion() {
+  const cid = document.getElementById('quiz-course-sel').value;
+  quizList = state.quizzes.filter(q => q.courseId === cid);
+  const acc = document.getElementById('quiz-accordion');
+  if(!acc) return;
+  document.getElementById('quiz-area').innerHTML = '';
+  document.getElementById('quiz-result').innerHTML = '';
+  if(!quizList.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso. Pega uno con el botón de arriba.</div>';
+    return;
+  }
+  acc.innerHTML = quizList.map((q, i) => `
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('qbody-${i}','qarrow-${i}')">
+        <div class="accordion-title">
+          <span>🎯</span>
+          <div>
+            <div>${q.session}</div>
+            <div class="accordion-meta">${q.questions.length} preguntas</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-purple">Quiz</span>
+          <span class="accordion-arrow" id="qarrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="qbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="startQuiz(${i})">▶ Iniciar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteQuiz('${q.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
 }
-function renderQuizArea() {
-  const area=document.getElementById('quiz-area');
-  document.getElementById('quiz-result').innerHTML='';
-  if(!activeQuiz) { area.innerHTML='<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso. Pega uno con el botón de arriba.</div>'; return; }
-  area.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px;font-family:\'Space Mono\',monospace;">${activeQuiz.session}</div>`+
-    activeQuiz.questions.map((q,qi)=>`<div class="question-block"><div class="question-num">Pregunta ${qi+1}</div><div class="question-text">${q.q}</div><div class="options">${q.opts.map((o,oi)=>`<div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})"><div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}</div>`).join('')}</div></div>`).join('');
+
+function toggleAcc(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  if(body) body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open');
 }
+
+function startQuiz(i) {
+  activeQuiz = quizList[i];
+  answered = {};
+  const acc = document.getElementById('quiz-accordion');
+  if(acc) acc.innerHTML = '';
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">${activeQuiz.session}</div>
+      <button class="btn btn-sm" onclick="renderQuizAccordion()">← Volver</button>
+    </div>` +
+    activeQuiz.questions.map((q,qi)=>`
+      <div class="question-block">
+        <div class="question-num">Pregunta ${qi+1}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options">${q.opts.map((o,oi)=>`
+          <div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}
+          </div>`).join('')}
+        </div>
+      </div>`).join('');
+  document.getElementById('quiz-result').innerHTML = '';
+}
+
+function deleteQuiz(qid) {
+  if(!confirm('¿Eliminar este quiz?')) return;
+  state.quizzes = state.quizzes.filter(q => q.id !== qid);
+  save(); renderQuizAccordion();
+}
+
 function selectOpt(qi,oi) {
   if(answered[qi]!==undefined) return;
   answered[qi]=oi;
   const correct=activeQuiz.questions[qi].ans;
   activeQuiz.questions[qi].opts.forEach((_,i)=>{
-    const el=document.getElementById(`opt-${qi}-${i}`); if(!el) return;
+    const el=document.getElementById('opt-'+qi+'-'+i); if(!el) return;
     if(i===correct){el.classList.add('correct');el.querySelector('.opt-circle').textContent='✓';}
     else if(i===oi&&oi!==correct){el.classList.add('wrong');el.querySelector('.opt-circle').textContent='✗';}
   });
@@ -711,15 +948,38 @@ function selectOpt(qi,oi) {
   state.stats.total++; save();
   if(Object.keys(answered).length===activeQuiz.questions.length) showQuizResult();
 }
+
 function showQuizResult() {
-  const total=activeQuiz.questions.length;
-  const correct=Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length;
-  const pct=Math.round(correct/total*100);
-  document.getElementById('quiz-result').innerHTML=`<div class="result-banner ${pct>=70?'result-good':'result-ok'}"><strong>${correct}/${total} correctas (${pct}%)</strong><br>${pct>=70?'¡Excelente trabajo! Sigue así 🚀':'Sigue repasando, cada intento cuenta 💪'}</div>`;
+  const total = activeQuiz.questions.length;
+  const correct = Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length;
+  const pct = Math.round(correct/total*100);
+  const score = Math.round(correct/total*20);
+  const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'💪':pct>=40?'📚':'😅';
+  const msg = pct===100?'¡Perfecto! ¡Dominas el tema completamente!':
+              pct>=80?'¡Muy bien! Estás lista para el examen.':
+              pct>=60?'¡Aprobado! Repasa los conceptos que fallaste.':
+              pct>=40?'Sigue practicando, vas por buen camino.':
+              '¡No te rindas! Repasa el material y vuelve a intentarlo.';
+  const overlay = document.createElement('div');
+  overlay.className = 'quiz-result-overlay';
+  overlay.innerHTML = '<div class="quiz-result-card">' +
+    '<div style="font-size:64px;margin-bottom:12px;">'+emoji+'</div>' +
+    '<div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-family:Space Mono,monospace;">RESULTADO</div>' +
+    '<div style="font-size:48px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;">'+correct+'/'+total+'</div>' +
+    '<div style="font-size:20px;color:var(--muted);margin-bottom:12px;">'+score+'/20 pts</div>' +
+    '<div style="font-size:14px;color:var(--text);margin-bottom:24px;line-height:1.5;">'+msg+'</div>' +
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">' +
+    '<button class="btn btn-primary" onclick="this.closest('.quiz-result-overlay').remove();renderQuizAccordion()">Ver sesiones</button>' +
+    '<button class="btn" onclick="this.closest('.quiz-result-overlay').remove();startQuiz('+quizList.indexOf(activeQuiz)+')">Repetir</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
   const s=state.sessions.find(x=>x.name===activeQuiz.session&&x.courseId===activeQuiz.courseId);
   if(s) s.done=pct>=60; save(); renderCourses();
 }
-function resetQuiz() { answered={}; renderQuizArea(); }
+
+function filterQuiz() { renderQuizAccordion(); }
+function resetQuiz() { if(activeQuiz) startQuiz(quizList.indexOf(activeQuiz)); }
+
 function loadQuiz() {
   const raw = document.getElementById('quiz-json').value.trim();
   if(!raw) { alert('Por favor pega el JSON del quiz.'); return; }
@@ -746,13 +1006,73 @@ function loadQuiz() {
 }
 
 // ── FLASHCARDS ──
-let flashCards=[], flashIdx=0, flashFlipped=false;
-function renderFlashTab() { populateSelects(); filterFlash(); }
-function filterFlash() {
-  const cid=document.getElementById('flash-course-sel').value;
-  const deck=state.flashDecks.find(d=>d.courseId===cid);
-  flashCards=deck?deck.cards:[]; flashIdx=0; flashFlipped=false; showCard();
+let flashCards=[], flashIdx=0, flashFlipped=false, activeFlashDeck=null;
+
+function renderFlashTab() { populateSelects(); renderFlashAccordion(); }
+
+function renderFlashAccordion() {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  const acc = document.getElementById('flash-accordion');
+  const player = document.getElementById('flash-player');
+  if(player) player.style.display = 'none';
+  if(!acc) return;
+  if(!decks.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🃏 Sin flashcards para este curso. Agrega algunas con el botón de arriba.</div>';
+    return;
+  }
+  acc.innerHTML = decks.map((d, i) => {
+    const sessionLabel = d.sessionNum ? d.sessionNum + ' — ' + (d.sessionName || '') : (d.sessionName || 'Sin nombre');
+    const dateLabel = d.sessionDate ? ' · ' + d.sessionDate : '';
+    return `<div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('fbody-${i}','farrow-${i}')">
+        <div class="accordion-title">
+          <span>🃏</span>
+          <div>
+            <div>${sessionLabel}</div>
+            <div class="accordion-meta">${d.cards.length} tarjetas${dateLabel}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-green">${d.cards.length} cards</span>
+          <span class="accordion-arrow" id="farrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="fbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openFlashDeck(${i})">▶ Practicar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteFlashDeck('${d.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
+
+function openFlashDeck(i) {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  activeFlashDeck = decks[i];
+  flashCards = activeFlashDeck.cards;
+  flashIdx = 0; flashFlipped = false;
+  const sessionLabel = activeFlashDeck.sessionNum ? activeFlashDeck.sessionNum + ' — ' + (activeFlashDeck.sessionName || '') : (activeFlashDeck.sessionName || 'Flashcards');
+  document.getElementById('flash-player-title').textContent = sessionLabel;
+  document.getElementById('flash-player').style.display = 'block';
+  document.getElementById('flash-accordion').style.display = 'none';
+  showCard();
+}
+
+function closeFlashPlayer() {
+  document.getElementById('flash-player').style.display = 'none';
+  document.getElementById('flash-accordion').style.display = 'block';
+}
+
+function deleteFlashDeck(did) {
+  if(!confirm('¿Eliminar este mazo de tarjetas?')) return;
+  state.flashDecks = state.flashDecks.filter(d => d.id !== did);
+  save(); renderFlashAccordion();
+}
+
+function filterFlash() { renderFlashAccordion(); }
 function showCard() {
   const fc=document.getElementById('flashcard');
   fc.classList.remove('flipped'); flashFlipped=false;
@@ -779,15 +1099,18 @@ function loadFlash() {
   }
   const cid = document.getElementById('flash-paste-course').value;
   if(!cid) { alert('Selecciona un curso.'); return; }
-  const existing = state.flashDecks.find(d=>d.courseId===cid);
-  if(existing) existing.cards.push(...cards);
-  else state.flashDecks.push({id:'f'+Date.now(), courseId:cid, cards});
+  const sessionNum = document.getElementById('flash-session-num') ? document.getElementById('flash-session-num').value.trim() : '';
+  const sessionName = document.getElementById('flash-session-name-inp') ? document.getElementById('flash-session-name-inp').value.trim() : '';
+  const sessionDate = document.getElementById('flash-session-date') ? document.getElementById('flash-session-date').value : '';
+  state.flashDecks.push({id:'f'+Date.now(), courseId:cid, sessionNum, sessionName, sessionDate, cards});
   save();
   document.getElementById('flash-json').value='';
+  if(document.getElementById('flash-session-num')) document.getElementById('flash-session-num').value='';
+  if(document.getElementById('flash-session-name-inp')) document.getElementById('flash-session-name-inp').value='';
   closeModal('modal-paste-flash');
   document.getElementById('flash-course-sel').value = cid;
-  filterFlash();
-  alert('Tarjetas cargadas: ' + cards.length + ' flashcards agregadas!');
+  renderFlashAccordion();
+  alert('Tarjetas cargadas: ' + cards.length + ' flashcards en la sesión "' + (sessionName||sessionNum||'Sin nombre') + '"');
 }
 
 // ── BITÁCORA ──
@@ -880,6 +1203,13 @@ function saveBitacora() {
     alert('Error al guardar: ' + err.message);
   }
 }
+function confirmClearBita() {
+  if(confirm('¿Limpiar todos los campos de la plantilla? Los datos guardados no se perderán.')) {
+    resetBitaForm();
+    showBitaForm();
+  }
+}
+
 function resetBitaForm() {
   editingBitaId=null;
   document.querySelectorAll('#bita-form input[type=text], #bita-form textarea').forEach(el=>el.value='');
@@ -991,7 +1321,51 @@ function printBitacora() {
   }
   if(tags) w.document.write('<div class="tags">🏷️ ' + tags + '</div>');
   w.document.write('<div class="footer">StudySpace · ' + new Date().toLocaleDateString("es-PE") + ' · Cada sesión es un planeta por descubrir 🚀</div>');
-  w.document.write('</body></html>');
+  w.document.write('
+<!-- MODAL: código de biblioteca -->
+<div class="overlay" id="modal-sim-code">
+  <div class="modal">
+    <div class="modal-title">Ingresar código de repertorio</div>
+    <div class="hint-box">
+      Pega aquí el código generado por sesión.<br>
+      Formato JSON:<br>
+      <code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code>
+    </div>
+    <textarea id="sim-code-input" placeholder="Pega aquí tu código..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sim-code')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSimLibrary()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let simLibrary = JSON.parse(localStorage.getItem("simLibrary") || "[]");
+
+function saveSimLibrary() {
+  const raw = document.getElementById("sim-code-input").value;
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) throw "Formato incorrecto";
+    simLibrary.push(...data);
+    localStorage.setItem("simLibrary", JSON.stringify(simLibrary));
+    alert("✅ Código guardado correctamente");
+    closeModal('modal-sim-code');
+  } catch (e) {
+    alert("❌ Error en el formato del código");
+  }
+}
+
+function getMotivation(score, total) {
+  const pct = (score / total) * 100;
+  if (pct >= 90) return "🔥 Excelente, estás en nivel experto";
+  if (pct >= 70) return "💪 Muy bien, vas por buen camino";
+  if (pct >= 50) return "⚡ Puedes mejorar, sigue practicando";
+  return "📚 No te rindas, cada intento te acerca más";
+}
+</script>
+
+</body></html>');
   w.document.close();
   setTimeout(() => w.print(), 600);
 }
@@ -1104,10 +1478,356 @@ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{
   window.addEventListener('resize', () => { resize(); initStars(); });
 })();
 
+
+// ── SIMULACRO ──
+const SIM_LIBRARY = {
+  bioseguridad: [
+    {caso:"En el laboratorio de microbiología, una estudiante de medicina trabaja con muestras de sangre de pacientes. Accidentalmente se pincha con una aguja contaminada mientras descarta material. El laboratorio opera bajo nivel BSL-2.",
+     preguntas:[
+       {q:"¿A qué tipo de agente de riesgo estuvo expuesta la estudiante y por qué vía ingresó al organismo?",tipo:"libre",respuesta_ideal:"Estuvo expuesta a un agente de riesgo biológico (sangre potencialmente infectada). La vía de entrada fue la parenteral, ya que el patógeno ingresó a través de una herida provocada por el pinchazo con la aguja contaminada."},
+       {q:"¿Cuáles son los pasos inmediatos que debe seguir ante este accidente?",tipo:"libre",respuesta_ideal:"Mantener la calma, avisar al personal a cargo, actuar según el tipo de accidente (limpiar la herida, aplicar antiséptico), y llamar a la central de riesgos o SAMU al 106 para recibir atención médica especializada."}
+     ]},
+    {caso:"Un investigador trabaja con Mycobacterium tuberculosis en un laboratorio especializado. Debe usar trajes de protección completos, el aire del laboratorio es filtrado antes de ser expulsado y existen puertas dobles de ingreso.",
+     preguntas:[
+       {q:"¿En qué nivel de bioseguridad (BSL) trabaja este investigador y qué grupo de riesgo corresponde a este microorganismo?",tipo:"libre",respuesta_ideal:"Trabaja en BSL-3 (Nivel de Bioseguridad 3). Mycobacterium tuberculosis pertenece al Grupo de Riesgo 3, que corresponde a agentes con riesgo individual elevado pero riesgo poblacional bajo, con transmisión principalmente por inhalación."},
+       {q:"¿Por qué el mandil o bata NO debe usarse fuera del área de trabajo?",tipo:"libre",respuesta_ideal:"Porque el mandil o bata es una barrera de protección que puede estar contaminada con agentes infecciosos del laboratorio. Usarlo fuera del área de trabajo (cafetería, pasillos, transporte) implica un riesgo de diseminación de microorganismos al entorno y constituye una violación del principio de universalidad y uso de barreras de la bioseguridad."}
+     ]},
+    {caso:"En una clínica, una enfermera debe clasificar los residuos generados durante la atención de un paciente post-operatorio. Entre los materiales tiene: gasas con sangre, jeringas usadas, envases de medicamentos vencidos, restos de comida del paciente y guantes contaminados.",
+     preguntas:[
+       {q:"Clasifique correctamente cada residuo según las categorías A, B y C, justificando su respuesta.",tipo:"libre",respuesta_ideal:"Categoría A (residuos de atención médica): gasas con sangre, jeringas usadas y guantes contaminados, porque son materiales que estuvieron en contacto directo con fluidos biológicos del paciente. Categoría B (residuos peligrosos): envases de medicamentos vencidos, porque son residuos farmacéuticos con potencial peligro. Categoría C (residuos comunes): restos de comida del paciente, porque no se clasifican en A ni B."},
+       {q:"¿Qué principio de bioseguridad justifica tratar los guantes usados como material de categoría A aunque el paciente no tenga diagnóstico confirmado de infección?",tipo:"libre",respuesta_ideal:"El principio de Universalidad, que establece que todo sujeto y/o espécimen biológico debe considerarse potencialmente infectado, independientemente de si tiene diagnóstico confirmado. Por ello se toman las precauciones necesarias para prevenir el contagio en todos los casos."}
+     ]},
+    {caso:"Una doctora llega a la cafetería del hospital con su mandil puesto, se sienta a comer y luego regresa directamente a trabajar con pacientes sin cambiarlo. Sus compañeras llevan guantes, pero los usan tanto dentro como fuera del laboratorio.",
+     preguntas:[
+       {q:"Identifica al menos dos infracciones a las medidas básicas de bioseguridad en esta situación y explica el riesgo que representan.",tipo:"libre",respuesta_ideal:"Primera infracción: usar el mandil fuera del área de trabajo (cafetería). El mandil puede estar contaminado con microorganismos del hospital, pudiendo contaminar el entorno y los alimentos, y viceversa. Segunda infracción: usar guantes fuera del laboratorio/área clínica. Los guantes son barreras de protección que, al usarse fuera del área de trabajo, pueden contaminar superficies externas o contaminarse ellos mismos, comprometiendo su función protectora."},
+       {q:"¿Cuáles son los dos métodos aceptados para la higiene de manos en el laboratorio y en qué situación específica se usa cada uno?",tipo:"libre",respuesta_ideal:"1. Lavado de manos con agua y jabón: método principal, eficiente, sencillo y efectivo en el control de infecciones. Se usa como rutina antes y después de procedimientos. 2. Frotación con solución de alcohol: se realiza en situaciones donde no hay agua potable disponible o cuando se requiere aumentar las medidas de higiene rápidamente entre procedimientos."}
+     ]}
+  ],
+  general: [
+    {caso:"",
+     preguntas:[
+       {q:"Define el concepto de bioseguridad según la OMS (2005) e identifica los tres tipos de riesgos que contempla.",tipo:"libre",respuesta_ideal:"La bioseguridad es el conjunto de normas y medidas para proteger la salud del personal frente a riesgos biológicos, químicos y físicos a los que está expuesto en el desempeño de sus funciones, también a los pacientes y al medio ambiente (OMS, 2005). Los tres tipos de riesgo son: biológico (microorganismos infecciosos), químico (sustancias peligrosas mal manejadas) y físico-mecánico (temperaturas extremas, radiaciones, elementos punzocortantes)."},
+       {q:"¿Cuáles son los tres principios de bioseguridad? Explica cada uno brevemente.",tipo:"libre",respuesta_ideal:"1. Universalidad: todo sujeto y espécimen biológico debe considerarse potencialmente infectado. 2. Uso de barreras: empleo de barreras físicas (guantes, mandil, lentes) e inmunológicas (vacunas) para evitar exposición directa. 3. Eliminación de material contaminado: disposición adecuada de residuos con el menor riesgo posible."}
+     ]}
+  ]
+};
+
+let simMode = '4x10';
+let simTypes = ['libre'];
+let simQuestions = [];
+let simCurrentQ = 0;
+let simAnswers = [];
+let simTimer = null;
+let simTotalSeconds = 600;
+let simSecondsLeft = 600;
+let simCustomCases = null;
+
+function selectMode(mode) {
+  simMode = mode;
+  document.querySelectorAll('[id^="mode-"]').forEach(el => el.classList.remove('sim-mode-selected'));
+  document.getElementById('mode-' + mode).classList.add('sim-mode-selected');
+}
+
+function toggleType(type, el) {
+  el.classList.toggle('active');
+  if(el.classList.contains('active')) {
+    if(!simTypes.includes(type)) simTypes.push(type);
+  } else {
+    simTypes = simTypes.filter(t => t !== type);
+    if(simTypes.length === 0) { simTypes.push(type); el.classList.add('active'); }
+  }
+}
+
+function startSimWithLibrary() {
+  const course = document.getElementById('sim-course').value;
+  let cases = SIM_LIBRARY.bioseguridad;
+  buildExamFromCases(cases);
+}
+
+function loadCustomCases() {
+  try {
+    const raw = document.getElementById('sim-custom-json').value.trim();
+    const cases = JSON.parse(raw);
+    if(!Array.isArray(cases) || !cases[0].preguntas) throw new Error();
+    simCustomCases = cases;
+    closeModal('modal-sim-custom');
+    buildExamFromCases(cases);
+  } catch(e) {
+    alert('Formato incorrecto. Revisa el JSON.');
+  }
+}
+
+function buildExamFromCases(cases) {
+  simQuestions = [];
+  let maxQ = simMode === '4x10' ? 4 : simMode === '5x30' ? 10 : 20;
+  let totalSecs = simMode === '4x10' ? 600 : simMode === '5x30' ? 1800 : 3600;
+
+  cases.forEach(c => {
+    c.preguntas.forEach(p => {
+      if(simQuestions.length < maxQ) {
+        simQuestions.push({
+          caso: c.caso || '',
+          q: p.q,
+          tipo: p.tipo || 'libre',
+          respuesta_ideal: p.respuesta_ideal || '',
+          opts: p.opts || null,
+          ans: p.ans !== undefined ? p.ans : null
+        });
+      }
+    });
+  });
+
+  if(simQuestions.length === 0) { alert('No hay preguntas disponibles.'); return; }
+
+  simCurrentQ = 0;
+  simAnswers = new Array(simQuestions.length).fill('');
+  simTotalSeconds = totalSecs;
+  simSecondsLeft = totalSecs;
+
+  document.getElementById('sim-setup').style.display = 'none';
+  document.getElementById('sim-results').style.display = 'none';
+  document.getElementById('sim-exam').style.display = 'block';
+
+  const modeLabels = {'4x10':'Examen corto · 10 min','5x30':'Examen mediano · 30 min','20x60':'Examen final · 1 hora','custom':'Personalizado'};
+  document.getElementById('sim-mode-label').textContent = modeLabels[simMode] || 'Simulacro';
+
+  startTimer();
+  renderSimQuestion();
+}
+
+function renderSimQuestion() {
+  const q = simQuestions[simCurrentQ];
+  document.getElementById('sim-q-counter').textContent = 'Pregunta ' + (simCurrentQ + 1) + '/' + simQuestions.length;
+  document.getElementById('sim-q-label').textContent = 'Pregunta ' + (simCurrentQ + 1);
+  document.getElementById('sim-q-text').textContent = q.q;
+
+  const caseBox = document.getElementById('sim-case-box');
+  if(q.caso && q.caso.trim()) {
+    caseBox.style.display = 'block';
+    caseBox.textContent = q.caso;
+  } else {
+    caseBox.style.display = 'none';
+  }
+
+  const freeArea = document.getElementById('sim-free-area');
+  const choiceArea = document.getElementById('sim-choice-area');
+
+  if(q.tipo === 'marcada' && q.opts) {
+    freeArea.style.display = 'none';
+    choiceArea.style.display = 'block';
+    document.getElementById('sim-choices').innerHTML = q.opts.map((o,i) =>
+      `<div class="option" onclick="selectSimChoice(${i},this)"><div class="opt-circle">${String.fromCharCode(65+i)}</div>${o}</div>`
+    ).join('');
+  } else {
+    freeArea.style.display = 'block';
+    choiceArea.style.display = 'none';
+    document.getElementById('sim-answer').value = simAnswers[simCurrentQ] || '';
+  }
+}
+
+function selectSimChoice(idx, el) {
+  document.querySelectorAll('#sim-choices .option').forEach(o => o.classList.remove('correct','wrong'));
+  simAnswers[simCurrentQ] = idx;
+  el.classList.add('correct');
+}
+
+function nextSimQuestion() {
+  const q = simQuestions[simCurrentQ];
+  if(q.tipo !== 'marcada') {
+    simAnswers[simCurrentQ] = document.getElementById('sim-answer').value.trim();
+  }
+  simCurrentQ++;
+  if(simCurrentQ >= simQuestions.length) {
+    endExam();
+  } else {
+    renderSimQuestion();
+  }
+}
+
+function startTimer() {
+  if(simTimer) clearInterval(simTimer);
+  simTimer = setInterval(() => {
+    simSecondsLeft--;
+    const m = Math.floor(simSecondsLeft / 60);
+    const s = simSecondsLeft % 60;
+    document.getElementById('sim-timer').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    const pct = (simSecondsLeft / simTotalSeconds) * 100;
+    document.getElementById('timer-bar').style.width = pct + '%';
+    if(simSecondsLeft <= 60) document.getElementById('sim-timer').style.color = '#ff6464';
+    if(simSecondsLeft <= 0) endExam();
+  }, 1000);
+}
+
+async function endExam() {
+  if(simTimer) clearInterval(simTimer);
+  // Save last answer
+  if(simCurrentQ < simQuestions.length) {
+    const q = simQuestions[simCurrentQ];
+    if(q && q.tipo !== 'marcada') {
+      simAnswers[simCurrentQ] = document.getElementById('sim-answer') ? document.getElementById('sim-answer').value.trim() : '';
+    }
+  }
+
+  document.getElementById('sim-exam').style.display = 'none';
+  document.getElementById('sim-results').style.display = 'block';
+  document.getElementById('sim-result-emoji').textContent = '⏳';
+  document.getElementById('sim-result-score').textContent = '...';
+  document.getElementById('sim-result-msg').textContent = 'La IA está evaluando tus respuestas...';
+  document.getElementById('sim-feedback-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);">Evaluando con IA... 🧠</div>';
+
+  await evaluateWithAI();
+}
+
+async function evaluateWithAI() {
+  const pointsPerQ = 20 / simQuestions.length;
+  let totalScore = 0;
+  let feedbackHTML = '';
+
+  for(let i = 0; i < simQuestions.length; i++) {
+    const q = simQuestions[i];
+    const answer = simAnswers[i];
+    let score = 0;
+    let feedback = '';
+
+    if(q.tipo === 'marcada') {
+      score = (answer === q.ans) ? pointsPerQ : 0;
+      feedback = answer === q.ans ? 'Respuesta correcta ✓' : 'Respuesta incorrecta. La correcta era: ' + (q.opts ? q.opts[q.ans] : '');
+    } else {
+      try {
+        const prompt = `Eres un profesor universitario de medicina evaluando un examen. 
+Pregunta: "${q.q}"
+Respuesta ideal: "${q.respuesta_ideal}"
+Respuesta del estudiante: "${answer || '(sin respuesta)'}"
+
+Evalúa la respuesta del estudiante en una escala de 0 a ${pointsPerQ.toFixed(1)} puntos.
+Considera: precisión de conceptos, uso de terminología correcta, completitud de la respuesta.
+Responde SOLO en este formato JSON exacto:
+{"puntaje": <número con un decimal>, "feedback": "<retroalimentación en 2-3 oraciones en español>", "faltó": "<qué conceptos faltaron o estuvieron incorrectos, si aplica>"}`;
+
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 400,
+            messages: [{role: 'user', content: prompt}]
+          })
+        });
+        const data = await response.json();
+        const text = data.content[0].text.trim();
+        const clean = text.replace(/```json|```/g, '').trim();
+        const result = JSON.parse(clean);
+        score = Math.min(parseFloat(result.puntaje) || 0, pointsPerQ);
+        feedback = result.feedback + (result.faltó && result.faltó !== 'N/A' ? ' <em>Faltó mencionar: ' + result.faltó + '</em>' : '');
+      } catch(e) {
+        score = answer && answer.length > 20 ? pointsPerQ * 0.5 : 0;
+        feedback = 'No se pudo evaluar automáticamente. Puntaje estimado.';
+      }
+    }
+
+    totalScore += score;
+    const scoreClass = score >= pointsPerQ * 0.75 ? 'feedback-good' : score >= pointsPerQ * 0.4 ? 'feedback-ok' : 'feedback-bad';
+    feedbackHTML += `<div class="feedback-card">
+      <div class="feedback-score ${scoreClass}">${score.toFixed(1)}/${pointsPerQ.toFixed(1)}</div>
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-family:'Space Mono',monospace;">Pregunta ${i+1}</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">${q.q}</div>
+      ${answer ? `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;padding:8px 12px;background:var(--surface2);border-radius:6px;"><strong>Tu respuesta:</strong> ${answer}</div>` : '<div style="font-size:13px;color:var(--red);margin-bottom:8px;">Sin respuesta</div>'}
+      <div style="font-size:13px;color:var(--text);line-height:1.5;">${feedback}</div>
+    </div>`;
+  }
+
+  const finalScore = Math.min(Math.round(totalScore * 10) / 10, 20);
+  const emoji = finalScore >= 18 ? '🏆' : finalScore >= 14 ? '🎉' : finalScore >= 11 ? '📚' : '💪';
+  const msg = finalScore >= 18 ? '¡Excelente! Dominas el tema completamente.' :
+              finalScore >= 14 ? '¡Muy bien! Sigue repasando los detalles.' :
+              finalScore >= 11 ? 'Aprobado, pero hay conceptos que reforzar.' :
+              'Necesitas repasar más. ¡Tú puedes, no te rindas!';
+
+  document.getElementById('sim-result-emoji').textContent = emoji;
+  document.getElementById('sim-result-score').textContent = finalScore.toFixed(1) + '/20';
+  document.getElementById('sim-result-msg').textContent = msg;
+  document.getElementById('sim-feedback-list').innerHTML = feedbackHTML;
+}
+
+function resetSimulacro() {
+  simMode = '4x10';
+  simTypes = ['libre'];
+  simCustomCases = null;
+  document.querySelectorAll('[id^="mode-"]').forEach(el => el.classList.remove('sim-mode-selected'));
+  document.getElementById('sim-setup').style.display = 'block';
+  document.getElementById('sim-exam').style.display = 'none';
+  document.getElementById('sim-results').style.display = 'none';
+  document.getElementById('sim-timer').style.color = '';
+}
+
+
 // ── INIT ──
 document.getElementById('b-fecha').valueAsDate=new Date();
 populateSelects();
 renderCourses();
 </script>
+
+<!-- MODAL: custom sim cases -->
+<div class="overlay" id="modal-sim-custom">
+  <div class="modal">
+    <div class="modal-title">Ingresar mis casos</div>
+    <div class="hint-box">
+      Formato JSON. Ejemplo caso clínico con preguntas de respuesta libre:<br>
+      <code>[{"caso":"Paciente de 45 años...","preguntas":[{"q":"¿Qué tipo de agente de riesgo...?","tipo":"libre","respuesta_ideal":"Agente biológico porque..."},{"q":"¿Qué medida de bioseguridad...?","tipo":"libre","respuesta_ideal":"Uso de barreras..."}]}]</code><br><br>
+      Para respuesta marcada agrega: <code>"opts":["A","B","C","D"],"ans":0</code>
+    </div>
+    <label>JSON de tus casos</label>
+    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","preguntas":[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta ideal..."}]}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
+      <button class="btn btn-primary" onclick="loadCustomCases()">Cargar casos</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL: código de biblioteca -->
+<div class="overlay" id="modal-sim-code">
+  <div class="modal">
+    <div class="modal-title">Ingresar código de repertorio</div>
+    <div class="hint-box">
+      Pega aquí el código generado por sesión.<br>
+      Formato JSON:<br>
+      <code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code>
+    </div>
+    <textarea id="sim-code-input" placeholder="Pega aquí tu código..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sim-code')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSimLibrary()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let simLibrary = JSON.parse(localStorage.getItem("simLibrary") || "[]");
+
+function saveSimLibrary() {
+  const raw = document.getElementById("sim-code-input").value;
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) throw "Formato incorrecto";
+    simLibrary.push(...data);
+    localStorage.setItem("simLibrary", JSON.stringify(simLibrary));
+    alert("✅ Código guardado correctamente");
+    closeModal('modal-sim-code');
+  } catch (e) {
+    alert("❌ Error en el formato del código");
+  }
+}
+
+function getMotivation(score, total) {
+  const pct = (score / total) * 100;
+  if (pct >= 90) return "🔥 Excelente, estás en nivel experto";
+  if (pct >= 70) return "💪 Muy bien, vas por buen camino";
+  if (pct >= 50) return "⚡ Puedes mejorar, sigue practicando";
+  return "📚 No te rindas, cada intento te acerca más";
+}
+</script>
+
 </body>
 </html>
