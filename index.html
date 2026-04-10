@@ -636,7 +636,6 @@ select option { background: #1a1a2e; color: var(--text); }
     <div class="section-label">Fuente de preguntas</div>
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="startSimWithLibrary()">📚 Usar biblioteca</button>
-      <button class="btn btn-green" onclick="openModal('modal-sim-code')">🔑 Ingresar código</button>
       <button class="btn" onclick="openModal('modal-sim-custom')">✏️ Ingresar mis casos</button>
     </div>
   </div>
@@ -1322,47 +1321,123 @@ function printBitacora() {
   if(tags) w.document.write('<div class="tags">🏷️ ' + tags + '</div>');
   w.document.write('<div class="footer">StudySpace · ' + new Date().toLocaleDateString("es-PE") + ' · Cada sesión es un planeta por descubrir 🚀</div>');
   w.document.write('
-<!-- MODAL: código de biblioteca -->
-<div class="overlay" id="modal-sim-code">
-  <div class="modal">
-    <div class="modal-title">Ingresar código de repertorio</div>
-    <div class="hint-box">
-      Pega aquí el código generado por sesión.<br>
-      Formato JSON:<br>
-      <code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code>
-    </div>
-    <textarea id="sim-code-input" placeholder="Pega aquí tu código..."></textarea>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-sim-code')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveSimLibrary()">Guardar</button>
-    </div>
-  </div>
-</div>
-
+<!-- FIXED SIMULACRO SYSTEM -->
 <script>
+
+// ===== SAFE LIBRARY SYSTEM =====
 let simLibrary = JSON.parse(localStorage.getItem("simLibrary") || "[]");
 
 function saveSimLibrary() {
   const raw = document.getElementById("sim-code-input").value;
+
   try {
     const data = JSON.parse(raw);
     if (!Array.isArray(data)) throw "Formato incorrecto";
+
     simLibrary.push(...data);
     localStorage.setItem("simLibrary", JSON.stringify(simLibrary));
+
     alert("✅ Código guardado correctamente");
     closeModal('modal-sim-code');
+
   } catch (e) {
     alert("❌ Error en el formato del código");
   }
 }
 
+// ===== RANDOM EXAM GENERATOR =====
+let currentSimQuestions = [];
+let currentIndex = 0;
+let score = 0;
+
+function startSimWithLibrary() {
+  if (simLibrary.length === 0) {
+    alert("No hay preguntas en la biblioteca");
+    return;
+  }
+
+  const shuffled = [...simLibrary].sort(() => Math.random() - 0.5);
+
+  currentSimQuestions = shuffled.slice(0, 5);
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById("sim-setup").style.display = "none";
+  document.getElementById("sim-exam").style.display = "block";
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = currentSimQuestions[currentIndex];
+
+  document.getElementById("sim-q-text").innerText = q.q;
+  document.getElementById("sim-q-counter").innerText = 
+    "Pregunta " + (currentIndex+1) + "/" + currentSimQuestions.length;
+
+  const choicesDiv = document.getElementById("sim-choices");
+  choicesDiv.innerHTML = "";
+
+  if (q.opts) {
+    document.getElementById("sim-choice-area").style.display = "block";
+    document.getElementById("sim-free-area").style.display = "none";
+
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement("div");
+      btn.className = "option";
+      btn.innerText = opt;
+      btn.onclick = () => selectAnswer(i, q.ans);
+      choicesDiv.appendChild(btn);
+    });
+
+  } else {
+    document.getElementById("sim-free-area").style.display = "block";
+    document.getElementById("sim-choice-area").style.display = "none";
+  }
+}
+
+function selectAnswer(i, correct) {
+  if (i === correct) score++;
+  nextSimQuestion();
+}
+
+function nextSimQuestion() {
+  currentIndex++;
+
+  if (currentIndex >= currentSimQuestions.length) {
+    endExam();
+  } else {
+    showQuestion();
+  }
+}
+
+// ===== RESULTADOS =====
+function endExam() {
+  document.getElementById("sim-exam").style.display = "none";
+  document.getElementById("sim-results").style.display = "block";
+
+  document.getElementById("sim-result-score").innerText =
+    score + "/" + currentSimQuestions.length;
+
+  document.getElementById("sim-result-msg").innerText =
+    getMotivation(score, currentSimQuestions.length);
+}
+
+function resetSimulacro() {
+  document.getElementById("sim-results").style.display = "none";
+  document.getElementById("sim-setup").style.display = "block";
+}
+
+// ===== MOTIVACIÓN =====
 function getMotivation(score, total) {
   const pct = (score / total) * 100;
+
   if (pct >= 90) return "🔥 Excelente, estás en nivel experto";
   if (pct >= 70) return "💪 Muy bien, vas por buen camino";
   if (pct >= 50) return "⚡ Puedes mejorar, sigue practicando";
   return "📚 No te rindas, cada intento te acerca más";
 }
+
 </script>
 
 </body></html>');
@@ -1786,47 +1861,123 @@ renderCourses();
 </div>
 
 
-<!-- MODAL: código de biblioteca -->
-<div class="overlay" id="modal-sim-code">
-  <div class="modal">
-    <div class="modal-title">Ingresar código de repertorio</div>
-    <div class="hint-box">
-      Pega aquí el código generado por sesión.<br>
-      Formato JSON:<br>
-      <code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code>
-    </div>
-    <textarea id="sim-code-input" placeholder="Pega aquí tu código..."></textarea>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-sim-code')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveSimLibrary()">Guardar</button>
-    </div>
-  </div>
-</div>
-
+<!-- FIXED SIMULACRO SYSTEM -->
 <script>
+
+// ===== SAFE LIBRARY SYSTEM =====
 let simLibrary = JSON.parse(localStorage.getItem("simLibrary") || "[]");
 
 function saveSimLibrary() {
   const raw = document.getElementById("sim-code-input").value;
+
   try {
     const data = JSON.parse(raw);
     if (!Array.isArray(data)) throw "Formato incorrecto";
+
     simLibrary.push(...data);
     localStorage.setItem("simLibrary", JSON.stringify(simLibrary));
+
     alert("✅ Código guardado correctamente");
     closeModal('modal-sim-code');
+
   } catch (e) {
     alert("❌ Error en el formato del código");
   }
 }
 
+// ===== RANDOM EXAM GENERATOR =====
+let currentSimQuestions = [];
+let currentIndex = 0;
+let score = 0;
+
+function startSimWithLibrary() {
+  if (simLibrary.length === 0) {
+    alert("No hay preguntas en la biblioteca");
+    return;
+  }
+
+  const shuffled = [...simLibrary].sort(() => Math.random() - 0.5);
+
+  currentSimQuestions = shuffled.slice(0, 5);
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById("sim-setup").style.display = "none";
+  document.getElementById("sim-exam").style.display = "block";
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = currentSimQuestions[currentIndex];
+
+  document.getElementById("sim-q-text").innerText = q.q;
+  document.getElementById("sim-q-counter").innerText = 
+    "Pregunta " + (currentIndex+1) + "/" + currentSimQuestions.length;
+
+  const choicesDiv = document.getElementById("sim-choices");
+  choicesDiv.innerHTML = "";
+
+  if (q.opts) {
+    document.getElementById("sim-choice-area").style.display = "block";
+    document.getElementById("sim-free-area").style.display = "none";
+
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement("div");
+      btn.className = "option";
+      btn.innerText = opt;
+      btn.onclick = () => selectAnswer(i, q.ans);
+      choicesDiv.appendChild(btn);
+    });
+
+  } else {
+    document.getElementById("sim-free-area").style.display = "block";
+    document.getElementById("sim-choice-area").style.display = "none";
+  }
+}
+
+function selectAnswer(i, correct) {
+  if (i === correct) score++;
+  nextSimQuestion();
+}
+
+function nextSimQuestion() {
+  currentIndex++;
+
+  if (currentIndex >= currentSimQuestions.length) {
+    endExam();
+  } else {
+    showQuestion();
+  }
+}
+
+// ===== RESULTADOS =====
+function endExam() {
+  document.getElementById("sim-exam").style.display = "none";
+  document.getElementById("sim-results").style.display = "block";
+
+  document.getElementById("sim-result-score").innerText =
+    score + "/" + currentSimQuestions.length;
+
+  document.getElementById("sim-result-msg").innerText =
+    getMotivation(score, currentSimQuestions.length);
+}
+
+function resetSimulacro() {
+  document.getElementById("sim-results").style.display = "none";
+  document.getElementById("sim-setup").style.display = "block";
+}
+
+// ===== MOTIVACIÓN =====
 function getMotivation(score, total) {
   const pct = (score / total) * 100;
+
   if (pct >= 90) return "🔥 Excelente, estás en nivel experto";
   if (pct >= 70) return "💪 Muy bien, vas por buen camino";
   if (pct >= 50) return "⚡ Puedes mejorar, sigue practicando";
   return "📚 No te rindas, cada intento te acerca más";
 }
+
 </script>
 
 </body>
