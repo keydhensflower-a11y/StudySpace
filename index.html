@@ -764,31 +764,52 @@ let diffVal = '';
 let editingBitaId = null;
 
 // ── STATE ──
-let state = JSON.parse(localStorage.getItem('ss_state') || 'null') || {
-  courses: [
-    {id:'c1',name:'Biología',emoji:'🧬',sessions:5,done:3},
-    {id:'c2',name:'Química',emoji:'⚗️',sessions:6,done:2},
-    {id:'c3',name:'Matemáticas',emoji:'📐',sessions:4,done:4}
-  ],
-  quizzes: [{id:'q1',courseId:'c1',session:'Sesión 3 — Mitosis',questions:[
-    {q:'¿Cuántas fases principales tiene la mitosis?',opts:['2','4','6','8'],ans:1},
-    {q:'¿Qué estructura guía la separación de cromosomas?',opts:['Membrana celular','Ribosoma','Huso mitótico','Vacuola'],ans:2},
-    {q:'¿En qué fase los cromosomas se alinean en el ecuador?',opts:['Profase','Metafase','Anafase','Telofase'],ans:1}
-  ]}],
-  flashDecks: [{id:'f1',courseId:'c1',cards:[
-    {front:'¿Qué es la mitosis?',back:'Proceso de división celular que produce dos células hijas genéticamente idénticas.'},
-    {front:'¿Cuántas fases tiene la mitosis?',back:'4 fases: Profase, Metafase, Anafase y Telofase.'},
-    {front:'¿Qué es la citocinesis?',back:'División del citoplasma al final de la mitosis.'}
-  ]}],
-  stats:{total:0,correct:0},
-  sessions:[
-    {courseId:'c1',name:'Sesión 3 — Mitosis',done:true,questions:8},
-    {courseId:'c2',name:'Sesión 5 — Enlace iónico',done:false,questions:10}
-  ],
-  bitacoras:[]
-};
+let state = {};
 
-function save() { localStorage.setItem('ss_state',JSON.stringify(state)); }
+function loadState() {
+  // Intentar cargar la nueva versión
+  const saved = localStorage.getItem('ss_state_v2');
+  
+  if (saved) {
+    try {
+      state = JSON.parse(saved);
+    } catch(e) {
+      state = {};
+    }
+  } else {
+    // Si no existe la nueva versión, intentamos migrar la antigua
+    const oldSaved = localStorage.getItem('ss_state');
+    if (oldSaved) {
+      try {
+        state = JSON.parse(oldSaved);
+        localStorage.removeItem('ss_state'); // Borramos la antigua
+      } catch(e) {
+        state = {};
+      }
+    } else {
+      // Estado por defecto si no hay nada
+      state = {
+        courses: [
+          {id:'c1',name:'Biología',emoji:'🧬',sessions:5,done:3},
+          {id:'c2',name:'Química',emoji:'⚗️',sessions:6,done:2},
+          {id:'c3',name:'Matemáticas',emoji:'📐',sessions:4,done:4}
+        ],
+        quizzes: [],
+        flashDecks: [],
+        stats: {total:0, correct:0},
+        sessions: [],
+        bitacoras: []
+      };
+    }
+  }
+}
+
+function save() {
+  localStorage.setItem('ss_state_v2', JSON.stringify(state));
+}
+
+// Cargar el estado al inicio
+loadState(); { localStorage.setItem('ss_state',JSON.stringify(state)); }
 
 // ── TABS ──
 function goTab(name) {
