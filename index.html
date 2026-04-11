@@ -45,6 +45,7 @@ body {
   overflow-x: hidden;
 }
 
+/* STARS */
 #galaxy-canvas {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   width: 100%; height: 100%;
@@ -80,6 +81,11 @@ body {
   box-shadow: 0 0 30px rgba(144,96,255,0.3), inset -10px -10px 20px rgba(0,0,0,0.4);
   animation-duration: 18s;
 }
+.planet-1::after {
+  content:''; position:absolute; inset:-8px; border-radius:50%;
+  border: 2px solid rgba(144,96,255,0.2);
+  transform: rotateX(70deg);
+}
 .planet-2 {
   width: 45px; height: 45px; bottom: 20%; left: 3%;
   background: radial-gradient(circle at 35% 35%, #1D9E75, #085041);
@@ -102,6 +108,7 @@ body {
   100% { opacity: 1; transform: scale(1.08); }
 }
 
+/* TOPBAR */
 .topbar {
   background: rgba(8,11,26,0.9);
   backdrop-filter: blur(24px);
@@ -135,6 +142,7 @@ body {
 .tab.active { background: var(--surface2); color: var(--text); }
 .tab:hover:not(.active) { background: var(--surface); color: var(--text); }
 
+/* LAYOUT */
 .page { display: none; max-width: 860px; margin: 0 auto; padding: 28px 20px; position: relative; z-index: 1; }
 .page.active { display: block; }
 .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 4px; }
@@ -142,6 +150,7 @@ body {
 .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hint); margin-bottom: 10px; margin-top: 28px; font-family: 'Space Mono', monospace; }
 .section-label:first-child { margin-top: 0; }
 
+/* CARDS */
 .card {
   background: rgba(255,255,255,0.04);
   border: 0.5px solid rgba(144,96,255,0.15);
@@ -157,13 +166,17 @@ body {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(144,96,255,0.5), rgba(29,158,117,0.3), transparent);
 }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 600; }
 
+/* COURSE GRID */
 .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 12px; margin-bottom: 6px; }
 .course-card {
   background: var(--surface); border: 0.5px solid var(--border);
   border-radius: var(--radius-lg); padding: 18px; cursor: pointer;
   transition: all 0.15s; position: relative; overflow: hidden;
 }
+.course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.2), transparent); }
 .course-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 .course-card.selected { border: 1.5px solid var(--purple); box-shadow: 0 0 20px var(--purple-glow); }
 .course-icon { width: 40px; height: 40px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
@@ -175,89 +188,105 @@ body {
   background: transparent; border: 1px dashed var(--border2);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 8px; color: var(--muted); font-size: 13px; font-weight: 500;
-  cursor: pointer; min-height: 120px; transition: all 0.15s;
+  cursor: pointer; min-height: 120px; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
 }
 .add-course-card:hover { background: var(--surface); color: var(--text); border-color: var(--purple); }
 .plus-circle { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); }
 
+/* BUTTONS */
 .btn {
   padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
   cursor: pointer; border: 0.5px solid var(--border2); background: transparent;
-  color: var(--text); transition: all 0.15s;
+  color: var(--text); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
   display: inline-flex; align-items: center; gap: 6px;
 }
 .btn:hover { background: var(--surface2); }
-.btn-primary { background: linear-gradient(135deg, rgba(144,96,255,0.3), rgba(29,158,117,0.3)); border-color: var(--purple); }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: linear-gradient(135deg, rgba(144,96,255,0.3), rgba(29,158,117,0.3)); border-color: var(--purple); color: var(--text); }
 .btn-primary:hover { background: linear-gradient(135deg, rgba(144,96,255,0.45), rgba(29,158,117,0.45)); box-shadow: 0 0 16px var(--purple-glow); }
-.btn-green { background: rgba(29,158,117,0.2); border-color: var(--green); }
+.btn-green { background: rgba(29,158,117,0.2); border-color: var(--green); color: var(--text); }
 .btn-green:hover { background: rgba(29,158,117,0.35); box-shadow: 0 0 16px var(--green-glow); }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
-.btn-danger { border-color: rgba(255,100,100,0.3); color: var(--red); }
-.btn-danger:hover { background: var(--red-light); }
 
+/* INPUTS */
 input[type=text], input[type=date], textarea, select {
   width: 100%; padding: 9px 13px; border: 0.5px solid var(--border2);
   border-radius: 8px; font-size: 14px; background: rgba(255,255,255,0.04);
-  color: var(--text);
-  margin-bottom: 12px; outline: none;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  margin-bottom: 12px; outline: none; transition: border-color 0.15s;
 }
-input:focus, textarea:focus, select:focus {
+input[type=text]:focus, input[type=date]:focus, textarea:focus, select:focus {
   border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-light);
 }
 input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
-textarea { resize: vertical; min-height: 90px; }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 label { font-size: 11px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 5px; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'Space Mono', monospace; }
 select option { background: #1a1a2e; color: var(--text); }
 
+/* HINT BOX */
 .hint-box {
   background: var(--blue-light); border: 0.5px solid rgba(100,160,255,0.2);
   border-radius: var(--radius); padding: 12px 14px; font-size: 13px;
-  color: var(--blue); margin-bottom: 16px;
+  color: var(--blue); margin-bottom: 16px; line-height: 1.5;
 }
 .hint-box code { font-family: 'Space Mono', monospace; font-size: 11px; background: rgba(100,160,255,0.15); padding: 2px 5px; border-radius: 4px; }
 
+/* QUIZ */
 .question-block { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; background: var(--surface3); }
-.question-text { font-size: 14px; font-weight: 500; margin-bottom: 12px; }
-.question-num { display: inline-block; background: var(--surface2); color: var(--muted); font-size: 11px; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; font-family: 'Space Mono', monospace; }
+.question-text { font-size: 14px; font-weight: 500; margin-bottom: 12px; line-height: 1.5; }
+.question-num { display: inline-block; background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; font-family: 'Space Mono', monospace; }
 .options { display: flex; flex-direction: column; gap: 7px; }
-.option { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); padding: 9px 13px; border-radius: 8px; border: 0.5px solid var(--border); cursor: pointer; background: var(--surface3); }
+.option { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); padding: 9px 13px; border-radius: 8px; border: 0.5px solid var(--border); cursor: pointer; transition: all 0.12s; background: var(--surface3); }
 .option:hover { border-color: var(--purple); background: var(--purple-light); color: var(--text); }
 .option.correct { border-color: var(--green); background: var(--green-light); color: #9fefd4; }
 .option.wrong { border-color: var(--red); background: var(--red-light); color: #ffaaaa; }
 .opt-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; background: var(--surface); }
+.option.correct .opt-circle { border-color: var(--green); background: var(--green); color: white; }
+.option.wrong .opt-circle { border-color: var(--red); background: var(--red); color: white; }
+.result-banner { padding: 18px 20px; border-radius: var(--radius); text-align: center; margin-top: 16px; font-size: 15px; font-weight: 500; }
+.result-good { background: var(--green-light); color: #9fefd4; border: 0.5px solid var(--green); }
+.result-ok { background: var(--amber-light); color: var(--amber); border: 0.5px solid rgba(255,180,80,0.3); }
 
+/* FLASHCARDS */
 .flash-wrap { perspective: 900px; height: 210px; cursor: pointer; margin-bottom: 16px; }
-.flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s; }
+.flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
 .flashcard.flipped { transform: rotateY(180deg); }
 .face { position: absolute; inset: 0; backface-visibility: hidden; border: 0.5px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; background: var(--surface); backdrop-filter: blur(10px); }
 .face-back { transform: rotateY(180deg); background: var(--green-light); border-color: var(--green); }
 .face-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--hint); margin-bottom: 14px; font-family: 'Space Mono', monospace; }
 .face-back .face-label { color: var(--green); }
-.face-text { font-size: 16px; }
+.face-text { font-size: 16px; line-height: 1.55; color: var(--text); }
+.face-back .face-text { color: #9fefd4; }
 .flip-hint { font-size: 11px; color: var(--hint); text-align: center; margin-bottom: 10px; font-family: 'Space Mono', monospace; }
 .flash-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-.flash-counter { font-size: 13px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.flash-counter { font-size: 13px; color: var(--muted); font-weight: 500; font-family: 'Space Mono', monospace; }
 
+/* PROGRESS */
 .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
 .stat-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; }
 .stat-val { font-size: 26px; font-weight: 600; letter-spacing: -0.03em; margin-bottom: 2px; }
 .stat-lbl { font-size: 12px; color: var(--muted); }
 .prog-row { margin-bottom: 18px; }
 .prog-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 7px; }
+.prog-meta span:last-child { color: var(--muted); }
 .prog-bar { height: 6px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
 .prog-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--green)); border-radius: 4px; transition: width 0.4s; }
 
+/* BADGES */
 .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
 .badge-green { background: var(--green-light); color: #9fefd4; border: 0.5px solid rgba(29,158,117,0.3); }
 .badge-amber { background: var(--amber-light); color: var(--amber); border: 0.5px solid rgba(255,180,80,0.3); }
 .badge-purple { background: var(--purple-light); color: #c8b0ff; border: 0.5px solid rgba(144,96,255,0.3); }
 
+/* SESSION ITEMS */
 .session-item { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 0.5px solid var(--border); }
+.session-item:last-child { border-bottom: none; padding-bottom: 0; }
 .session-icon { font-size: 22px; }
 .session-info { flex: 1; }
 .session-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
 .session-meta { font-size: 12px; color: var(--muted); }
 
+/* BITÁCORA */
 .bita-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 22px; margin-bottom: 16px; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
 .bita-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.4), transparent); }
 .bita-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
@@ -279,20 +308,24 @@ select option { background: #1a1a2e; color: var(--text); }
 .star { font-size: 22px; cursor: pointer; transition: transform 0.1s; filter: grayscale(1) opacity(0.3); }
 .star:hover, .star.active { filter: none; transform: scale(1.15); }
 .diff-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.diff-btn { padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; border: 0.5px solid var(--border2); background: transparent; color: var(--muted); transition: all 0.15s; }
+.diff-btn { padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; border: 0.5px solid var(--border2); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.diff-btn:hover { border-color: var(--border2); color: var(--text); }
 .diff-btn.sel-easy { background: rgba(29,158,117,0.2); border-color: var(--green); color: #9fefd4; }
 .diff-btn.sel-mid { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
 .diff-btn.sel-hard { background: var(--red-light); border-color: var(--red); color: #ffaaaa; }
 .tags-area { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .etag { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid rgba(144,96,255,0.3); background: rgba(144,96,255,0.1); color: #c8b0ff; transition: all 0.15s; }
+.etag:hover { background: rgba(144,96,255,0.2); }
 .etag.sel { background: rgba(144,96,255,0.3); border-color: rgba(144,96,255,0.6); }
 .emoji-pick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 .ep-btn { font-size: 22px; padding: 7px; border-radius: 8px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.12s; background: var(--surface2); line-height: 1; }
+.ep-btn:hover { background: var(--surface); border-color: var(--border2); }
 .ep-btn.picked { border-color: var(--purple); background: var(--purple-light); }
 .mission-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface3); border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
-.mission-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.mission-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; font-size: 11px; }
 .mission-check.done { background: var(--green-light); border-color: var(--green); color: var(--green); }
-.mission-text { font-size: 13px; background: transparent; border: none; outline: none; color: var(--text); flex: 1; margin-bottom: 0; padding: 0; }
+.mission-text { font-size: 13px; background: transparent; border: none; outline: none; font-family: 'DM Sans', sans-serif; color: var(--text); flex: 1; margin-bottom: 0; width: auto; padding: 0; }
+.mission-text::placeholder { color: rgba(255,255,255,0.2); }
 .saved-banner { background: var(--green-light); border: 0.5px solid var(--green); border-radius: var(--radius); padding: 10px 16px; font-size: 13px; color: #9fefd4; text-align: center; margin-bottom: 14px; display: none; font-family: 'Space Mono', monospace; }
 .bita-list-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--surface3); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
 .bita-list-item:hover { border-color: var(--purple); background: var(--purple-light); }
@@ -300,12 +333,15 @@ select option { background: #1a1a2e; color: var(--text); }
 .bita-info { flex: 1; }
 .bita-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
 .bita-meta { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.btn-danger { border-color: rgba(255,100,100,0.3); color: var(--red); }
+.btn-danger:hover { background: var(--red-light); }
 
+/* MODAL */
 .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .overlay.open { display: flex; }
 .modal { background: #0d1028; border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 26px; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; position: relative; }
 .modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(144,96,255,0.5), transparent); }
-.modal-title { font-size: 17px; font-weight: 600; margin-bottom: 18px; }
+.modal-title { font-size: 17px; font-weight: 600; margin-bottom: 18px; letter-spacing: -0.02em; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
 
 @media (max-width: 600px) {
@@ -320,19 +356,29 @@ select option { background: #1a1a2e; color: var(--text); }
 .sim-type-btn {
   padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 500;
   cursor: pointer; border: 0.5px solid var(--border2); background: transparent;
-  color: var(--muted); transition: all 0.15s;
+  color: var(--muted); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
 }
 .sim-type-btn.active { background: var(--purple-light); border-color: var(--purple); color: #c8b0ff; }
-.sim-mode-card { cursor: pointer; transition: all 0.2s; }
-.sim-mode-card:hover { border-color: var(--purple); }
-.sim-mode-card.selected { border: 1.5px solid var(--purple); box-shadow: 0 0 16px var(--purple-glow); }
-.sim-lib-item { background: var(--surface3); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
-.sim-lib-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; }
-.sim-lib-header:hover { background: var(--surface2); }
-.sim-lib-body { display: none; padding: 0 16px 14px; border-top: 0.5px solid var(--border); }
-.sim-lib-body.open { display: block; }
-.accordion-item { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
-.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; }
+.sim-type-btn:hover:not(.active) { background: var(--surface2); color: var(--text); }
+.sim-mode-selected { border: 1.5px solid var(--purple) !important; box-shadow: 0 0 16px var(--purple-glow); }
+.feedback-card {
+  background: var(--surface3); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+}
+.feedback-score { font-size:18px;font-weight:600;float:right; }
+.feedback-good { color: #9fefd4; }
+.feedback-ok { color: var(--amber); }
+.feedback-bad { color: #ffaaaa; }
+
+.accordion-item {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden;
+  transition: all 0.2s;
+}
+.accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer; transition: background 0.15s;
+}
 .accordion-header:hover { background: var(--surface2); }
 .accordion-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
 .accordion-meta { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
@@ -340,10 +386,37 @@ select option { background: #1a1a2e; color: var(--text); }
 .accordion-arrow.open { transform: rotate(180deg); }
 .accordion-body { display: none; padding: 0 18px 18px; border-top: 0.5px solid var(--border); }
 .accordion-body.open { display: block; }
-.quiz-result-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 300; backdrop-filter: blur(8px); }
-.quiz-result-card { background: #0d1028; border: 0.5px solid var(--border); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%; animation: pop-in 0.4s; }
-@keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-.feedback-item { background: var(--surface3); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+.quiz-result-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300; backdrop-filter: blur(8px);
+}
+.quiz-result-card {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-radius: 20px; padding: 40px; text-align: center;
+  max-width: 400px; width: 90%;
+  animation: pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.sim-mode-card { cursor:pointer; transition:all 0.2s; }
+.sim-mode-card:hover { border-color:var(--purple); }
+.sim-mode-card.selected { border:1.5px solid var(--purple); box-shadow:0 0 16px var(--purple-glow); }
+.sim-type-btn { padding:8px 16px; border-radius:99px; font-size:13px; font-weight:500; cursor:pointer; border:0.5px solid var(--border2); background:transparent; color:var(--muted); transition:all 0.15s; font-family:'DM Sans',sans-serif; }
+.sim-type-btn.active { background:var(--purple-light); border-color:var(--purple); color:#c8b0ff; }
+.sim-type-btn:hover:not(.active) { background:var(--surface2); color:var(--text); }
+.sim-lib-item { background:var(--surface3); border:0.5px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+.sim-lib-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; cursor:pointer; }
+.sim-lib-header:hover { background:var(--surface2); }
+.sim-lib-body { display:none; padding:0 16px 14px; border-top:0.5px solid var(--border); }
+.sim-lib-body.open { display:block; }
+.quiz-result-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:flex; align-items:center; justify-content:center; z-index:300; backdrop-filter:blur(8px); }
+.quiz-result-card { background:#0d1028; border:0.5px solid var(--border); border-radius:20px; padding:40px 32px; text-align:center; max-width:400px; width:90%; animation:pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes pop-in { 0%{transform:scale(0.5);opacity:0} 100%{transform:scale(1);opacity:1} }
+.feedback-item { background:var(--surface3); border:0.5px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
 </style>
 </head>
 <body>
@@ -434,9 +507,13 @@ select option { background: #1a1a2e; color: var(--text); }
     <button class="btn btn-sm" onclick="confirmClearBita()" style="border-color:rgba(255,180,80,0.4);color:var(--amber);">🧹 Limpiar plantilla</button>
   </div>
 
+  <!-- SAVED BANNER -->
   <div class="saved-banner" id="saved-banner">✓ Bitácora guardada correctamente</div>
 
+  <!-- FORM -->
   <div id="bita-form">
+
+    <!-- DATOS DEL PLANETA -->
     <div class="bita-section">
       <div class="bita-header">
         <div class="bita-icon bi-purple">🛸</div>
@@ -465,6 +542,7 @@ select option { background: #1a1a2e; color: var(--text); }
       </div>
     </div>
 
+    <!-- DESCRIPCIÓN -->
     <div class="bita-section">
       <div class="bita-header">
         <div class="bita-icon bi-blue">🌐</div>
@@ -475,6 +553,7 @@ select option { background: #1a1a2e; color: var(--text); }
       <div class="field field-row single"><label>¿Algo que te sorprendió o costó entender?</label><textarea id="b-sorpresa" placeholder="Lo que te generó curiosidad, dudas o confusión..."></textarea></div>
     </div>
 
+    <!-- HABITANTES -->
     <div class="bita-section">
       <div class="bita-header">
         <div class="bita-icon bi-teal">🧬</div>
@@ -485,6 +564,7 @@ select option { background: #1a1a2e; color: var(--text); }
       <div class="field field-row single"><label>Ejemplo o aplicación real</label><textarea id="b-ejemplo" placeholder="¿Dónde se ve esto en la vida real?"></textarea></div>
     </div>
 
+    <!-- CLIMA -->
     <div class="bita-section">
       <div class="bita-header">
         <div class="bita-icon bi-amber">🌤️</div>
@@ -522,6 +602,7 @@ select option { background: #1a1a2e; color: var(--text); }
       </div>
     </div>
 
+    <!-- MISIÓN PENDIENTE -->
     <div class="bita-section">
       <div class="bita-header">
         <div class="bita-icon bi-pink">🎯</div>
@@ -537,6 +618,7 @@ select option { background: #1a1a2e; color: var(--text); }
       <div class="field field-row single"><label>¿Qué viene en la próxima sesión?</label><input type="text" id="b-proxima" placeholder="Tema de la próxima clase..."></div>
     </div>
 
+    <!-- ACCIONES -->
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button class="btn btn-green" style="flex:1;justify-content:center;padding:14px;" onclick="saveBitacora()">💾 Guardar bitácora</button>
       <button class="btn" style="padding:14px 18px;" onclick="printBitacora()">🖨️ Exportar PDF</button>
@@ -544,6 +626,7 @@ select option { background: #1a1a2e; color: var(--text); }
     <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:10px;font-family:'Space Mono',monospace;">Los datos se guardan automáticamente en tu navegador</p>
   </div>
 
+  <!-- LISTA DE BITÁCORAS -->
   <div id="bita-list" style="display:none;">
     <div class="section-label">Bitácoras guardadas</div>
     <div id="bita-saved-list"></div>
@@ -551,28 +634,19 @@ select option { background: #1a1a2e; color: var(--text); }
       <div style="font-size:36px;margin-bottom:10px">🪐</div>
       Aún no tienes bitácoras guardadas. ¡Crea una nueva!
     </div>
+    <div class="empty" id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
+      <div style="font-size:36px;margin-bottom:10px">🪐</div>
+      Aún no tienes bitácoras guardadas. ¡Crea una nueva!
+    </div>
   </div>
 </div>
 
 <!-- PROGRESO -->
-<div id="tab-progreso" class="page">
-  <div class="page-title">Mi progreso</div>
-  <div class="page-sub">Resumen de tu desempeño en quizzes y sesiones.</div>
-  <div class="stats-row">
-    <div class="stat-box"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Preguntas respondidas</div></div>
-    <div class="stat-box"><div class="stat-val" id="s-correct">0</div><div class="stat-lbl">Respuestas correctas</div></div>
-    <div class="stat-box"><div class="stat-val" id="s-pct">—</div><div class="stat-lbl">Precisión global</div></div>
-  </div>
-  <div class="section-label">Por curso</div>
-  <div class="card" id="prog-courses"></div>
-  <div class="section-label">Bitácoras registradas</div>
-  <div class="card" id="prog-bitacoras" style="padding:16px 20px;"></div>
-</div>
 
 <!-- SIMULACRO -->
 <div id="tab-simulacro" class="page">
   <div class="page-title">Simulacro de Examen 🔬</div>
-  <div class="page-sub">Practica con cronómetro, casos clínicos y evaluación.</div>
+  <div class="page-sub">Practica con cronómetro, casos clínicos y evaluación por IA.</div>
 
   <div id="sim-setup">
     <div class="section-label">Formato de examen</div>
@@ -580,12 +654,12 @@ select option { background: #1a1a2e; color: var(--text); }
       <div class="card sim-mode-card" onclick="selectSimMode('4x10',this)" id="mode-4x10">
         <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
         <div style="font-size:14px;font-weight:600;">Examen corto</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">4 preguntas · 10 min</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">4 preguntas · 10 min · c/u vale 5 pts</div>
       </div>
       <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="mode-5x30">
         <div style="font-size:28px;margin-bottom:8px;">📋</div>
         <div style="font-size:14px;font-weight:600;">Examen mediano</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">10 preguntas · 30 min</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">5 casos · 2 preg. c/u · 30 min</div>
       </div>
       <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="mode-20x60">
         <div style="font-size:28px;margin-bottom:8px;">🎓</div>
@@ -605,7 +679,7 @@ select option { background: #1a1a2e; color: var(--text); }
     <select id="sim-course-sel" style="margin-bottom:16px;" onchange="renderSimLibrary()"></select>
 
     <div class="section-label">Biblioteca de sesiones</div>
-    <div class="hint-box" style="margin-bottom:12px;">Agrega preguntas por sesión.</div>
+    <div class="hint-box" style="margin-bottom:12px;">Agrega preguntas por sesión. La IA usará estas para generar tu examen.</div>
     <div id="sim-library-accordion"></div>
     <button class="btn btn-primary" style="margin-bottom:20px;" onclick="openModal('modal-add-sim-session')">+ Agregar sesión a biblioteca</button>
 
@@ -615,6 +689,7 @@ select option { background: #1a1a2e; color: var(--text); }
     <button class="btn btn-green" style="width:100%;justify-content:center;padding:14px;font-size:15px;" onclick="startSimulacro()">🚀 Iniciar simulacro</button>
   </div>
 
+  <!-- EXAM SCREEN -->
   <div id="sim-exam" style="display:none;">
     <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -622,15 +697,15 @@ select option { background: #1a1a2e; color: var(--text); }
         <div style="font-size:13px;font-weight:600;" id="sim-q-indicator">Pregunta 1 de 4</div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="font-size:24px;font-weight:700;font-family:'Space Mono',monospace;" id="sim-clock">10:00</div>
+        <div style="font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:var(--text);" id="sim-clock">10:00</div>
         <button class="btn btn-sm btn-danger" onclick="endSimulacro()">Terminar</button>
       </div>
     </div>
     <div style="height:5px;background:var(--surface2);border-radius:3px;margin-bottom:20px;overflow:hidden;">
-      <div id="sim-timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));width:100%;transition:width 1s linear;"></div>
+      <div id="sim-timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:3px;width:100%;transition:width 1s linear;"></div>
     </div>
     <div class="card" id="sim-q-card">
-      <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;"></div>
+      <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;line-height:1.7;"></div>
       <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:6px;" id="sim-q-num">Pregunta 1</div>
       <div style="font-size:15px;font-weight:500;line-height:1.5;margin-bottom:16px;" id="sim-q-text"></div>
       <div id="sim-free-area">
@@ -644,6 +719,7 @@ select option { background: #1a1a2e; color: var(--text); }
     </div>
   </div>
 
+  <!-- RESULTS -->
   <div id="sim-results" style="display:none;">
     <div class="card" style="text-align:center;padding:36px 20px;">
       <div style="font-size:60px;margin-bottom:10px;" id="sim-res-emoji">🎉</div>
@@ -657,7 +733,126 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
-<!-- MODALES -->
+<!-- PROGRESO -->
+
+<!-- SIMULACRO -->
+<div id="tab-simulacro" class="page">
+  <div class="page-title">Simulacro de Examen 🧪</div>
+  <div class="page-sub">Practica con casos clínicos, respuesta libre y cronómetro real.</div>
+
+  <!-- SETUP SCREEN -->
+  <div id="sim-setup">
+    <div class="section-label">Configurar examen</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('4x10')" id="mode-4x10">
+        <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen corto</div>
+        <div style="font-size:12px;color:var(--muted);">4 preguntas · 10 minutos</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 5 pts</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('5x30')" id="mode-5x30">
+        <div style="font-size:28px;margin-bottom:8px;">📋</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen mediano</div>
+        <div style="font-size:12px;color:var(--muted);">5 casos · 2 preguntas c/u · 30 min</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 2 pts</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('20x60')" id="mode-20x60">
+        <div style="font-size:28px;margin-bottom:8px;">🎓</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen final</div>
+        <div style="font-size:12px;color:var(--muted);">20 preguntas · 1 hora</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Mezcla de todos los tipos</div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('custom')" id="mode-custom">
+        <div style="font-size:28px;margin-bottom:8px;">⚙️</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Personalizado</div>
+        <div style="font-size:12px;color:var(--muted);">Tú decides tiempo y preguntas</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Control total</div>
+      </div>
+    </div>
+
+    <div class="section-label">Tipo de preguntas</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="sim-type-btn active" onclick="toggleType('libre',this)" id="type-libre">✍️ Respuesta libre</button>
+      <button class="sim-type-btn" onclick="toggleType('marcada',this)" id="type-marcada">🔘 Respuesta marcada</button>
+      <button class="sim-type-btn" onclick="toggleType('caso',this)" id="type-caso">🏥 Caso clínico</button>
+    </div>
+
+    <div class="section-label">Curso</div>
+    <select id="sim-course" style="margin-bottom:16px;"></select>
+
+    <div class="section-label">Fuente de preguntas</div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="startSimWithLibrary()">📚 Usar biblioteca</button>
+      <button class="btn" onclick="openModal('modal-sim-custom')">✏️ Ingresar mis casos</button>
+    </div>
+  </div>
+
+  <!-- EXAM SCREEN -->
+  <div id="sim-exam" style="display:none;">
+    <!-- Timer bar -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:13px;color:var(--muted);" id="sim-mode-label">Examen corto</div>
+        <span class="badge badge-purple" id="sim-q-counter">Pregunta 1/4</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:22px;font-weight:600;font-family:'Space Mono',monospace;color:var(--text);" id="sim-timer">10:00</div>
+        <button class="btn btn-sm btn-danger" onclick="endExam()">Terminar</button>
+      </div>
+    </div>
+    <div style="height:4px;background:var(--surface2);border-radius:2px;margin-bottom:20px;overflow:hidden;">
+      <div id="timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:2px;transition:width 1s linear;width:100%;"></div>
+    </div>
+
+    <!-- Question -->
+    <div class="card" id="sim-question-card">
+      <div id="sim-case-box" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:16px;margin-bottom:16px;font-size:14px;line-height:1.7;color:var(--text);border-left:3px solid var(--purple);"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;font-family:'Space Mono',monospace;" id="sim-q-label">Pregunta 1</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:16px;line-height:1.5;" id="sim-q-text"></div>
+      <!-- Free response -->
+      <div id="sim-free-area">
+        <textarea id="sim-answer" style="min-height:120px;" placeholder="Escribe tu respuesta aquí..."></textarea>
+        <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sé preciso/a. Usa los términos correctos del tema.</div>
+      </div>
+      <!-- Multiple choice -->
+      <div id="sim-choice-area" style="display:none;">
+        <div id="sim-choices"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="nextSimQuestion()">
+        Siguiente pregunta →
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="sim-results" style="display:none;">
+    <div class="card" style="text-align:center;padding:32px 20px;">
+      <div style="font-size:56px;margin-bottom:12px;" id="sim-result-emoji">🎉</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:8px;font-family:'Space Mono',monospace;">CALIFICACIÓN FINAL</div>
+      <div style="font-size:52px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;" id="sim-result-score">18/20</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:20px;" id="sim-result-msg"></div>
+      <button class="btn btn-primary" style="margin:0 auto;" onclick="resetSimulacro()">Nuevo simulacro</button>
+    </div>
+    <div class="section-label" style="margin-top:24px;">Retroalimentación por pregunta</div>
+    <div id="sim-feedback-list"></div>
+  </div>
+</div>
+
+<div id="tab-progreso" class="page">
+  <div class="page-title">Mi progreso</div>
+  <div class="page-sub">Resumen de tu desempeño en quizzes y sesiones.</div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Preguntas respondidas</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-correct">0</div><div class="stat-lbl">Respuestas correctas</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-pct">—</div><div class="stat-lbl">Precisión global</div></div>
+  </div>
+  <div class="section-label">Por curso</div>
+  <div class="card" id="prog-courses"></div>
+  <div class="section-label">Bitácoras registradas</div>
+  <div class="card" id="prog-bitacoras" style="padding:16px 20px;"></div>
+</div>
+
+<!-- MODAL: nuevo curso -->
 <div class="overlay" id="modal-curso">
   <div class="modal">
     <div class="modal-title">Nuevo curso</div>
@@ -672,10 +867,11 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
+<!-- MODAL: pegar quiz -->
 <div class="overlay" id="modal-paste-quiz">
   <div class="modal">
     <div class="modal-title">Pegar quiz generado por IA</div>
-    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code><br><code>ans</code> = índice de la opción correcta (0 = primera).</div>
+    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code><br><br><code>ans</code> = índice de la opción correcta (0 = primera).</div>
     <label>Curso</label><select id="quiz-paste-course"></select>
     <label>Nombre de la sesión</label><input type="text" id="quiz-session-name" placeholder="Ej: Sesión 3 — Mitosis">
     <label>JSON del quiz</label><textarea id="quiz-json" placeholder='[{"q":"¿Cuántas fases tiene la mitosis?","opts":["2","4","6","8"],"ans":1}]'></textarea>
@@ -686,15 +882,19 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
+<!-- MODAL: pegar flashcards -->
 <div class="overlay" id="modal-paste-flash">
   <div class="modal">
     <div class="modal-title">Agregar flashcards</div>
     <div class="hint-box">Formato JSON:<br><code>[{"front":"Concepto","back":"Definición"}]</code></div>
     <label>Curso</label><select id="flash-paste-course"></select>
-    <label>Número de sesión</label><input type="text" id="flash-session-num" placeholder="Ej: Sesión 01">
-    <label>Nombre de la sesión</label><input type="text" id="flash-session-name-inp" placeholder="Ej: Bioseguridad">
-    <label>Fecha</label><input type="date" id="flash-session-date">
-    <label>JSON de las tarjetas</label><textarea id="flash-json" placeholder='[{"front":"Mitosis","back":"División celular"}]'></textarea>
+    <label>Número de sesión</label>
+    <input type="text" id="flash-session-num" placeholder="Ej: Sesión 01">
+    <label>Nombre de la sesión</label>
+    <input type="text" id="flash-session-name-inp" placeholder="Ej: Bioseguridad — Niveles BSL">
+    <label>Fecha</label>
+    <input type="date" id="flash-session-date">
+    <label>JSON de las tarjetas</label><textarea id="flash-json" placeholder='[{"front":"Mitosis","back":"División celular que produce 2 células idénticas"}]'></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-paste-flash')">Cancelar</button>
       <button class="btn btn-primary" onclick="loadFlash()">Cargar tarjetas</button>
@@ -702,34 +902,8 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
-<div class="overlay" id="modal-add-sim-session">
-  <div class="modal">
-    <div class="modal-title">Agregar sesión a biblioteca</div>
-    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta..."}]</code><br><code>tipo</code>: "libre" o "marcada"</div>
-    <label>Número de sesión</label><input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
-    <label>Nombre / tema</label><input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos">
-    <label>JSON de preguntas</label><textarea id="sim-lib-json" style="min-height:100px;" placeholder='[{"q":"¿Qué es...?","tipo":"libre","respuesta_ideal":"..."}]'></textarea>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="modal-sim-custom">
-  <div class="modal">
-    <div class="modal-title">Crear examen personalizado</div>
-    <div class="hint-box">Mismo formato JSON.</div>
-    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","q":"Pregunta...","tipo":"libre","respuesta_ideal":"..."}]'></textarea>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
-      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar</button>
-    </div>
-  </div>
-</div>
-
 <script>
-// ── STATE ──
+// ── STATE SEGURO PARA GITHUB PAGES ──
 let state = {
   courses: [
     {id:'c1',name:'Biología',emoji:'🧬',sessions:5,done:3},
@@ -740,10 +914,29 @@ let state = {
   flashDecks: [],
   stats: {total:0, correct:0},
   sessions: [],
-  bitacoras: [],
-  simLibrary: []
+  bitacoras: []
 };
 
+function save() {
+  localStorage.setItem('ss_state_v2', JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('ss_state_v2');
+  if (saved) {
+    try {
+      state = JSON.parse(saved);
+    } catch(e) {
+      console.warn("Estado corrupto, usando valores por defecto");
+    }
+  }
+  localStorage.removeItem('ss_state'); // limpiamos versión antigua
+}
+
+// Cargar estado al iniciar
+loadState();
+
+// ── VARIABLES GLOBALES ──
 const EMOJIS = ['🧬','⚗️','📐','📖','🌍','💡','🔬','📊','🎨','🏛️','🧮','📝','🌱','⚡','🎵','🧠'];
 let pickedEmoji = '📖';
 let planetEmoji = '🪐';
@@ -751,79 +944,85 @@ let feelingVal = 0;
 let diffVal = '';
 let editingBitaId = null;
 
-let simTimer = null;
-let simTotalSecs = 0;
-let simSecsLeft = 0;
-let simCustomQuestions = null;
-let simMode = '4x10';
-let simTypes = ['libre'];
-let simQuestions = [];
-let simCurrentQ = 0;
-let simAnswers = [];
-
-let answered = {};
-let quizList = [];
-let activeQuiz = null;
-let flashCards = [];
-let flashIdx = 0;
-let flashFlipped = false;
-let activeFlashDeck = null;
-
-function save() { localStorage.setItem('ss_state_v2', JSON.stringify(state)); }
-function loadState() {
-  const saved = localStorage.getItem('ss_state_v2');
-  if (saved) try { state = JSON.parse(saved); if (!state.simLibrary) state.simLibrary = []; } catch(e) {}
-  if (!state.simLibrary) state.simLibrary = [];
-}
-loadState();
-
+// ── TABS ──
 function goTab(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
+  
   const tabs = ['cursos','quiz','flash','bitacora','simulacro','progreso'];
   document.querySelectorAll('.tab').forEach((t,i) => { if(tabs[i]===name) t.classList.add('active'); });
+
   if(name==='quiz') renderQuizTab();
   if(name==='flash') renderFlashTab();
   if(name==='progreso') renderProgreso();
-  if(name==='bitacora') showBitaForm();
+  if(name==='bitacora') { showBitaForm(); }
   if(name==='simulacro') populateSimCourse();
 }
-
-function renderProgreso() {
-  document.getElementById('s-total').textContent = state.stats.total || 0;
-  document.getElementById('s-correct').textContent = state.stats.correct || 0;
-  const pct = state.stats.total > 0 ? Math.round((state.stats.correct / state.stats.total) * 100) : 0;
-  document.getElementById('s-pct').textContent = `${pct}%`;
-  const progCourses = document.getElementById('prog-courses');
-  if(progCourses) {
-    progCourses.innerHTML = state.courses.map(c => {
-      const pctCurso = c.sessions > 0 ? Math.round((c.done / c.sessions) * 100) : 0;
-      return `<div class="prog-row"><div class="prog-meta"><span>${c.emoji} ${c.name}</span><span>${c.done}/${c.sessions} sesiones</span></div><div class="prog-bar"><div class="prog-fill" style="width: ${pctCurso}%"></div></div></div>`;
-    }).join('');
-  }
-  const progBitacoras = document.getElementById('prog-bitacoras');
-  if(progBitacoras) {
-    if(!state.bitacoras || state.bitacoras.length === 0) progBitacoras.innerHTML = '<div style="text-align:center;color:var(--hint);padding:20px;">🪐 No hay bitácoras registradas aún</div>';
-    else progBitacoras.innerHTML = state.bitacoras.slice(0,5).map(b => `<div style="padding:10px 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">${b.planeta || '🪐'}</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">${b.planeta_nombre || 'Sin título'}</div><div style="font-size:11px;color:var(--muted);">${b.curso || 'Sin curso'} · ${b.fecha || 'Sin fecha'}</div></div></div>`).join('');
-  }
-}
-
+  // ── COURSES ──
 function renderCourses() {
   const grid = document.getElementById('course-grid');
-  if(!grid) return;
-  grid.innerHTML = state.courses.map(c => { const pct = c.sessions>0?Math.round(c.done/c.sessions*100):0; return `<div class="course-card" onclick="selectCourse('${c.id}',this)"><div class="course-icon">${c.emoji}</div><div class="course-name">${c.name}</div><div class="course-meta">${c.sessions} sesiones · ${c.done} completadas</div><div class="course-progress"><div class="course-progress-fill" style="width:${pct}%"></div></div></div>`; }).join('') + `<button class="course-card add-course-card" onclick="openModal('modal-curso')"><div class="plus-circle">+</div>Nuevo curso</button>`;
+  grid.innerHTML = state.courses.map(c=>{
+    const pct = c.sessions>0?Math.round(c.done/c.sessions*100):0;
+    return `<div class="course-card" onclick="selectCourse('${c.id}',this)">
+      <div class="course-icon">${c.emoji}</div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-meta">${c.sessions} sesiones · ${c.done} completadas</div>
+      <div class="course-progress"><div class="course-progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('')+`<button class="course-card add-course-card" onclick="openModal('modal-curso')"><div class="plus-circle">+</div>Nuevo curso</button>`;
+
   const sl = document.getElementById('sessions-list');
-  if(sl) sl.innerHTML = state.sessions.length===0 ? '<div style="text-align:center;padding:40px;color:var(--hint);">🪐 Sin sesiones aún</div>' : state.sessions.map(s => { const c=state.courses.find(x=>x.id===s.courseId)||{}; return `<div class="session-item"><div class="session-icon">${c.emoji||'📝'}</div><div class="session-info"><div class="session-name">${c.name||''} — ${s.name}</div><div class="session-meta">${s.questions} preguntas</div></div><span class="badge ${s.done?'badge-green':'badge-amber'}">${s.done?'Completado':'Pendiente'}</span></div>`; }).join('');
+  sl.innerHTML = state.sessions.length===0
+    ? '<div style="text-align:center;padding:40px;color:var(--hint);font-size:14px;">🪐 Sin sesiones aún</div>'
+    : state.sessions.map(s=>{
+      const c=state.courses.find(x=>x.id===s.courseId)||{};
+      return `<div class="session-item"><div class="session-icon">${c.emoji||'📝'}</div><div class="session-info"><div class="session-name">${c.name||''} — ${s.name}</div><div class="session-meta">${s.questions} preguntas</div></div><span class="badge ${s.done?'badge-green':'badge-amber'}">${s.done?'Completado':'Pendiente'}</span></div>`;
+    }).join('');
 }
-function selectCourse(id,el) { document.querySelectorAll('.course-card').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); }
-function saveCourse() { const name=document.getElementById('cn-name').value.trim(); if(!name) return; state.courses.push({id:'c'+Date.now(),name,emoji:pickedEmoji,sessions:0,done:0}); save(); renderCourses(); populateSelects(); document.getElementById('cn-name').value=''; closeModal('modal-curso'); }
-function buildEmojiRow() { const row=document.getElementById('emoji-row'); if(row) row.innerHTML=EMOJIS.map(e=>`<span class="ep-btn${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}',this)">${e}</span>`).join(''); }
-function pickEmoji(e,el) { pickedEmoji=e; document.querySelectorAll('#emoji-row .ep-btn').forEach(b=>b.classList.remove('picked')); el.classList.add('picked'); }
-function populateSimCourse() { const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join(''); const el = document.getElementById('sim-course-sel'); if(el) el.innerHTML = opts; renderSimLibrary(); }
-function populateSelects() { const opts=state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join(''); ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; }); }
+
+function selectCourse(id,el) {
+  document.querySelectorAll('.course-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveCourse() {
+  const name=document.getElementById('cn-name').value.trim();
+  if(!name) return;
+  state.courses.push({id:'c'+Date.now(),name,emoji:pickedEmoji,sessions:0,done:0});
+  save(); renderCourses(); populateSelects();
+  document.getElementById('cn-name').value='';
+  closeModal('modal-curso');
+}
+
+function buildEmojiRow() {
+  document.getElementById('emoji-row').innerHTML=EMOJIS.map(e=>`<span class="ep-btn${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}',this)">${e}</span>`).join('');
+}
+
+function pickEmoji(e,el) {
+  pickedEmoji=e;
+  document.querySelectorAll('#emoji-row .ep-btn').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
+}
+
+function populateSimCourse() {
+  const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  const el = document.getElementById('sim-course');
+  if(el) el.innerHTML = opts;
+}
+
+function populateSelects() {
+  const opts=state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=opts;
+  });
+}
+
+// ── QUIZ ──
+let answered={}, quizList=[], activeQuiz=null;
 
 function renderQuizTab() { populateSelects(); renderQuizAccordion(); }
+
 function renderQuizAccordion() {
   const cid = document.getElementById('quiz-course-sel').value;
   quizList = state.quizzes.filter(q => q.courseId === cid);
@@ -831,63 +1030,769 @@ function renderQuizAccordion() {
   if(!acc) return;
   document.getElementById('quiz-area').innerHTML = '';
   document.getElementById('quiz-result').innerHTML = '';
-  if(!quizList.length) { acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso.</div>'; return; }
-  acc.innerHTML = quizList.map((q, i) => `<div class="accordion-item"><div class="accordion-header" onclick="toggleAcc('qbody-${i}','qarrow-${i}')"><div class="accordion-title"><span>🎯</span><div><div>${q.session}</div><div class="accordion-meta">${q.questions.length} preguntas</div></div></div><div style="display:flex;align-items:center;gap:10px;"><span class="badge badge-purple">Quiz</span><span class="accordion-arrow" id="qarrow-${i}">▼</span></div></div><div class="accordion-body" id="qbody-${i}"><div style="padding-top:14px;display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="startQuiz(${i})">▶ Iniciar</button><button class="btn btn-sm btn-danger" onclick="deleteQuiz('${q.id}')">🗑️</button></div></div></div>`).join('');
+  if(!quizList.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso. Pega uno con el botón de arriba.</div>';
+    return;
+  }
+  acc.innerHTML = quizList.map((q, i) => `
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('qbody-${i}','qarrow-${i}')">
+        <div class="accordion-title">
+          <span>🎯</span>
+          <div>
+            <div>${q.session}</div>
+            <div class="accordion-meta">${q.questions.length} preguntas</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-purple">Quiz</span>
+          <span class="accordion-arrow" id="qarrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="qbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="startQuiz(${i})">▶ Iniciar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteQuiz('${q.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
 }
-function toggleAcc(bodyId, arrowId) { const body = document.getElementById(bodyId); const arrow = document.getElementById(arrowId); if(body) body.classList.toggle('open'); if(arrow) arrow.classList.toggle('open'); }
-function startQuiz(i) { activeQuiz = quizList[i]; answered = {}; const acc = document.getElementById('quiz-accordion'); if(acc) acc.innerHTML = ''; const area = document.getElementById('quiz-area'); area.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-size:14px;font-weight:600;">${activeQuiz.session}</div><button class="btn btn-sm" onclick="renderQuizAccordion()">← Volver</button></div>` + activeQuiz.questions.map((q,qi)=>`<div class="question-block"><div class="question-num">Pregunta ${qi+1}</div><div class="question-text">${q.q}</div><div class="options">${q.opts.map((o,oi)=>`<div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})"><div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}</div>`).join('')}</div></div>`).join(''); document.getElementById('quiz-result').innerHTML = ''; }
-function deleteQuiz(qid) { if(!confirm('¿Eliminar este quiz?')) return; state.quizzes = state.quizzes.filter(q => q.id !== qid); save(); renderQuizAccordion(); }
-function selectOpt(qi,oi) { if(answered[qi]!==undefined) return; answered[qi]=oi; const correct=activeQuiz.questions[qi].ans; activeQuiz.questions[qi].opts.forEach((_,i)=>{ const el=document.getElementById('opt-'+qi+'-'+i); if(!el) return; if(i===correct){el.classList.add('correct');el.querySelector('.opt-circle').textContent='✓';} else if(i===oi&&oi!==correct){el.classList.add('wrong');el.querySelector('.opt-circle').textContent='✗';} }); if(oi===correct) state.stats.correct++; state.stats.total++; save(); if(Object.keys(answered).length===activeQuiz.questions.length) showQuizResult(); }
-function showQuizResult() { const total = activeQuiz.questions.length; const correct = Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length; const pct = Math.round(correct/total*100); const score = Math.round(correct/total*20); const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'💪':pct>=40?'📚':'😅'; const msg = pct===100?'¡Perfecto!':pct>=80?'¡Muy bien!':pct>=60?'¡Aprobado!':pct>=40?'Sigue practicando':'¡No te rindas!'; const overlay = document.createElement('div'); overlay.className = 'quiz-result-overlay'; overlay.innerHTML = `<div class="quiz-result-card"><div style="font-size:64px;margin-bottom:12px;">${emoji}</div><div style="font-size:13px;color:var(--muted);margin-bottom:6px;">RESULTADO</div><div style="font-size:48px;font-weight:700;">${correct}/${total}</div><div style="font-size:20px;color:var(--muted);margin-bottom:12px;">${score}/20 pts</div><div style="font-size:14px;margin-bottom:24px;">${msg}</div><div style="display:flex;gap:10px;justify-content:center;"><button class="btn btn-primary" onclick="this.closest(\'.quiz-result-overlay\').remove();renderQuizAccordion()">Ver sesiones</button><button class="btn" onclick="this.closest(\'.quiz-result-overlay\').remove();startQuiz(${quizList.indexOf(activeQuiz)})">Repetir</button></div></div>`; document.body.appendChild(overlay); const s=state.sessions.find(x=>x.name===activeQuiz.session&&x.courseId===activeQuiz.courseId); if(s) s.done=pct>=60; save(); renderCourses(); }
-function loadQuiz() { const raw = document.getElementById('quiz-json').value.trim(); if(!raw) { alert('Pega el JSON'); return; } let qs; try { qs = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; } if(!Array.isArray(qs)||qs.length===0||!qs[0].q) { alert('Formato incorrecto'); return; } const cid = document.getElementById('quiz-paste-course').value; if(!cid) { alert('Selecciona un curso'); return; } const session = document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre'; state.quizzes.push({id:'q'+Date.now(), courseId:cid, session, questions:qs}); const c = state.courses.find(x=>x.id===cid); if(c) c.sessions++; state.sessions.unshift({courseId:cid, name:session, done:false, questions:qs.length}); save(); renderCourses(); document.getElementById('quiz-json').value=''; document.getElementById('quiz-session-name').value=''; closeModal('modal-paste-quiz'); document.getElementById('quiz-course-sel').value = cid; renderQuizAccordion(); alert('Quiz cargado con ' + qs.length + ' preguntas!'); }
+
+function toggleAcc(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  if(body) body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open');
+}
+
+function startQuiz(i) {
+  activeQuiz = quizList[i];
+  answered = {};
+  const acc = document.getElementById('quiz-accordion');
+  if(acc) acc.innerHTML = '';
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">${activeQuiz.session}</div>
+      <button class="btn btn-sm" onclick="renderQuizAccordion()">← Volver</button>
+    </div>` +
+    activeQuiz.questions.map((q,qi)=>`
+      <div class="question-block">
+        <div class="question-num">Pregunta ${qi+1}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options">${q.opts.map((o,oi)=>`
+          <div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}
+          </div>`).join('')}
+        </div>
+      </div>`).join('');
+  document.getElementById('quiz-result').innerHTML = '';
+}
+
+function deleteQuiz(qid) {
+  if(!confirm('¿Eliminar este quiz?')) return;
+  state.quizzes = state.quizzes.filter(q => q.id !== qid);
+  save(); renderQuizAccordion();
+}
+
+function selectOpt(qi,oi) {
+  if(answered[qi]!==undefined) return;
+  answered[qi]=oi;
+  const correct=activeQuiz.questions[qi].ans;
+  activeQuiz.questions[qi].opts.forEach((_,i)=>{
+    const el=document.getElementById('opt-'+qi+'-'+i); if(!el) return;
+    if(i===correct){el.classList.add('correct');el.querySelector('.opt-circle').textContent='✓';}
+    else if(i===oi&&oi!==correct){el.classList.add('wrong');el.querySelector('.opt-circle').textContent='✗';}
+  });
+  if(oi===correct) state.stats.correct++;
+  state.stats.total++; save();
+  if(Object.keys(answered).length===activeQuiz.questions.length) showQuizResult();
+}
+
+function showQuizResult() {
+  const total = activeQuiz.questions.length;
+  const correct = Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length;
+  const pct = Math.round(correct/total*100);
+  const score = Math.round(correct/total*20);
+  const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'💪':pct>=40?'📚':'😅';
+  const msg = pct===100?'¡Perfecto! ¡Dominas el tema completamente!':
+              pct>=80?'¡Muy bien! Estás lista para el examen.':
+              pct>=60?'¡Aprobado! Repasa los conceptos que fallaste.':
+              pct>=40?'Sigue practicando, vas por buen camino.':
+              '¡No te rindas! Repasa el material y vuelve a intentarlo.';
+  const overlay = document.createElement('div');
+  overlay.className = 'quiz-result-overlay';
+  overlay.innerHTML = `<div class="quiz-result-card">
+    <div style="font-size:64px;margin-bottom:12px;">${emoji}</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-family:Space Mono,monospace;">RESULTADO</div>
+    <div style="font-size:48px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;">${correct}/${total}</div>
+    <div style="font-size:20px;color:var(--muted);margin-bottom:12px;">${score}/20 pts</div>
+    <div style="font-size:14px;color:var(--text);margin-bottom:24px;line-height:1.5;">${msg}</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="this.closest('.quiz-result-overlay').remove();renderQuizAccordion()">Ver sesiones</button>
+      <button class="btn" onclick="this.closest('.quiz-result-overlay').remove();startQuiz(${quizList.indexOf(activeQuiz)})">Repetir</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const s=state.sessions.find(x=>x.name===activeQuiz.session&&x.courseId===activeQuiz.courseId);
+  if(s) s.done=pct>=60; save(); renderCourses();
+}
+
+function loadQuiz() {
+  const raw = document.getElementById('quiz-json').value.trim();
+  if(!raw) { alert('Por favor pega el JSON del quiz.'); return; }
+  let qs;
+  try { qs = JSON.parse(raw); } catch(e) { alert('El JSON tiene un error.'); return; }
+  if(!Array.isArray(qs)||qs.length===0||!qs[0].q) {
+    alert('Formato incorrecto.'); return;
+  }
+  const cid = document.getElementById('quiz-paste-course').value;
+  if(!cid) { alert('Selecciona un curso.'); return; }
+  const session = document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre';
+  state.quizzes.push({id:'q'+Date.now(), courseId:cid, session, questions:qs});
+  const c = state.courses.find(x=>x.id===cid);
+  if(c) c.sessions++;
+  state.sessions.unshift({courseId:cid, name:session, done:false, questions:qs.length});
+  save();
+  renderCourses();
+  document.getElementById('quiz-json').value='';
+  document.getElementById('quiz-session-name').value='';
+  closeModal('modal-paste-quiz');
+  document.getElementById('quiz-course-sel').value = cid;
+  renderQuizAccordion();
+  alert('Quiz cargado con ' + qs.length + ' preguntas!');
+}
+  // ── FLASHCARDS ──
+let flashCards=[], flashIdx=0, flashFlipped=false, activeFlashDeck=null;
 
 function renderFlashTab() { populateSelects(); renderFlashAccordion(); }
-function renderFlashAccordion() { const cid = document.getElementById('flash-course-sel').value; const decks = state.flashDecks.filter(d => d.courseId === cid); const acc = document.getElementById('flash-accordion'); const player = document.getElementById('flash-player'); if(player) player.style.display = 'none'; if(!acc) return; if(!decks.length) { acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🃏 Sin flashcards.</div>'; return; } acc.innerHTML = decks.map((d, i) => { const sessionLabel = d.sessionNum ? d.sessionNum + ' — ' + (d.sessionName || '') : (d.sessionName || 'Sin nombre'); return `<div class="accordion-item"><div class="accordion-header" onclick="toggleAcc('fbody-${i}','farrow-${i}')"><div class="accordion-title"><span>🃏</span><div><div>${sessionLabel}</div><div class="accordion-meta">${d.cards.length} tarjetas</div></div></div><div style="display:flex;align-items:center;gap:10px;"><span class="badge badge-green">${d.cards.length} cards</span><span class="accordion-arrow" id="farrow-${i}">▼</span></div></div><div class="accordion-body" id="fbody-${i}"><div style="padding-top:14px;display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="openFlashDeck(${i})">▶ Practicar</button><button class="btn btn-sm btn-danger" onclick="deleteFlashDeck('${d.id}')">🗑️</button></div></div></div>`; }).join(''); }
-function openFlashDeck(i) { const cid = document.getElementById('flash-course-sel').value; const decks = state.flashDecks.filter(d => d.courseId === cid); activeFlashDeck = decks[i]; flashCards = activeFlashDeck.cards; flashIdx = 0; flashFlipped = false; document.getElementById('flash-player-title').textContent = activeFlashDeck.sessionName || 'Flashcards'; document.getElementById('flash-player').style.display = 'block'; document.getElementById('flash-accordion').style.display = 'none'; showCard(); }
-function closeFlashPlayer() { document.getElementById('flash-player').style.display = 'none'; document.getElementById('flash-accordion').style.display = 'block'; }
-function deleteFlashDeck(did) { if(!confirm('¿Eliminar?')) return; state.flashDecks = state.flashDecks.filter(d => d.id !== did); save(); renderFlashAccordion(); }
-function showCard() { const fc = document.getElementById('flashcard'); if(fc) fc.classList.remove('flipped'); if(!flashCards.length) return; const card = flashCards[flashIdx]; document.getElementById('card-front').textContent = card.front; document.getElementById('card-back').textContent = card.back; document.getElementById('card-counter').textContent = `${flashIdx+1} / ${flashCards.length}`; }
-function flipCard() { flashFlipped = !flashFlipped; const fc = document.getElementById('flashcard'); if(fc) fc.classList.toggle('flipped', flashFlipped); }
+
+function renderFlashAccordion() {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  const acc = document.getElementById('flash-accordion');
+  const player = document.getElementById('flash-player');
+  if(player) player.style.display = 'none';
+  if(!acc) return;
+  if(!decks.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🃏 Sin flashcards para este curso.</div>';
+    return;
+  }
+  acc.innerHTML = decks.map((d, i) => {
+    const sessionLabel = d.sessionNum ? d.sessionNum + ' — ' + (d.sessionName || '') : (d.sessionName || 'Sin nombre');
+    return `<div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('fbody-${i}','farrow-${i}')">
+        <div class="accordion-title">
+          <span>🃏</span>
+          <div><div>${sessionLabel}</div><div class="accordion-meta">${d.cards.length} tarjetas</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-green">${d.cards.length} cards</span>
+          <span class="accordion-arrow" id="farrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="fbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openFlashDeck(${i})">▶ Practicar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteFlashDeck('${d.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openFlashDeck(i) {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  activeFlashDeck = decks[i];
+  flashCards = activeFlashDeck.cards;
+  flashIdx = 0; flashFlipped = false;
+  document.getElementById('flash-player-title').textContent = activeFlashDeck.sessionName || 'Flashcards';
+  document.getElementById('flash-player').style.display = 'block';
+  document.getElementById('flash-accordion').style.display = 'none';
+  showCard();
+}
+
+function closeFlashPlayer() {
+  document.getElementById('flash-player').style.display = 'none';
+  document.getElementById('flash-accordion').style.display = 'block';
+}
+
+function deleteFlashDeck(did) {
+  if(!confirm('¿Eliminar este mazo?')) return;
+  state.flashDecks = state.flashDecks.filter(d => d.id !== did);
+  save(); renderFlashAccordion();
+}
+
+function showCard() {
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  if(!flashCards.length) return;
+  const card = flashCards[flashIdx];
+  document.getElementById('card-front').textContent = card.front;
+  document.getElementById('card-back').textContent = card.back;
+  document.getElementById('card-counter').textContent = `${flashIdx+1} / ${flashCards.length}`;
+}
+function flipCard() { 
+  flashFlipped = !flashFlipped; 
+  document.getElementById('flashcard').classList.toggle('flipped', flashFlipped); 
+}
 function nextCard() { if(!flashCards.length) return; flashIdx = (flashIdx+1)%flashCards.length; showCard(); }
 function prevCard() { if(!flashCards.length) return; flashIdx = (flashIdx-1+flashCards.length)%flashCards.length; showCard(); }
-function loadFlash() { const raw = document.getElementById('flash-json').value.trim(); if(!raw) { alert('Pega el JSON'); return; } let cards; try { cards = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; } const cid = document.getElementById('flash-paste-course').value; if(!cid) { alert('Selecciona un curso'); return; } const sessionNum = document.getElementById('flash-session-num').value.trim(); const sessionName = document.getElementById('flash-session-name-inp').value.trim(); state.flashDecks.push({id:'f'+Date.now(), courseId:cid, cards, sessionNum, sessionName}); save(); closeModal('modal-paste-flash'); renderFlashAccordion(); alert('Flashcards agregadas!'); }
 
-function showBitaList() { const form = document.getElementById('bita-form'); const list = document.getElementById('bita-list'); if(form) form.style.display = 'none'; if(list) list.style.display = 'block'; renderBitaList(); }
-function showBitaForm() { const form = document.getElementById('bita-form'); const list = document.getElementById('bita-list'); if(form) form.style.display = 'block'; if(list) list.style.display = 'none'; }
-function resetBitaForm() { editingBitaId = null; document.querySelectorAll('#bita-form input, #bita-form textarea').forEach(el => { if(el.type !== 'checkbox' && el.type !== 'radio') el.value = ''; }); const fechaEl = document.getElementById('b-fecha'); if(fechaEl) fechaEl.valueAsDate = new Date(); planetEmoji = '🪐'; document.querySelectorAll('#planet-pick .ep-btn').forEach((btn, idx) => { if(idx === 0) btn.classList.add('picked'); else btn.classList.remove('picked'); }); feelingVal = 0; document.querySelectorAll('#feeling-stars .star').forEach(s => s.classList.remove('active')); diffVal = ''; document.querySelectorAll('.diff-btn').forEach(btn => btn.className = 'diff-btn'); document.querySelectorAll('.etag').forEach(t => t.classList.remove('sel')); const missionList = document.getElementById('mission-list'); if(missionList) missionList.innerHTML = `<div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar conceptos..."></div><div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz..."></div><div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Investigar más..."></div>`; }
-function confirmClearBita() { if(confirm('¿Limpiar todos los campos?')) { resetBitaForm(); const banner = document.getElementById('saved-banner'); if(banner) { banner.style.display = 'block'; banner.textContent = '🧹 Plantilla limpiada'; setTimeout(() => banner.style.display = 'none', 2000); } } }
-function renderBitaList() { const list = document.getElementById('bita-saved-list'); const empty = document.getElementById('bita-empty'); if(!list) return; if(!state.bitacoras || !state.bitacoras.length) { list.innerHTML = ''; if(empty) empty.style.display = 'block'; return; } if(empty) empty.style.display = 'none'; list.innerHTML = state.bitacoras.map(b => { const tagHtml = b.tags && b.tags.length ? b.tags.map(t=>`<span class="etag sel" style="font-size:11px;padding:2px 8px;pointer-events:none;">${t}</span>`).join('') : ''; return `<div class="bita-list-item" onclick="loadBitacora('${b.id}')"><div class="bita-planet">${b.planeta||'🪐'}</div><div class="bita-info"><div class="bita-name">${b.planeta_nombre||'Sin nombre'}</div><div class="bita-meta">${b.curso||''} · ${b.sesion||'Sin sesión'} · ${b.fecha||'Sin fecha'}</div>${tagHtml ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${tagHtml}</div>` : ''}</div><button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteBita('${b.id}')">🗑️</button></div>`; }).join(''); }
-function deleteBita(id) { if(!confirm('¿Eliminar esta bitácora?')) return; state.bitacoras = state.bitacoras.filter(b => b.id !== id); save(); renderBitaList(); }
-function loadBitacora(id) { const b = state.bitacoras.find(x => x.id === id); if(!b) return; editingBitaId = id; showBitaForm(); const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val||''; }; set('b-curso', b.curso); set('b-planeta', b.planeta_nombre); set('b-fecha', b.fecha); set('b-sesion', b.sesion); set('b-duracion', b.duracion); set('b-resumen', b.resumen); set('b-importante', b.importante); set('b-sorpresa', b.sorpresa); set('b-conceptos', b.conceptos); set('b-relaciones', b.relaciones); set('b-ejemplo', b.ejemplo); set('b-mejora', b.mejora); set('b-proxima', b.proxima); const planets = ['🪐','🌍','🌙','⭐','🌌','☄️','🔭','🚀']; planetEmoji = b.planeta || '🪐'; document.querySelectorAll('#planet-pick .ep-btn').forEach((el,i) => el.classList.toggle('picked', planets[i]===planetEmoji)); if(b.feeling) setStar(b.feeling); if(b.diff) { document.querySelectorAll('.diff-btn').forEach(btn => btn.className='diff-btn'); const diffBtn = document.querySelector(`.diff-btn[onclick*="${b.diff}"]`); if(diffBtn) diffBtn.classList.add('sel-'+b.diff); } document.querySelectorAll('.etag').forEach(t => t.classList.toggle('sel', b.tags && b.tags.includes(t.textContent.trim()))); if(b.missions && b.missions.length) { const ml = document.getElementById('mission-list'); if(ml) ml.innerHTML = b.missions.map(m => `<div class="mission-item"><div class="mission-check${m.done?' done':''}" onclick="toggleMission(this)">${m.done?'✓':''}</div><input class="mission-text" type="text" value="${(m.text||'').replace(/"/g,'&quot;')}"></div>`).join(''); } }
-function pickPlanet(e,el) { planetEmoji = e; document.querySelectorAll('#planet-pick .ep-btn').forEach(b=>b.classList.remove('picked')); el.classList.add('picked'); }
-function setStar(val) { feelingVal = val; document.querySelectorAll('#feeling-stars .star').forEach((s,i)=>s.classList.toggle('active',i<val)); }
-function setDiff(val,el) { diffVal = val; document.querySelectorAll('.diff-btn').forEach(b=>b.className='diff-btn'); el.classList.add('sel-'+val); }
-function toggleMission(el) { el.classList.toggle('done'); el.textContent = el.classList.contains('done') ? '✓' : ''; }
-function addMission() { const div = document.createElement('div'); div.className = 'mission-item'; div.innerHTML = `<div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Nueva tarea...">`; document.getElementById('mission-list').appendChild(div); }
-function saveBitacora() { const curso = document.getElementById('b-curso').value.trim(); const planeta = document.getElementById('b-planeta').value.trim(); if (!curso || !planeta) { alert('❌ Completa Curso y Nombre del planeta'); return; } const missions = []; document.querySelectorAll('#mission-list .mission-item').forEach(item => { const textEl = item.querySelector('.mission-text'); const check = item.querySelector('.mission-check'); if (textEl && textEl.value.trim()) missions.push({ text: textEl.value.trim(), done: check ? check.classList.contains('done') : false }); }); const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t => t.textContent.trim()); const bita = { id: editingBitaId || 'b' + Date.now(), planeta: planetEmoji || '🪐', curso, planeta_nombre: planeta, fecha: document.getElementById('b-fecha').value, sesion: document.getElementById('b-sesion').value, duracion: document.getElementById('b-duracion').value, resumen: document.getElementById('b-resumen').value, importante: document.getElementById('b-importante').value, sorpresa: document.getElementById('b-sorpresa').value, conceptos: document.getElementById('b-conceptos').value, relaciones: document.getElementById('b-relaciones').value, ejemplo: document.getElementById('b-ejemplo').value, feeling: feelingVal, diff: diffVal, mejora: document.getElementById('b-mejora').value, tags: tags, missions: missions, proxima: document.getElementById('b-proxima').value, savedAt: new Date().toISOString() }; if (editingBitaId) { const idx = state.bitacoras.findIndex(b => b.id === editingBitaId); if (idx >= 0) state.bitacoras[idx] = bita; } else { state.bitacoras.unshift(bita); } save(); editingBitaId = null; const banner = document.getElementById('saved-banner'); banner.style.display = 'block'; setTimeout(() => banner.style.display = 'none', 3000); alert('✅ Bitácora guardada'); resetBitaForm(); }
-function printBitacora() { const get = id => { const el = document.getElementById(id); return el ? el.value : ''; }; const curso = get('b-curso'); const planeta = get('b-planeta'); if(!curso && !planeta) { alert('Llena curso y nombre antes de exportar.'); return; } const fecha = get('b-fecha'); const sesion = get('b-sesion'); const duracion = get('b-duracion'); const resumen = get('b-resumen'); const importante = get('b-importante'); const sorpresa = get('b-sorpresa'); const conceptos = get('b-conceptos'); const relaciones = get('b-relaciones'); const ejemplo = get('b-ejemplo'); const mejora = get('b-mejora'); const proxima = get('b-proxima'); const feelingEmojis = ['','😴','😕','😐','🙂','🤩']; const diffLabel = diffVal==='easy'?'Fácil 🟢':diffVal==='mid'?'Regular 🟡':diffVal==='hard'?'Difícil 🔴':'—'; const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t=>t.textContent.trim()).join(' · '); const missions = Array.from(document.querySelectorAll('#mission-list .mission-item')).map(item => { const t = item.querySelector('.mission-text'); const c = item.querySelector('.mission-check'); return t && t.value.trim() ? '<li>'+(c&&c.classList.contains('done')?'✅ ':'⬜ ')+t.value.trim()+'</li>' : ''; }).join(''); const sec = (icon, title, body) => body ? '<div class="sec"><div class="sec-t">'+icon+' '+title+'</div><div class="sec-b">'+body.replace(/\n/g,'<br>')+'</div></div>' : ''; const w = window.open('','_blank','width=800,height=900'); if(!w) { alert('Activa ventanas emergentes'); return; } w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bitácora — '+planeta+'</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#fff;color:#1a1a2e;max-width:720px;margin:0 auto;padding:32px 28px;font-size:14px;line-height:1.6}.header{text-align:center;margin-bottom:28px;border-bottom:2px solid #3a1a8a;padding-bottom:20px}.planet{font-size:52px;display:block;margin-bottom:10px}.title{font-size:24px;font-weight:700;color:#3a1a8a;margin-bottom:4px}.subtitle{font-size:13px;color:#666}.meta-row{display:flex;flex-wrap:wrap;gap:10px;background:#f5f3ff;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px}.meta-item strong{color:#3a1a8a}.sec{border:1px solid #ddd;border-radius:8px;padding:14px 16px;margin-bottom:14px;break-inside:avoid}.sec-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#3a1a8a;margin-bottom:8px}.sec-b{font-size:14px;color:#222;white-space:pre-wrap}.tags{font-size:13px;color:#5a3a9a;padding:10px 14px;background:#f5f3ff;border-radius:8px;margin-top:14px}.footer{text-align:center;font-size:11px;color:#aaa;margin-top:24px;padding-top:14px;border-top:1px solid #eee}@media print{body{padding:20px}}</style></head><body>'); w.document.write('<div class="header"><span class="planet">'+(planetEmoji||'🪐')+'</span><div class="title">'+(planeta||'Bitácora')+'</div><div class="subtitle">Bitácora de Viaje · StudySpace</div></div>'); w.document.write('<div class="meta-row"><span class="meta-item"><strong>Curso:</strong> '+(curso||'—')+'</span><span class="meta-item"><strong>Sesión:</strong> '+(sesion||'—')+'</span><span class="meta-item"><strong>Fecha:</strong> '+(fecha||'—')+'</span><span class="meta-item"><strong>Duración:</strong> '+(duracion||'—')+'</span><span class="meta-item"><strong>Ánimo:</strong> '+(feelingEmojis[feelingVal]||'—')+'</span><span class="meta-item"><strong>Dificultad:</strong> '+diffLabel+'</span></div>'); w.document.write(sec('📝','Resumen de la sesión',resumen)); w.document.write(sec('⭐','Lo más importante',importante)); w.document.write(sec('💡','Sorpresas y dudas',sorpresa)); if(conceptos||relaciones||ejemplo) w.document.write(sec('🧬','Conceptos clave',(conceptos?'Términos: '+conceptos:'')+(relaciones?'\n\nRelaciones: '+relaciones:'')+(ejemplo?'\n\nEjemplo real: '+ejemplo:''))); if(missions) w.document.write('<div class="sec"><div class="sec-t">🎯 Misiones pendientes</div><ul style="padding-left:20px;margin-top:4px">'+missions+'</ul></div>'); if(mejora||proxima) w.document.write(sec('🚀','Próximos pasos',(mejora?'A mejorar: '+mejora:'')+(proxima?'\n\nPróxima sesión: '+proxima:''))); if(tags) w.document.write('<div class="tags">🏷️ '+tags+'</div>'); w.document.write('<div class="footer">StudySpace · '+new Date().toLocaleDateString("es-PE")+' · Cada sesión es un planeta 🚀</div>'); w.document.write('</body></html>'); w.document.close(); setTimeout(()=>w.print(), 700); }
+function loadFlash() {
+  const raw = document.getElementById('flash-json').value.trim();
+  if(!raw) { alert('Pega el JSON'); return; }
+  let cards;
+  try { cards = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; }
+  const cid = document.getElementById('flash-paste-course').value;
+  if(!cid) { alert('Selecciona un curso'); return; }
+  state.flashDecks.push({id:'f'+Date.now(), courseId:cid, cards});
+  save();
+  closeModal('modal-paste-flash');
+  renderFlashAccordion();
+}
 
-function openModal(id) { if(id==='modal-curso') buildEmojiRow(); if(id==='modal-paste-quiz' || id==='modal-paste-flash') populateSelects(); const modal = document.getElementById(id); if(modal) modal.classList.add('open'); }
-function closeModal(id) { const modal = document.getElementById(id); if(modal) modal.classList.remove('open'); }
+// ── BITÁCORA ──
 
-function selectSimMode(mode, el) { simMode = mode; document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected')); if(el) el.classList.add('selected'); }
-function toggleSimType(type, el) { el.classList.toggle('active'); if(el.classList.contains('active')) { if(!simTypes.includes(type)) simTypes.push(type); } else { simTypes = simTypes.filter(t=>t!==type); if(!simTypes.length){simTypes.push(type);el.classList.add('active');} } }
-function renderSimLibrary() { const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : ''; const acc = document.getElementById('sim-library-accordion'); if(!acc) return; const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid); if(!sessions.length) { acc.innerHTML = '<div style="text-align:center;padding:24px;color:var(--hint);">Sin sesiones. Agrega una.</div>'; return; } acc.innerHTML = sessions.map((s,i)=>`<div class="sim-lib-item"><div class="sim-lib-header" onclick="toggleSimLib(${i})"><div><div style="font-size:14px;font-weight:600;">${s.num||''} ${s.name||''}</div><div style="font-size:12px;color:var(--muted);">${(s.questions||[]).length} preguntas</div></div><div style="display:flex;gap:8px;"><span class="badge badge-purple">${(s.questions||[]).length}</span><button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteSimSession('${s.id}')">🗑️</button><span id="slib-arrow-${i}" style="color:var(--muted);">▼</span></div></div><div class="sim-lib-body" id="slib-body-${i}"><div style="padding-top:12px;">${(s.questions||[]).slice(0,3).map((q,qi)=>`<div style="padding:4px 0;">${qi+1}. ${q.q||''}</div>`).join('')}${(s.questions||[]).length>3?`<div style="color:var(--hint);">...y ${(s.questions||[]).length-3} más</div>`:''}</div></div></div>`).join(''); }
-function toggleSimLib(i) { const body = document.getElementById('slib-body-'+i); const arrow = document.getElementById('slib-arrow-'+i); if(body) body.classList.toggle('open'); if(arrow) arrow.textContent = body&&body.classList.contains('open')?'▲':'▼'; }
-function saveSimLibSession() { const num = document.getElementById('sim-lib-num').value.trim(); const name = document.getElementById('sim-lib-name').value.trim(); const raw = document.getElementById('sim-lib-json').value.trim(); if(!name&&!num) { alert('Agrega nombre de sesión'); return; } if(!raw) { alert('Agrega preguntas'); return; } let questions; try { questions = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; } if(!Array.isArray(questions)||!questions[0].q) { alert('Formato incorrecto'); return; } const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : ''; if(!state.simLibrary) state.simLibrary = []; state.simLibrary.push({id:'sl'+Date.now(), courseId:cid, num, name, questions}); save(); document.getElementById('sim-lib-num').value=''; document.getElementById('sim-lib-name').value=''; document.getElementById('sim-lib-json').value=''; closeModal('modal-add-sim-session'); renderSimLibrary(); alert('Sesión agregada con '+questions.length+' preguntas'); }
-function deleteSimSession(id) { if(!confirm('¿Eliminar?')) return; state.simLibrary = (state.simLibrary||[]).filter(s=>s.id!==id); save(); renderSimLibrary(); }
-function loadCustomSimExam() { const raw = document.getElementById('sim-custom-json').value.trim(); if(!raw) { alert('Agrega preguntas'); return; } let qs; try { qs = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; } if(!Array.isArray(qs)||!qs[0].q) { alert('Formato incorrecto'); return; } simCustomQuestions = qs; closeModal('modal-sim-custom'); buildAndStartExam(qs); }
-function startSimulacro() { const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : ''; const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid); if(!sessions.length && !simCustomQuestions) { alert('Agrega sesiones a tu biblioteca'); return; } let pool = []; sessions.forEach(s => { if(s.questions) pool.push(...s.questions); }); if(!pool.length) pool = simCustomQuestions || []; pool = pool.sort(()=>Math.random()-0.5); const filtered = pool.filter(q => simTypes.includes(q.tipo||'libre')); const finalPool = filtered.length >= 2 ? filtered : pool; buildAndStartExam(finalPool); }
-function buildAndStartExam(pool) { const maxQ = simMode==='4x10'?4:simMode==='5x30'?10:20; const totalSecs = simMode==='4x10'?600:simMode==='5x30'?1800:3600; simQuestions = pool.slice(0, maxQ); if(!simQuestions.length) { alert('No hay preguntas'); return; } simCurrentQ = 0; simAnswers = new Array(simQuestions.length).fill(''); simTotalSecs = totalSecs; simSecsLeft = totalSecs; document.getElementById('sim-setup').style.display = 'none'; document.getElementById('sim-results').style.display = 'none'; document.getElementById('sim-exam').style.display = 'block'; const labels = {'4x10':'Examen corto · 10 min','5x30':'Examen mediano · 30 min','20x60':'Examen final · 1 hora'}; const labelEl = document.getElementById('sim-exam-label'); if(labelEl) labelEl.textContent = labels[simMode]||'Simulacro'; startSimTimer(); renderSimQuestion(); }
-function renderSimQuestion() { const q = simQuestions[simCurrentQ]; document.getElementById('sim-q-indicator').textContent = 'Pregunta '+(simCurrentQ+1)+' de '+simQuestions.length; document.getElementById('sim-q-num').textContent = 'Pregunta '+(simCurrentQ+1); document.getElementById('sim-q-text').textContent = q.q||''; const casoBox = document.getElementById('sim-caso-box'); if(casoBox) { if(q.caso&&q.caso.trim()) { casoBox.style.display='block'; casoBox.textContent=q.caso; } else { casoBox.style.display='none'; } } const freeArea = document.getElementById('sim-free-area'); const choiceArea = document.getElementById('sim-choice-area'); if(q.tipo==='marcada'&&q.opts) { if(freeArea) freeArea.style.display='none'; if(choiceArea) choiceArea.style.display='block'; const choicesList = document.getElementById('sim-choices-list'); if(choicesList) { choicesList.innerHTML = q.opts.map((o,i)=>`<div class="option" onclick="simSelectChoice(${i},this)"><div class="opt-circle">${String.fromCharCode(65+i)}</div>${o}</div>`).join(''); } } else { if(freeArea) freeArea.style.display='block'; if(choiceArea) choiceArea.style.display='none'; const answerFree = document.getElementById('sim-answer-free'); if(answerFree) answerFree.value = simAnswers[simCurrentQ]||''; } const nextBtn = document.getElementById('sim-next-btn'); if(nextBtn) nextBtn.textContent = simCurrentQ===simQuestions.length-1 ? 'Finalizar →' : 'Siguiente →'; }
-function simSelectChoice(idx, el) { document.querySelectorAll('#sim-choices-list .option').forEach(o=>o.classList.remove('correct')); el.classList.add('correct'); simAnswers[simCurrentQ] = idx; }
-function simNextQuestion() { const q = simQuestions[simCurrentQ]; if(q.tipo!=='marcada') { const answerFree = document.getElementById('sim-answer-free'); if(answerFree) simAnswers[simCurrentQ] = answerFree.value.trim(); } simCurrentQ++; if(simCurrentQ>=simQuestions.length) endSimulacro(); else renderSimQuestion(); }
-function startSimTimer() { if(simTimer) clearInterval(simTimer); simTimer = setInterval(()=>{ if(simSecsLeft <= 0) { clearInterval(simTimer); endSimulacro(); return; } simSecsLeft--; const m=Math.floor(simSecsLeft/60); const s=simSecsLeft%60; const clockEl=document.getElementById('sim-clock'); if(clockEl) clockEl.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); const bar=document.getElementById('sim-timer-bar'); if(bar && simTotalSecs > 0) bar.style.width=(simSecsLeft/simTotalSecs*100)+'%'; if(clockEl && simSecsLeft<=60) clockEl.style.color='#ff6464'; },1000); }
-async function endSimulacro() { if(simTimer) clearInterval(simTimer); const q=simQuestions[simCurrentQ]; if(q&&q.tipo!=='marcada') { const answerFree = document.getElementById('sim-answer-free'); if(answerFree) simAnswers[simCurrentQ]=answerFree.value.trim(); } document.getElementById('sim-exam').style.display='none'; document.getElementById('sim-results').style.display='block'; document.getElementById('sim-res-emoji').textContent='⏳'; document.getElementById('sim-res-score').textContent='...'; document.getElementById('sim-res-msg').textContent='Evaluando respuestas...'; document.getElementById('sim-feedback-list').innerHTML='<div style="text-align:center;padding:24px;">Evaluando 🧠...</div>'; await evaluateSimulacro(); }
-async function evaluateSimulacro() { const ptsPerQ = 20/simQuestions.length; let total=0; let feedbackHTML=''; for(let i=0;i<simQuestions.length;i++){ const q=simQuestions[i]; const ans=simAnswers[i]; let score=0; let fb=''; let missing=''; if(q.tipo==='marcada'){ score=(ans===q.ans)?ptsPerQ:0; fb=ans===q.ans?'✓ Correcta':'✗ Incorrecta. Respuesta correcta: '+(q.opts?q.opts[q.ans]:''); } else { score = ans && ans.length > 15 ? ptsPerQ * 0.7 : (ans && ans.length > 0 ? ptsPerQ * 0.3 : 0); fb = ans ? (ans.length > 15 ? 'Respuesta completa.' : 'Respuesta breve.') : 'Sin respuesta.'; missing = 'Para mejor evaluación, conecta con IA.'; } total+=score; const cls=score>=ptsPerQ*0.75?'#9fefd4':score>=ptsPerQ*0.4?'#ffb450':'#ff9090'; feedbackHTML+=`<div class="feedback-item"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:12px;color:var(--muted);">Pregunta ${i+1}</div><div style="font-size:18px;font-weight:700;color:${cls};">${score.toFixed(1)}/${ptsPerQ.toFixed(1)}</div></div><div style="font-size:14px;font-weight:500;margin-bottom:8px;">${q.q}</div>${ans?`<div style="font-size:13px;padding:8px 12px;background:var(--surface2);border-radius:6px;margin-bottom:8px;"><strong>Tu respuesta:</strong> ${ans}</div>`:'<div style="font-size:13px;color:var(--red);margin-bottom:8px;">Sin respuesta</div>'}<div style="font-size:13px;">${fb}${missing?` <span style="color:var(--amber);">Faltó: ${missing}</span>`:''}</div></div>`; } const final=Math.min(parseFloat(total.toFixed(1)),20); const emoji=final>=18?'🏆':final>=15?'🌟':final>=11?'💪':final>=7?'📚':'😅'; const msg=final>=18?'¡Perfecto!':final>=15?'¡Muy bien!':final>=11?'Aprobado':final>=7?'Sigue practicando':'Necesitas repasar más'; document.getElementById('sim-res-emoji').textContent=emoji; document.getElementById('sim-res-score').textContent=final+'/20'; document.getElementById('sim-res-msg').textContent=msg; document.getElementById('sim-feedback-list').innerHTML=feedbackHTML; }
-function resetSimulacro() { simMode='4x10'; simTypes=['libre']; simCustomQuestions=null; simQuestions=[]; simCurrentQ=0; simAnswers=[]; document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected')); const typeLibre = document.getElementById('stype-libre'); if(typeLibre) { document.querySelectorAll('.sim-type-btn').forEach(b=>b.classList.remove('active')); typeLibre.classList.add('active'); } if(simTimer) clearInterval(simTimer); const setup = document.getElementById('sim-setup'); const exam = document.getElementById('sim-exam'); const results = document.getElementById('sim-results'); if(setup) setup.style.display='block'; if(exam) exam.style.display='none'; if(results) results.style.display='none'; const clockEl=document.getElementById('sim-clock'); if(clockEl) clockEl.style.color=''; }
+function showBitaList() {
+  document.getElementById('bita-form').style.display = 'none';
+  document.getElementById('bita-list').style.display = 'block';
+  renderBitaList();
+}
 
-document.addEventListener('DOMContentLoaded', () => { loadState(); populateSelects(); renderCourses(); const fechaEl = document.getElementById('b-fecha'); if(fechaEl) fechaEl.valueAsDate = new Date(); });
+function showBitaForm() {
+  document.getElementById('bita-form').style.display = 'block';
+  document.getElementById('bita-list').style.display = 'none';
+}
+
+function renderBitaList() {
+  const list = document.getElementById('bita-saved-list');
+  const empty = document.getElementById('bita-empty');
+  if(!list) return;
+  if(!state.bitacoras || !state.bitacoras.length) {
+    list.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  list.innerHTML = state.bitacoras.map(b => {
+    const tagHtml = b.tags && b.tags.length ? b.tags.map(t=>`<span class="etag sel" style="font-size:11px;padding:2px 8px;pointer-events:none;">${t}</span>`).join('') : '';
+    return `<div class="bita-list-item" onclick="loadBitacora('${b.id}')">
+      <div class="bita-planet">${b.planeta||'🪐'}</div>
+      <div class="bita-info">
+        <div class="bita-name">${b.planeta_nombre||'Sin nombre'}</div>
+        <div class="bita-meta">${b.curso||''} · ${b.sesion||'Sin sesión'} · ${b.fecha||'Sin fecha'}</div>
+        ${tagHtml ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${tagHtml}</div>` : ''}
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteBita('${b.id}')">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteBita(id) {
+  if(!confirm('¿Eliminar esta bitácora?')) return;
+  state.bitacoras = state.bitacoras.filter(b => b.id !== id);
+  save(); renderBitaList();
+}
+
+function loadBitacora(id) {
+  const b = state.bitacoras.find(x => x.id === id);
+  if(!b) return;
+  editingBitaId = id;
+  showBitaForm();
+  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val||''; };
+  set('b-curso', b.curso); set('b-planeta', b.planeta_nombre);
+  set('b-fecha', b.fecha); set('b-sesion', b.sesion); set('b-duracion', b.duracion);
+  set('b-resumen', b.resumen); set('b-importante', b.importante); set('b-sorpresa', b.sorpresa);
+  set('b-conceptos', b.conceptos); set('b-relaciones', b.relaciones); set('b-ejemplo', b.ejemplo);
+  set('b-mejora', b.mejora); set('b-proxima', b.proxima);
+  const planets = ['🪐','🌍','🌙','⭐','🌌','☄️','🔭','🚀'];
+  planetEmoji = b.planeta || '🪐';
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((el,i) => el.classList.toggle('picked', planets[i]===planetEmoji));
+  if(b.feeling) setStar(b.feeling);
+  if(b.diff) {
+    document.querySelectorAll('.diff-btn').forEach(btn => btn.className='diff-btn');
+    const diffBtn = document.querySelector('.diff-btn[onclick*="'+b.diff+'"]');
+    if(diffBtn) diffBtn.classList.add('sel-'+b.diff);
+  }
+  document.querySelectorAll('.etag').forEach(t => t.classList.toggle('sel', b.tags && b.tags.includes(t.textContent.trim())));
+  if(b.missions && b.missions.length) {
+    const ml = document.getElementById('mission-list');
+    if(ml) ml.innerHTML = b.missions.map(m => `<div class="mission-item">
+      <div class="mission-check${m.done?' done':''}" onclick="toggleMission(this)">${m.done?'✓':''}</div>
+      <input class="mission-text" type="text" value="${(m.text||'').replace(/"/g,'&quot;')}">
+    </div>`).join('');
+  }
+}
+
+function pickPlanet(e,el) {
+  planetEmoji = e;
+  document.querySelectorAll('#planet-pick .ep-btn').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
+}
+
+function setStar(val) {
+  feelingVal = val;
+  document.querySelectorAll('#feeling-stars .star').forEach((s,i)=>s.classList.toggle('active',i<val));
+}
+
+function setDiff(val,el) {
+  diffVal = val;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.className='diff-btn');
+  el.classList.add('sel-'+val);
+}
+
+function toggleMission(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+}
+
+function addMission() {
+  const div = document.createElement('div');
+  div.className = 'mission-item';
+  div.innerHTML = `<div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Nueva tarea...">`;
+  document.getElementById('mission-list').appendChild(div);
+}
+
+function saveBitacora() {
+  const curso = document.getElementById('b-curso').value.trim();
+  const planeta = document.getElementById('b-planeta').value.trim();
+  
+  if (!curso || !planeta) {
+    alert('❌ Completa al menos "Curso" y "Nombre del planeta"');
+    return;
+  }
+  const missions = [];
+  document.querySelectorAll('#mission-list .mission-item').forEach(item => {
+    const textEl = item.querySelector('.mission-text');
+    const check = item.querySelector('.mission-check');
+    if (textEl && textEl.value.trim()) {
+      missions.push({
+        text: textEl.value.trim(),
+        done: check ? check.classList.contains('done') : false
+      });
+    }
+  });
+ const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t => t.textContent.trim());
+
+  const bita = {
+    id: editingBitaId || 'b' + Date.now(),
+    planeta: planetEmoji || '🪐',
+    curso,
+    planeta_nombre: planeta,
+    fecha: document.getElementById('b-fecha').value,
+    sesion: document.getElementById('b-sesion').value,
+    duracion: document.getElementById('b-duracion').value,
+    resumen: document.getElementById('b-resumen').value,
+    importante: document.getElementById('b-importante').value,
+    sorpresa: document.getElementById('b-sorpresa').value,
+    conceptos: document.getElementById('b-conceptos').value,
+    relaciones: document.getElementById('b-relaciones').value,
+    ejemplo: document.getElementById('b-ejemplo').value,
+    feeling: feelingVal,
+    diff: diffVal,
+    mejora: document.getElementById('b-mejora').value,
+    tags: tags,
+    missions: missions,
+    proxima: document.getElementById('b-proxima').value,
+    savedAt: new Date().toISOString()
+  };
+
+  if (editingBitaId) {
+    const idx = state.bitacoras.findIndex(b => b.id === editingBitaId);
+    if (idx >= 0) state.bitacoras[idx] = bita;
+  } else {
+    state.bitacoras.unshift(bita);
+  }
+
+  save();
+  editingBitaId = null;
+
+  const banner = document.getElementById('saved-banner');
+  banner.style.display = 'block';
+  setTimeout(() => banner.style.display = 'none', 3000);
+
+  alert('✅ Bitácora guardada correctamente');
+}
+function confirmClearBita() {
+  if (confirm('¿Limpiar todos los campos de la plantilla? Las bitácoras guardadas no se perderán.')) {
+    resetBitaForm();
+  }
+}
+function resetBitaForm() {
+  editingBitaId = null;
+  document.querySelectorAll('#bita-form input, #bita-form textarea').forEach(el => el.value = '');
+  document.getElementById('b-fecha').valueAsDate = new Date();
+  planetEmoji = '🪐';
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((b, i) => b.classList.toggle('picked', i === 0));
+  feelingVal = 0;
+  diffVal = '';
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.diff-btn').forEach(b => b.className = 'diff-btn');
+  document.querySelectorAll('.etag').forEach(t => t.classList.remove('sel'));
+
+  const ml = document.getElementById('mission-list');
+  ml.innerHTML = `
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar los conceptos de la sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz de esta sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Investigar más sobre..."></div>`;
+}
+
+// ── EXPORTAR PDF (ahora sí funciona) ──
+function printBitacora() {
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const curso = get('b-curso'); const planeta = get('b-planeta');
+  if(!curso && !planeta) { alert('Llena al menos el curso y nombre del planeta antes de exportar.'); return; }
+  const fecha = get('b-fecha'); const sesion = get('b-sesion'); const duracion = get('b-duracion');
+  const resumen = get('b-resumen'); const importante = get('b-importante'); const sorpresa = get('b-sorpresa');
+  const conceptos = get('b-conceptos'); const relaciones = get('b-relaciones'); const ejemplo = get('b-ejemplo');
+  const mejora = get('b-mejora'); const proxima = get('b-proxima');
+  const feelingEmojis = ['','😴','😕','😐','🙂','🤩'];
+  const diffLabel = diffVal==='easy'?'Fácil 🟢':diffVal==='mid'?'Regular 🟡':diffVal==='hard'?'Difícil 🔴':'—';
+  const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t=>t.textContent.trim()).join(' · ');
+  const missions = Array.from(document.querySelectorAll('#mission-list .mission-item')).map(item => {
+    const t = item.querySelector('.mission-text'); const c = item.querySelector('.mission-check');
+    return t && t.value.trim() ? '<li style="margin-bottom:5px">'+(c&&c.classList.contains('done')?'✅ ':'⬜ ')+t.value.trim()+'</li>' : '';
+  }).join('');
+  const sec = (icon, title, body) => body ? '<div class="sec"><div class="sec-t">'+icon+' '+title+'</div><div class="sec-b">'+body.replace(/\n/g,'<br>')+'</div></div>' : '';
+  const w = window.open('','_blank','width=800,height=900');
+  if(!w) { alert('Activa las ventanas emergentes para exportar el PDF.'); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  w.document.write('<title>Bitácora — '+planeta+'</title>');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#fff;color:#1a1a2e;max-width:720px;margin:0 auto;padding:32px 28px;font-size:14px;line-height:1.6}.header{text-align:center;margin-bottom:28px;border-bottom:2px solid #3a1a8a;padding-bottom:20px}.planet{font-size:52px;display:block;margin-bottom:10px}.title{font-size:24px;font-weight:700;color:#3a1a8a;margin-bottom:4px}.subtitle{font-size:13px;color:#666}.meta-row{display:flex;flex-wrap:wrap;gap:10px;background:#f5f3ff;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px}.meta-item strong{color:#3a1a8a}.sec{border:1px solid #ddd;border-radius:8px;padding:14px 16px;margin-bottom:14px;break-inside:avoid}.sec-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#3a1a8a;margin-bottom:8px}.sec-b{font-size:14px;color:#222;white-space:pre-wrap}.tags{font-size:13px;color:#5a3a9a;padding:10px 14px;background:#f5f3ff;border-radius:8px;margin-top:14px}.footer{text-align:center;font-size:11px;color:#aaa;margin-top:24px;padding-top:14px;border-top:1px solid #eee}@media print{body{padding:20px}}</style>');
+  w.document.write('</head><body>');
+  w.document.write('<div class="header"><span class="planet">'+(planetEmoji||'🪐')+'</span><div class="title">'+(planeta||'Bitácora')+'</div><div class="subtitle">Bitácora de Viaje · StudySpace</div></div>');
+  w.document.write('<div class="meta-row"><span class="meta-item"><strong>Curso:</strong> '+(curso||'—')+'</span><span class="meta-item"><strong>Sesión:</strong> '+(sesion||'—')+'</span><span class="meta-item"><strong>Fecha:</strong> '+(fecha||'—')+'</span><span class="meta-item"><strong>Duración:</strong> '+(duracion||'—')+'</span><span class="meta-item"><strong>Ánimo:</strong> '+(feelingEmojis[feelingVal]||'—')+'</span><span class="meta-item"><strong>Dificultad:</strong> '+diffLabel+'</span></div>');
+  w.document.write(sec('📝','Resumen de la sesión',resumen));
+  w.document.write(sec('⭐','Lo más importante',importante));
+  w.document.write(sec('💡','Sorpresas y dudas',sorpresa));
+  if(conceptos||relaciones||ejemplo) w.document.write(sec('🧬','Conceptos clave',(conceptos?'Términos: '+conceptos:'')+(relaciones?'\n\nRelaciones: '+relaciones:'')+(ejemplo?'\n\nEjemplo real: '+ejemplo:'')));
+  if(missions) w.document.write('<div class="sec"><div class="sec-t">🎯 Misiones pendientes</div><ul style="padding-left:20px;margin-top:4px">'+missions+'</ul></div>');
+  if(mejora||proxima) w.document.write(sec('🚀','Próximos pasos',(mejora?'A mejorar: '+mejora:'')+(proxima?'\n\nPróxima sesión: '+proxima:'')));
+  if(tags) w.document.write('<div class="tags">🏷️ '+tags+'</div>');
+  w.document.write('<div class="footer">StudySpace · '+new Date().toLocaleDateString("es-PE")+' · Cada sesión es un planeta por descubrir 🚀</div>');
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(()=>w.print(), 700);
+}
+// ── MODALS ──
+function openModal(id) {
+  if(id==='modal-curso') buildEmojiRow();
+  if(id==='modal-paste-quiz' || id==='modal-paste-flash') populateSelects();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { 
+  document.getElementById(id).classList.remove('open'); 
+}
+
+
+// ── SIMULACRO ──
+let simMode = '4x10';
+let simTypes = ['libre'];
+let simQuestions = [];
+let simCurrentQ = 0;
+let simAnswers = [];
+let simTimer = null;
+let simTotalSecs = 600;
+let simSecsLeft = 600;
+let simCustomQuestions = null;
+
+function populateSimCourse() {
+  const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  const el = document.getElementById('sim-course-sel');
+  if(el) { el.innerHTML = opts; renderSimLibrary(); }
+}
+
+function selectSimMode(mode, el) {
+  simMode = mode;
+  document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+}
+
+function toggleSimType(type, el) {
+  el.classList.toggle('active');
+  if(el.classList.contains('active')) { if(!simTypes.includes(type)) simTypes.push(type); }
+  else { simTypes = simTypes.filter(t=>t!==type); if(!simTypes.length){simTypes.push(type);el.classList.add('active');} }
+}
+
+function renderSimLibrary() {
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  const acc = document.getElementById('sim-library-accordion');
+  if(!acc) return;
+  const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
+  if(!sessions.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:24px;color:var(--hint);font-size:13px;">Sin sesiones en la biblioteca. Agrega una con el botón de abajo.</div>';
+    return;
+  }
+  acc.innerHTML = sessions.map((s,i)=>`
+    <div class="sim-lib-item">
+      <div class="sim-lib-header" onclick="toggleSimLib(${i})">
+        <div>
+          <div style="font-size:14px;font-weight:600;">${s.num||''} ${s.name||''}</div>
+          <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;">${(s.questions||[]).length} preguntas guardadas</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="badge badge-purple">${(s.questions||[]).length} preg.</span>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteSimSession('${s.id}')">🗑️</button>
+          <span id="slib-arrow-${i}" style="color:var(--muted);font-size:12px;">▼</span>
+        </div>
+      </div>
+      <div class="sim-lib-body" id="slib-body-${i}">
+        <div style="padding-top:12px;font-size:13px;color:var(--muted);">
+          ${(s.questions||[]).slice(0,3).map((q,qi)=>`<div style="padding:4px 0;border-bottom:0.5px solid var(--border);">${qi+1}. ${q.q||''}</div>`).join('')}
+          ${(s.questions||[]).length>3?`<div style="color:var(--hint);font-size:12px;margin-top:4px;">...y ${(s.questions||[]).length-3} más</div>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSimLib(i) {
+  const body = document.getElementById('slib-body-'+i);
+  const arrow = document.getElementById('slib-arrow-'+i);
+  if(body) body.classList.toggle('open');
+  if(arrow) arrow.textContent = body&&body.classList.contains('open')?'▲':'▼';
+}
+
+function saveSimLibSession() {
+  const num = document.getElementById('sim-lib-num').value.trim();
+  const name = document.getElementById('sim-lib-name').value.trim();
+  const raw = document.getElementById('sim-lib-json').value.trim();
+  if(!name&&!num) { alert('Agrega al menos el nombre de la sesión.'); return; }
+  if(!raw) { alert('Agrega las preguntas en formato JSON.'); return; }
+  let questions;
+  try { questions = JSON.parse(raw); } catch(e) { alert('JSON inválido. Revisa el formato.'); return; }
+  if(!Array.isArray(questions)||!questions[0].q) { alert('Cada pregunta necesita al menos "q" y "tipo".'); return; }
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  if(!state.simLibrary) state.simLibrary = [];
+  state.simLibrary.push({id:'sl'+Date.now(), courseId:cid, num, name, questions});
+  save();
+  document.getElementById('sim-lib-num').value='';
+  document.getElementById('sim-lib-name').value='';
+  document.getElementById('sim-lib-json').value='';
+  closeModal('modal-add-sim-session');
+  renderSimLibrary();
+  alert('Sesión agregada a la biblioteca con '+questions.length+' preguntas.');
+}
+
+function deleteSimSession(id) {
+  if(!confirm('¿Eliminar esta sesión de la biblioteca?')) return;
+  state.simLibrary = (state.simLibrary||[]).filter(s=>s.id!==id);
+  save(); renderSimLibrary();
+}
+
+function loadCustomSimExam() {
+  const raw = document.getElementById('sim-custom-json').value.trim();
+  if(!raw) { alert('Agrega las preguntas.'); return; }
+  let qs;
+  try { qs = JSON.parse(raw); } catch(e) { alert('JSON inválido.'); return; }
+  if(!Array.isArray(qs)||!qs[0].q) { alert('Formato incorrecto.'); return; }
+  simCustomQuestions = qs;
+  closeModal('modal-sim-custom');
+  buildAndStartExam(qs);
+}
+
+function startSimulacro() {
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
+  if(!sessions.length && !simCustomQuestions) {
+    alert('Agrega sesiones a tu biblioteca primero, o crea un examen personalizado.');
+    return;
+  }
+  // Build question pool from all sessions
+  let pool = [];
+  sessions.forEach(s => { if(s.questions) pool.push(...s.questions); });
+  if(!pool.length) pool = simCustomQuestions || [];
+  // Shuffle
+  pool = pool.sort(()=>Math.random()-0.5);
+  // Filter by type
+  const filtered = pool.filter(q => simTypes.includes(q.tipo||'libre'));
+  const finalPool = filtered.length >= 2 ? filtered : pool;
+  buildAndStartExam(finalPool);
+}
+
+function buildAndStartExam(pool) {
+  const maxQ = simMode==='4x10'?4:simMode==='5x30'?10:20;
+  const totalSecs = simMode==='4x10'?600:simMode==='5x30'?1800:3600;
+  simQuestions = pool.slice(0, maxQ);
+  if(!simQuestions.length) { alert('No hay preguntas disponibles.'); return; }
+  simCurrentQ = 0;
+  simAnswers = new Array(simQuestions.length).fill('');
+  simTotalSecs = totalSecs;
+  simSecsLeft = totalSecs;
+  document.getElementById('sim-setup').style.display = 'none';
+  document.getElementById('sim-results').style.display = 'none';
+  document.getElementById('sim-exam').style.display = 'block';
+  const labels = {'4x10':'Examen corto · 10 min','5x30':'Examen mediano · 30 min','20x60':'Examen final · 1 hora'};
+  document.getElementById('sim-exam-label').textContent = labels[simMode]||'Simulacro';
+  startSimTimer();
+  renderSimQuestion();
+}
+
+function renderSimQuestion() {
+  const q = simQuestions[simCurrentQ];
+  document.getElementById('sim-q-indicator').textContent = 'Pregunta '+(simCurrentQ+1)+' de '+simQuestions.length;
+  document.getElementById('sim-q-num').textContent = 'Pregunta '+(simCurrentQ+1);
+  document.getElementById('sim-q-text').textContent = q.q||'';
+  const casoBox = document.getElementById('sim-caso-box');
+  if(q.caso&&q.caso.trim()) { casoBox.style.display='block'; casoBox.textContent=q.caso; }
+  else { casoBox.style.display='none'; }
+  const freeArea = document.getElementById('sim-free-area');
+  const choiceArea = document.getElementById('sim-choice-area');
+  if(q.tipo==='marcada'&&q.opts) {
+    freeArea.style.display='none'; choiceArea.style.display='block';
+    document.getElementById('sim-choices-list').innerHTML = q.opts.map((o,i)=>
+      `<div class="option" onclick="simSelectChoice(${i},this)"><div class="opt-circle">${String.fromCharCode(65+i)}</div>${o}</div>`
+    ).join('');
+  } else {
+    freeArea.style.display='block'; choiceArea.style.display='none';
+    document.getElementById('sim-answer-free').value = simAnswers[simCurrentQ]||'';
+  }
+  const nextBtn = document.getElementById('sim-next-btn');
+  if(nextBtn) nextBtn.textContent = simCurrentQ===simQuestions.length-1 ? 'Finalizar y ver resultados →' : 'Siguiente →';
+}
+
+function simSelectChoice(idx, el) {
+  document.querySelectorAll('#sim-choices-list .option').forEach(o=>o.classList.remove('correct'));
+  el.classList.add('correct');
+  simAnswers[simCurrentQ] = idx;
+}
+
+function simNextQuestion() {
+  const q = simQuestions[simCurrentQ];
+  if(q.tipo!=='marcada') simAnswers[simCurrentQ] = document.getElementById('sim-answer-free').value.trim();
+  simCurrentQ++;
+  if(simCurrentQ>=simQuestions.length) endSimulacro();
+  else renderSimQuestion();
+}
+
+function startSimTimer() {
+  if(simTimer) clearInterval(simTimer);
+  simTimer = setInterval(()=>{
+    simSecsLeft--;
+    const m=Math.floor(simSecsLeft/60); const s=simSecsLeft%60;
+    const el=document.getElementById('sim-clock');
+    if(el) el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const bar=document.getElementById('sim-timer-bar');
+    if(bar) bar.style.width=(simSecsLeft/simTotalSecs*100)+'%';
+    const clockEl=document.getElementById('sim-clock');
+    if(clockEl) clockEl.style.color=simSecsLeft<=60?'#ff6464':'';
+    if(simSecsLeft<=0) endSimulacro();
+  },1000);
+}
+
+async function endSimulacro() {
+  if(simTimer) clearInterval(simTimer);
+  const q=simQuestions[simCurrentQ];
+  if(q&&q.tipo!=='marcada') {
+    const el=document.getElementById('sim-answer-free');
+    if(el) simAnswers[simCurrentQ]=el.value.trim();
+  }
+  document.getElementById('sim-exam').style.display='none';
+  document.getElementById('sim-results').style.display='block';
+  document.getElementById('sim-res-emoji').textContent='⏳';
+  document.getElementById('sim-res-score').textContent='...';
+  document.getElementById('sim-res-msg').textContent='La IA está evaluando tus respuestas...';
+  document.getElementById('sim-feedback-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);">Evaluando 🧠...</div>';
+  await evaluateSimulacro();
+}
+
+async function evaluateSimulacro() {
+  const ptsPerQ = 20/simQuestions.length;
+  let total=0; let feedbackHTML='';
+  for(let i=0;i<simQuestions.length;i++){
+    const q=simQuestions[i]; const ans=simAnswers[i];
+    let score=0; let fb=''; let missing='';
+    if(q.tipo==='marcada'){
+      score=(ans===q.ans)?ptsPerQ:0;
+      fb=ans===q.ans?'Respuesta correcta ✓':'Respuesta incorrecta. La correcta era: '+(q.opts?q.opts[q.ans]:'');
+    } else {
+      try {
+        const prompt='Eres profesor universitario de medicina evaluando un examen.\nPregunta: "'+q.q+'"\nRespuesta ideal: "'+(q.respuesta_ideal||'No especificada')+'"\nRespuesta del estudiante: "'+(ans||'(sin respuesta)')+'"\n\nEvalúa en escala 0 a '+ptsPerQ.toFixed(1)+'. Considera precisión, terminología y completitud.\nResponde SOLO en JSON: {"puntaje":<número>,"feedback":"<2-3 oraciones>","falto":"<conceptos clave omitidos o incorrecto, o N/A>"}';
+        const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+        const data=await resp.json();
+        const text=data.content[0].text.replace(/```json|```/g,'').trim();
+        const res=JSON.parse(text);
+        score=Math.min(parseFloat(res.puntaje)||0,ptsPerQ);
+        fb=res.feedback||''; missing=res.falto&&res.falto!=='N/A'?res.falto:'';
+      } catch(e){score=ans&&ans.length>15?ptsPerQ*0.4:0;fb='No se pudo evaluar automáticamente.';}
+    }
+    total+=score;
+    const cls=score>=ptsPerQ*0.75?'#9fefd4':score>=ptsPerQ*0.4?'#ffb450':'#ff9090';
+    feedbackHTML+=`<div class="feedback-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;font-family:'Space Mono',monospace;">Pregunta ${i+1}</div>
+        <div style="font-size:18px;font-weight:700;color:${cls};">${score.toFixed(1)}/${ptsPerQ.toFixed(1)}</div>
+      </div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">${q.q}</div>
+      ${ans?`<div style="font-size:13px;color:var(--muted);padding:8px 12px;background:var(--surface2);border-radius:6px;margin-bottom:8px;"><strong>Tu respuesta:</strong> ${ans}</div>`:'<div style="font-size:13px;color:var(--red);margin-bottom:8px;">Sin respuesta</div>'}
+      <div style="font-size:13px;line-height:1.5;">${fb}${missing?` <span style="color:var(--amber);">Faltó: ${missing}</span>`:''}</div>
+    </div>`;
+  }
+  const final=Math.min(parseFloat(total.toFixed(1)),20);
+  const emoji=final>=18?'🏆':final>=15?'🌟':final>=11?'💪':final>=7?'📚':'😅';
+  const msg=final>=18?'¡Perfecto! Dominas el tema completamente.':final>=15?'¡Muy bien! Estás lista para el examen.':final>=11?'Aprobado. Repasa los conceptos que fallaste.':final>=7?'Sigue practicando, vas mejorando.':'Necesitas repasar más. ¡No te rindas!';
+  document.getElementById('sim-res-emoji').textContent=emoji;
+  document.getElementById('sim-res-score').textContent=final+'/20';
+  document.getElementById('sim-res-msg').textContent=msg;
+  document.getElementById('sim-feedback-list').innerHTML=feedbackHTML;
+}
+
+function resetSimulacro() {
+  simMode='4x10'; simTypes=['libre']; simCustomQuestions=null;
+  simQuestions=[]; simCurrentQ=0; simAnswers=[];
+  document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.sim-type-btn').forEach(b=>{ b.classList.remove('active'); if(b.id==='stype-libre') b.classList.add('active'); });
+  if(simTimer) clearInterval(simTimer);
+  document.getElementById('sim-setup').style.display='block';
+  document.getElementById('sim-exam').style.display='none';
+  document.getElementById('sim-results').style.display='none';
+  const clockEl=document.getElementById('sim-clock');
+  if(clockEl) clockEl.style.color='';
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  populateSelects();
+  renderCourses();
+  document.getElementById('b-fecha').valueAsDate = new Date();
+});
 </script>
+<!-- MODAL: add sim session to library -->
+<div class="overlay" id="modal-add-sim-session">
+  <div class="modal">
+    <div class="modal-title">Agregar sesión a biblioteca</div>
+    <div class="hint-box">
+      Formato JSON para preguntas:<br>
+      <code>[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta...","caso":"Texto del caso (opcional)","opts":["A","B","C"],"ans":0}]</code><br><br>
+      <code>tipo</code>: "libre" o "marcada" &nbsp;|&nbsp; <code>caso</code>: solo para casos clínicos
+    </div>
+    <label>Número de sesión</label>
+    <input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
+    <label>Nombre / tema</label>
+    <input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos de Bioseguridad">
+    <label>JSON de preguntas (mínimo 10 para 4 modelos)</label>
+    <textarea id="sim-lib-json" style="min-height:100px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","respuesta_ideal":"Conjunto de normas..."}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar en biblioteca</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: custom sim exam -->
+<div class="overlay" id="modal-sim-custom">
+  <div class="modal">
+    <div class="modal-title">Crear examen personalizado</div>
+    <div class="hint-box">Mismo formato JSON. Puedes mezclar preguntas libres, marcadas y con casos.</div>
+    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta ideal..."}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
+      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
