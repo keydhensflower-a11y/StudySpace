@@ -776,203 +776,8 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
-<!-- PROGRESO -->
-
-<!-- SIMULACRO -->
-<div id="tab-simulacro" class="page">
-  <div class="page-title">Simulacro de Examen 🔬</div>
-  <div class="page-sub">Practica con cronómetro, casos clínicos y evaluación por IA.</div>
-
-  <div id="sim-setup">
-    <div class="section-label">Formato de examen</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
-      <div class="card sim-mode-card" onclick="selectSimMode('4x10',this)" id="mode-4x10">
-        <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
-        <div style="font-size:14px;font-weight:600;">Examen corto</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">4 preguntas · 10 min · c/u vale 5 pts</div>
-      </div>
-      <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="mode-5x30">
-        <div style="font-size:28px;margin-bottom:8px;">📋</div>
-        <div style="font-size:14px;font-weight:600;">Examen mediano</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">5 casos · 2 preg. c/u · 30 min</div>
-      </div>
-      <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="mode-20x60">
-        <div style="font-size:28px;margin-bottom:8px;">🎓</div>
-        <div style="font-size:14px;font-weight:600;">Examen final</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;">20 preguntas · 1 hora</div>
-      </div>
-    </div>
-
-    <div class="section-label">Tipo de preguntas</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-      <button class="sim-type-btn active" id="stype-libre" onclick="toggleSimType('libre',this)">✍️ Respuesta libre</button>
-      <button class="sim-type-btn" id="stype-marcada" onclick="toggleSimType('marcada',this)">🔘 Alternativas</button>
-      <button class="sim-type-btn" id="stype-caso" onclick="toggleSimType('caso',this)">🏥 Caso clínico</button>
-    </div>
-
-    <div class="section-label">Curso</div>
-    <select id="sim-course-sel" style="margin-bottom:16px;" onchange="renderSimLibrary()"></select>
-
-    <div class="section-label">Biblioteca de sesiones</div>
-    <div class="hint-box" style="margin-bottom:12px;">Agrega preguntas por sesión. La IA usará estas para generar tu examen.</div>
-    <div id="sim-library-accordion"></div>
-    <button class="btn btn-primary" style="margin-bottom:20px;" onclick="openModal('modal-add-sim-session')">+ Agregar sesión a biblioteca</button>
-
-    <div class="section-label">O ingresa tu propio examen</div>
-    <button class="btn" onclick="openModal('modal-sim-custom')" style="margin-bottom:20px;">✏️ Crear examen personalizado</button>
-
-    <button class="btn btn-green" style="width:100%;justify-content:center;padding:14px;font-size:15px;" onclick="startSimulacro()">🚀 Iniciar simulacro</button>
-  </div>
-
-  <!-- EXAM SCREEN -->
-  <div id="sim-exam" style="display:none;">
-    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;" id="sim-exam-label">Examen corto</div>
-        <div style="font-size:13px;font-weight:600;" id="sim-q-indicator">Pregunta 1 de 4</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:var(--text);" id="sim-clock">10:00</div>
-        <button class="btn btn-sm btn-danger" onclick="endSimulacro()">Terminar</button>
-      </div>
-    </div>
-    <div style="height:5px;background:var(--surface2);border-radius:3px;margin-bottom:20px;overflow:hidden;">
-      <div id="sim-timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:3px;width:100%;transition:width 1s linear;"></div>
-    </div>
-    <div class="card" id="sim-q-card">
-      <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;line-height:1.7;"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:6px;" id="sim-q-num">Pregunta 1</div>
-      <div style="font-size:15px;font-weight:500;line-height:1.5;margin-bottom:16px;" id="sim-q-text"></div>
-      <div id="sim-free-area">
-        <textarea id="sim-answer-free" style="min-height:120px;" placeholder="Escribe tu respuesta con los conceptos y términos correctos..."></textarea>
-        <div style="font-size:11px;color:var(--hint);margin-top:-8px;">Sé precisa. Usa la terminología correcta del tema.</div>
-      </div>
-      <div id="sim-choice-area" style="display:none;">
-        <div id="sim-choices-list"></div>
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:16px;" onclick="simNextQuestion()" id="sim-next-btn">Siguiente →</button>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div id="sim-results" style="display:none;">
-    <div class="card" style="text-align:center;padding:36px 20px;">
-      <div style="font-size:60px;margin-bottom:10px;" id="sim-res-emoji">🎉</div>
-      <div style="font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px;">CALIFICACIÓN FINAL</div>
-      <div style="font-size:54px;font-weight:700;letter-spacing:-0.03em;" id="sim-res-score">—</div>
-      <div style="font-size:14px;color:var(--muted);margin:10px 0 24px;" id="sim-res-msg"></div>
-      <button class="btn btn-primary" onclick="resetSimulacro()">Nuevo simulacro</button>
-    </div>
-    <div class="section-label" style="margin-top:20px;">Retroalimentación detallada</div>
-    <div id="sim-feedback-list"></div>
-  </div>
-</div>
 
 <!-- PROGRESO -->
-
-<!-- SIMULACRO -->
-<div id="tab-simulacro" class="page">
-  <div class="page-title">Simulacro de Examen 🧪</div>
-  <div class="page-sub">Practica con casos clínicos, respuesta libre y cronómetro real.</div>
-
-  <!-- SETUP SCREEN -->
-  <div id="sim-setup">
-    <div class="section-label">Configurar examen</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('4x10')" id="mode-4x10">
-        <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen corto</div>
-        <div style="font-size:12px;color:var(--muted);">4 preguntas · 10 minutos</div>
-        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 5 pts</div>
-      </div>
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('5x30')" id="mode-5x30">
-        <div style="font-size:28px;margin-bottom:8px;">📋</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen mediano</div>
-        <div style="font-size:12px;color:var(--muted);">5 casos · 2 preguntas c/u · 30 min</div>
-        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Cada pregunta vale 2 pts</div>
-      </div>
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('20x60')" id="mode-20x60">
-        <div style="font-size:28px;margin-bottom:8px;">🎓</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Examen final</div>
-        <div style="font-size:12px;color:var(--muted);">20 preguntas · 1 hora</div>
-        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Mezcla de todos los tipos</div>
-      </div>
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onclick="selectMode('custom')" id="mode-custom">
-        <div style="font-size:28px;margin-bottom:8px;">⚙️</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Personalizado</div>
-        <div style="font-size:12px;color:var(--muted);">Tú decides tiempo y preguntas</div>
-        <div style="font-size:11px;color:var(--hint);margin-top:4px;">Control total</div>
-      </div>
-    </div>
-
-    <div class="section-label">Tipo de preguntas</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
-      <button class="sim-type-btn active" onclick="toggleType('libre',this)" id="type-libre">✍️ Respuesta libre</button>
-      <button class="sim-type-btn" onclick="toggleType('marcada',this)" id="type-marcada">🔘 Respuesta marcada</button>
-      <button class="sim-type-btn" onclick="toggleType('caso',this)" id="type-caso">🏥 Caso clínico</button>
-    </div>
-
-    <div class="section-label">Curso</div>
-    <select id="sim-course" style="margin-bottom:16px;"></select>
-
-    <div class="section-label">Fuente de preguntas</div>
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="startSimWithLibrary()">📚 Usar biblioteca</button>
-      <button class="btn" onclick="openModal('modal-sim-custom')">✏️ Ingresar mis casos</button>
-    </div>
-  </div>
-
-  <!-- EXAM SCREEN -->
-  <div id="sim-exam" style="display:none;">
-    <!-- Timer bar -->
-    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="font-size:13px;color:var(--muted);" id="sim-mode-label">Examen corto</div>
-        <span class="badge badge-purple" id="sim-q-counter">Pregunta 1/4</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="font-size:22px;font-weight:600;font-family:'Space Mono',monospace;color:var(--text);" id="sim-timer">10:00</div>
-        <button class="btn btn-sm btn-danger" onclick="endExam()">Terminar</button>
-      </div>
-    </div>
-    <div style="height:4px;background:var(--surface2);border-radius:2px;margin-bottom:20px;overflow:hidden;">
-      <div id="timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:2px;transition:width 1s linear;width:100%;"></div>
-    </div>
-
-    <!-- Question -->
-    <div class="card" id="sim-question-card">
-      <div id="sim-case-box" style="display:none;background:var(--surface2);border-radius:var(--radius);padding:16px;margin-bottom:16px;font-size:14px;line-height:1.7;color:var(--text);border-left:3px solid var(--purple);"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;font-family:'Space Mono',monospace;" id="sim-q-label">Pregunta 1</div>
-      <div style="font-size:15px;font-weight:500;margin-bottom:16px;line-height:1.5;" id="sim-q-text"></div>
-      <!-- Free response -->
-      <div id="sim-free-area">
-        <textarea id="sim-answer" style="min-height:120px;" placeholder="Escribe tu respuesta aquí..."></textarea>
-        <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sé preciso/a. Usa los términos correctos del tema.</div>
-      </div>
-      <!-- Multiple choice -->
-      <div id="sim-choice-area" style="display:none;">
-        <div id="sim-choices"></div>
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="nextSimQuestion()">
-        Siguiente pregunta →
-      </button>
-    </div>
-  </div>
-
-  <!-- RESULTS SCREEN -->
-  <div id="sim-results" style="display:none;">
-    <div class="card" style="text-align:center;padding:32px 20px;">
-      <div style="font-size:56px;margin-bottom:12px;" id="sim-result-emoji">🎉</div>
-      <div style="font-size:14px;color:var(--muted);margin-bottom:8px;font-family:'Space Mono',monospace;">CALIFICACIÓN FINAL</div>
-      <div style="font-size:52px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;" id="sim-result-score">18/20</div>
-      <div style="font-size:14px;color:var(--muted);margin-bottom:20px;" id="sim-result-msg"></div>
-      <button class="btn btn-primary" style="margin:0 auto;" onclick="resetSimulacro()">Nuevo simulacro</button>
-    </div>
-    <div class="section-label" style="margin-top:24px;">Retroalimentación por pregunta</div>
-    <div id="sim-feedback-list"></div>
-  </div>
-</div>
-
 <div id="tab-progreso" class="page">
   <div class="page-title">Mi progreso</div>
   <div class="page-sub">Resumen de tu desempeño en quizzes y sesiones.</div>
@@ -1049,7 +854,8 @@ let state = {
   flashDecks: [],
   stats: {total:0, correct:0},
   sessions: [],
-  bitacoras: []
+  bitacoras: [],
+  simLibrary: []
 };
 
 function save() {
@@ -1061,11 +867,14 @@ function loadState() {
   if (saved) {
     try {
       state = JSON.parse(saved);
+      // Ensure new fields exist in old saves
+      if (!state.simLibrary) state.simLibrary = [];
+      if (!state.bitacoras) state.bitacoras = [];
     } catch(e) {
       console.warn("Estado corrupto, usando valores por defecto");
     }
   }
-  localStorage.removeItem('ss_state'); // limpiamos versión antigua
+  localStorage.removeItem('ss_state');
 }
 
 // Cargar estado al iniciar
@@ -2070,8 +1879,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 div>
-}
 
-</script>
 </body>
 </html>
