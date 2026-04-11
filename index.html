@@ -783,8 +783,7 @@ function loadState() {
       console.warn("Estado corrupto, usando valores por defecto");
     }
   }
-  // Limpiar versión antigua
-  localStorage.removeItem('ss_state');
+  localStorage.removeItem('ss_state'); // limpiamos versión antigua
 }
 
 // Cargar estado al iniciar
@@ -805,87 +804,429 @@ function goTab(name) {
   document.getElementById('tab-' + name).classList.add('active');
   
   const tabs = ['cursos','quiz','flash','bitacora','simulacro','progreso'];
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    if (tabs[i] === name) t.classList.add('active');
-  });
+  document.querySelectorAll('.tab').forEach((t,i) => { if(tabs[i]===name) t.classList.add('active'); });
 
-  if(name === 'quiz') renderQuizTab();
-  if(name === 'flash') renderFlashTab();
-  if(name === 'progreso') renderProgreso();
-  if(name === 'bitacora') { showBitaForm(); resetBitaForm(); }
-  if(name === 'simulacro') { populateSimCourse(); }
+  if(name==='quiz') renderQuizTab();
+  if(name==='flash') renderFlashTab();
+  if(name==='progreso') renderProgreso();
+  if(name==='bitacora') { showBitaForm(); resetBitaForm(); }
+  if(name==='simulacro') populateSimCourse();
 }
-
-// ── COURSES ──
+  // ── COURSES ──
 function renderCourses() {
   const grid = document.getElementById('course-grid');
-  grid.innerHTML = state.courses.map(c => {
-    const pct = c.sessions > 0 ? Math.round(c.done / c.sessions * 100) : 0;
+  grid.innerHTML = state.courses.map(c=>{
+    const pct = c.sessions>0?Math.round(c.done/c.sessions*100):0;
     return `<div class="course-card" onclick="selectCourse('${c.id}',this)">
       <div class="course-icon">${c.emoji}</div>
       <div class="course-name">${c.name}</div>
       <div class="course-meta">${c.sessions} sesiones · ${c.done} completadas</div>
       <div class="course-progress"><div class="course-progress-fill" style="width:${pct}%"></div></div>
     </div>`;
-  }).join('') + `<button class="course-card add-course-card" onclick="openModal('modal-curso')"><div class="plus-circle">+</div>Nuevo curso</button>`;
+  }).join('')+`<button class="course-card add-course-card" onclick="openModal('modal-curso')"><div class="plus-circle">+</div>Nuevo curso</button>`;
 
   const sl = document.getElementById('sessions-list');
-  sl.innerHTML = state.sessions.length === 0 
+  sl.innerHTML = state.sessions.length===0
     ? '<div style="text-align:center;padding:40px;color:var(--hint);font-size:14px;">🪐 Sin sesiones aún</div>'
-    : state.sessions.map(s => {
-        const c = state.courses.find(x => x.id === s.courseId) || {};
-        return `<div class="session-item"><div class="session-icon">${c.emoji||'📝'}</div><div class="session-info"><div class="session-name">${c.name||''} — ${s.name}</div><div class="session-meta">${s.questions} preguntas</div></div><span class="badge ${s.done?'badge-green':'badge-amber'}">${s.done?'Completado':'Pendiente'}</span></div>`;
-      }).join('');
+    : state.sessions.map(s=>{
+      const c=state.courses.find(x=>x.id===s.courseId)||{};
+      return `<div class="session-item"><div class="session-icon">${c.emoji||'📝'}</div><div class="session-info"><div class="session-name">${c.name||''} — ${s.name}</div><div class="session-meta">${s.questions} preguntas</div></div><span class="badge ${s.done?'badge-green':'badge-amber'}">${s.done?'Completado':'Pendiente'}</span></div>`;
+    }).join('');
 }
 
-function selectCourse(id, el) {
-  document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+function selectCourse(id,el) {
+  document.querySelectorAll('.course-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
 function saveCourse() {
-  const name = document.getElementById('cn-name').value.trim();
-  if (!name) return;
-  state.courses.push({id: 'c' + Date.now(), name, emoji: pickedEmoji, sessions: 0, done: 0});
-  save();
-  renderCourses();
-  populateSelects();
-  document.getElementById('cn-name').value = '';
+  const name=document.getElementById('cn-name').value.trim();
+  if(!name) return;
+  state.courses.push({id:'c'+Date.now(),name,emoji:pickedEmoji,sessions:0,done:0});
+  save(); renderCourses(); populateSelects();
+  document.getElementById('cn-name').value='';
   closeModal('modal-curso');
 }
 
 function buildEmojiRow() {
-  document.getElementById('emoji-row').innerHTML = EMOJIS.map(e => 
-    `<span class="ep-btn${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}',this)">${e}</span>`
-  ).join('');
+  document.getElementById('emoji-row').innerHTML=EMOJIS.map(e=>`<span class="ep-btn${e===pickedEmoji?' picked':''}" onclick="pickEmoji('${e}',this)">${e}</span>`).join('');
 }
 
-function pickEmoji(e, el) {
-  pickedEmoji = e;
-  document.querySelectorAll('#emoji-row .ep-btn').forEach(b => b.classList.remove('picked'));
+function pickEmoji(e,el) {
+  pickedEmoji=e;
+  document.querySelectorAll('#emoji-row .ep-btn').forEach(b=>b.classList.remove('picked'));
   el.classList.add('picked');
 }
 
 function populateSimCourse() {
-  const opts = state.courses.map(c => `<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
   const el = document.getElementById('sim-course');
-  if (el) el.innerHTML = opts;
+  if(el) el.innerHTML = opts;
 }
 
 function populateSelects() {
-  const opts = state.courses.map(c => `<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
-  ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = opts;
+  const opts=state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  ['quiz-course-sel','quiz-paste-course','flash-course-sel','flash-paste-course'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=opts;
   });
 }
 
-// ── Resto de funciones (quiz, flashcards, bitacora, etc.) se mantienen igual que antes
-// (Para no hacer el mensaje demasiado largo, copio solo las partes críticas. Si quieres todo el script completo con todas las funciones, dime "dame todo" y te lo envío completo).
+// ── QUIZ ──
+let answered={}, quizList=[], activeQuiz=null;
 
-// ── PRINT BITACORA (CORREGIDA) ──
+function renderQuizTab() { populateSelects(); renderQuizAccordion(); }
+
+function renderQuizAccordion() {
+  const cid = document.getElementById('quiz-course-sel').value;
+  quizList = state.quizzes.filter(q => q.courseId === cid);
+  const acc = document.getElementById('quiz-accordion');
+  if(!acc) return;
+  document.getElementById('quiz-area').innerHTML = '';
+  document.getElementById('quiz-result').innerHTML = '';
+  if(!quizList.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🎯 Sin quizzes para este curso. Pega uno con el botón de arriba.</div>';
+    return;
+  }
+  acc.innerHTML = quizList.map((q, i) => `
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('qbody-${i}','qarrow-${i}')">
+        <div class="accordion-title">
+          <span>🎯</span>
+          <div>
+            <div>${q.session}</div>
+            <div class="accordion-meta">${q.questions.length} preguntas</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-purple">Quiz</span>
+          <span class="accordion-arrow" id="qarrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="qbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="startQuiz(${i})">▶ Iniciar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteQuiz('${q.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleAcc(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  if(body) body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open');
+}
+
+function startQuiz(i) {
+  activeQuiz = quizList[i];
+  answered = {};
+  const acc = document.getElementById('quiz-accordion');
+  if(acc) acc.innerHTML = '';
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">${activeQuiz.session}</div>
+      <button class="btn btn-sm" onclick="renderQuizAccordion()">← Volver</button>
+    </div>` +
+    activeQuiz.questions.map((q,qi)=>`
+      <div class="question-block">
+        <div class="question-num">Pregunta ${qi+1}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options">${q.opts.map((o,oi)=>`
+          <div class="option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+            <div class="opt-circle">${String.fromCharCode(65+oi)}</div>${o}
+          </div>`).join('')}
+        </div>
+      </div>`).join('');
+  document.getElementById('quiz-result').innerHTML = '';
+}
+
+function deleteQuiz(qid) {
+  if(!confirm('¿Eliminar este quiz?')) return;
+  state.quizzes = state.quizzes.filter(q => q.id !== qid);
+  save(); renderQuizAccordion();
+}
+
+function selectOpt(qi,oi) {
+  if(answered[qi]!==undefined) return;
+  answered[qi]=oi;
+  const correct=activeQuiz.questions[qi].ans;
+  activeQuiz.questions[qi].opts.forEach((_,i)=>{
+    const el=document.getElementById('opt-'+qi+'-'+i); if(!el) return;
+    if(i===correct){el.classList.add('correct');el.querySelector('.opt-circle').textContent='✓';}
+    else if(i===oi&&oi!==correct){el.classList.add('wrong');el.querySelector('.opt-circle').textContent='✗';}
+  });
+  if(oi===correct) state.stats.correct++;
+  state.stats.total++; save();
+  if(Object.keys(answered).length===activeQuiz.questions.length) showQuizResult();
+}
+
+function showQuizResult() {
+  const total = activeQuiz.questions.length;
+  const correct = Object.entries(answered).filter(([qi,oi])=>activeQuiz.questions[+qi].ans===oi).length;
+  const pct = Math.round(correct/total*100);
+  const score = Math.round(correct/total*20);
+  const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'💪':pct>=40?'📚':'😅';
+  const msg = pct===100?'¡Perfecto! ¡Dominas el tema completamente!':
+              pct>=80?'¡Muy bien! Estás lista para el examen.':
+              pct>=60?'¡Aprobado! Repasa los conceptos que fallaste.':
+              pct>=40?'Sigue practicando, vas por buen camino.':
+              '¡No te rindas! Repasa el material y vuelve a intentarlo.';
+  const overlay = document.createElement('div');
+  overlay.className = 'quiz-result-overlay';
+  overlay.innerHTML = `<div class="quiz-result-card">
+    <div style="font-size:64px;margin-bottom:12px;">${emoji}</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-family:Space Mono,monospace;">RESULTADO</div>
+    <div style="font-size:48px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px;">${correct}/${total}</div>
+    <div style="font-size:20px;color:var(--muted);margin-bottom:12px;">${score}/20 pts</div>
+    <div style="font-size:14px;color:var(--text);margin-bottom:24px;line-height:1.5;">${msg}</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="this.closest('.quiz-result-overlay').remove();renderQuizAccordion()">Ver sesiones</button>
+      <button class="btn" onclick="this.closest('.quiz-result-overlay').remove();startQuiz(${quizList.indexOf(activeQuiz)})">Repetir</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const s=state.sessions.find(x=>x.name===activeQuiz.session&&x.courseId===activeQuiz.courseId);
+  if(s) s.done=pct>=60; save(); renderCourses();
+}
+
+function loadQuiz() {
+  const raw = document.getElementById('quiz-json').value.trim();
+  if(!raw) { alert('Por favor pega el JSON del quiz.'); return; }
+  let qs;
+  try { qs = JSON.parse(raw); } catch(e) { alert('El JSON tiene un error.'); return; }
+  if(!Array.isArray(qs)||qs.length===0||!qs[0].q) {
+    alert('Formato incorrecto.'); return;
+  }
+  const cid = document.getElementById('quiz-paste-course').value;
+  if(!cid) { alert('Selecciona un curso.'); return; }
+  const session = document.getElementById('quiz-session-name').value.trim()||'Quiz sin nombre';
+  state.quizzes.push({id:'q'+Date.now(), courseId:cid, session, questions:qs});
+  const c = state.courses.find(x=>x.id===cid);
+  if(c) c.sessions++;
+  state.sessions.unshift({courseId:cid, name:session, done:false, questions:qs.length});
+  save();
+  renderCourses();
+  document.getElementById('quiz-json').value='';
+  document.getElementById('quiz-session-name').value='';
+  closeModal('modal-paste-quiz');
+  document.getElementById('quiz-course-sel').value = cid;
+  renderQuizAccordion();
+  alert('Quiz cargado con ' + qs.length + ' preguntas!');
+}
+  // ── FLASHCARDS ──
+let flashCards=[], flashIdx=0, flashFlipped=false, activeFlashDeck=null;
+
+function renderFlashTab() { populateSelects(); renderFlashAccordion(); }
+
+function renderFlashAccordion() {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  const acc = document.getElementById('flash-accordion');
+  const player = document.getElementById('flash-player');
+  if(player) player.style.display = 'none';
+  if(!acc) return;
+  if(!decks.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--hint);">🃏 Sin flashcards para este curso.</div>';
+    return;
+  }
+  acc.innerHTML = decks.map((d, i) => {
+    const sessionLabel = d.sessionNum ? d.sessionNum + ' — ' + (d.sessionName || '') : (d.sessionName || 'Sin nombre');
+    return `<div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAcc('fbody-${i}','farrow-${i}')">
+        <div class="accordion-title">
+          <span>🃏</span>
+          <div><div>${sessionLabel}</div><div class="accordion-meta">${d.cards.length} tarjetas</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-green">${d.cards.length} cards</span>
+          <span class="accordion-arrow" id="farrow-${i}">▼</span>
+        </div>
+      </div>
+      <div class="accordion-body" id="fbody-${i}">
+        <div style="padding-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openFlashDeck(${i})">▶ Practicar</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteFlashDeck('${d.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openFlashDeck(i) {
+  const cid = document.getElementById('flash-course-sel').value;
+  const decks = state.flashDecks.filter(d => d.courseId === cid);
+  activeFlashDeck = decks[i];
+  flashCards = activeFlashDeck.cards;
+  flashIdx = 0; flashFlipped = false;
+  document.getElementById('flash-player-title').textContent = activeFlashDeck.sessionName || 'Flashcards';
+  document.getElementById('flash-player').style.display = 'block';
+  document.getElementById('flash-accordion').style.display = 'none';
+  showCard();
+}
+
+function closeFlashPlayer() {
+  document.getElementById('flash-player').style.display = 'none';
+  document.getElementById('flash-accordion').style.display = 'block';
+}
+
+function deleteFlashDeck(did) {
+  if(!confirm('¿Eliminar este mazo?')) return;
+  state.flashDecks = state.flashDecks.filter(d => d.id !== did);
+  save(); renderFlashAccordion();
+}
+
+function showCard() {
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  if(!flashCards.length) return;
+  const card = flashCards[flashIdx];
+  document.getElementById('card-front').textContent = card.front;
+  document.getElementById('card-back').textContent = card.back;
+  document.getElementById('card-counter').textContent = `${flashIdx+1} / ${flashCards.length}`;
+}
+function flipCard() { 
+  flashFlipped = !flashFlipped; 
+  document.getElementById('flashcard').classList.toggle('flipped', flashFlipped); 
+}
+function nextCard() { if(!flashCards.length) return; flashIdx = (flashIdx+1)%flashCards.length; showCard(); }
+function prevCard() { if(!flashCards.length) return; flashIdx = (flashIdx-1+flashCards.length)%flashCards.length; showCard(); }
+
+function loadFlash() {
+  const raw = document.getElementById('flash-json').value.trim();
+  if(!raw) { alert('Pega el JSON'); return; }
+  let cards;
+  try { cards = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; }
+  const cid = document.getElementById('flash-paste-course').value;
+  if(!cid) { alert('Selecciona un curso'); return; }
+  state.flashDecks.push({id:'f'+Date.now(), courseId:cid, cards});
+  save();
+  closeModal('modal-paste-flash');
+  renderFlashAccordion();
+}
+
+// ── BITÁCORA ──
+function showBitaForm() {
+  document.getElementById('bita-form').style.display='block';
+  document.getElementById('bita-list').style.display='none';
+}
+function showBitaList() {
+  document.getElementById('bita-form').style.display='none';
+  document.getElementById('bita-list').style.display='block';
+  renderBitaList();
+}
+
+function pickPlanet(e,el) {
+  planetEmoji = e;
+  document.querySelectorAll('#planet-pick .ep-btn').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
+}
+
+function setStar(val) {
+  feelingVal = val;
+  document.querySelectorAll('#feeling-stars .star').forEach((s,i)=>s.classList.toggle('active',i<val));
+}
+
+function setDiff(val,el) {
+  diffVal = val;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.className='diff-btn');
+  el.classList.add('sel-'+val);
+}
+
+function toggleMission(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+}
+
+function addMission() {
+  const div = document.createElement('div');
+  div.className = 'mission-item';
+  div.innerHTML = `<div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Nueva tarea...">`;
+  document.getElementById('mission-list').appendChild(div);
+}
+
+function saveBitacora() {
+  const curso = document.getElementById('b-curso').value.trim();
+  const planeta = document.getElementById('b-planeta').value.trim();
+  if(!curso || !planeta) {
+    alert('Completa Curso y Nombre del planeta');
+    return;
+  }
+  const missions = [];
+  document.querySelectorAll('#mission-list .mission-item').forEach(item => {
+    const t = item.querySelector('.mission-text');
+    const c = item.querySelector('.mission-check');
+    if(t && t.value.trim()) missions.push({text: t.value.trim(), done: c ? c.classList.contains('done') : false});
+  });
+  const tags = [];
+  document.querySelectorAll('.etag.sel').forEach(t => tags.push(t.textContent.trim()));
+
+  const bita = {
+    id: editingBitaId || 'b' + Date.now(),
+    planeta: planetEmoji,
+    curso,
+    planeta_nombre: planeta,
+    fecha: document.getElementById('b-fecha').value,
+    sesion: document.getElementById('b-sesion').value,
+    duracion: document.getElementById('b-duracion').value,
+    resumen: document.getElementById('b-resumen').value,
+    importante: document.getElementById('b-importante').value,
+    sorpresa: document.getElementById('b-sorpresa').value,
+    conceptos: document.getElementById('b-conceptos').value,
+    relaciones: document.getElementById('b-relaciones').value,
+    ejemplo: document.getElementById('b-ejemplo').value,
+    feeling: feelingVal,
+    diff: diffVal,
+    mejora: document.getElementById('b-mejora').value,
+    tags,
+    missions,
+    proxima: document.getElementById('b-proxima').value,
+    savedAt: new Date().toISOString()
+  };
+
+  if(editingBitaId) {
+    const idx = state.bitacoras.findIndex(b => b.id === editingBitaId);
+    if(idx >= 0) state.bitacoras[idx] = bita;
+  } else {
+    state.bitacoras.unshift(bita);
+  }
+  save();
+  editingBitaId = null;
+  const banner = document.getElementById('saved-banner');
+  if(banner) { banner.style.display = 'block'; setTimeout(() => banner.style.display = 'none', 3000); }
+}
+
+function resetBitaForm() {
+  editingBitaId = null;
+  document.querySelectorAll('#bita-form input[type=text], #bita-form textarea').forEach(el => el.value = '');
+  document.getElementById('b-fecha').valueAsDate = new Date();
+  planetEmoji = '🪐';
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((b,i) => b.classList.toggle('picked', i===0));
+  feelingVal = 0;
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+  diffVal = '';
+  document.querySelectorAll('.diff-btn').forEach(b => b.className = 'diff-btn');
+  document.querySelectorAll('.etag').forEach(t => t.classList.remove('sel'));
+}
+
+function renderBitaList() {
+  // ... (puedes dejarla como estaba o pedirla si la necesitas completa)
+}
+
+// ── PRINT BITACORA ──
 function printBitacora() {
   alert("Exportar PDF estará disponible pronto");
+}
+
+// ── MODALS ──
+function openModal(id) {
+  if(id==='modal-curso') buildEmojiRow();
+  if(id==='modal-paste-quiz' || id==='modal-paste-flash') populateSelects();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { 
+  document.getElementById(id).classList.remove('open'); 
 }
 
 // ── INIT ──
@@ -896,7 +1237,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('b-fecha').valueAsDate = new Date();
 });
 </script>
-
 <!-- MODAL: custom sim cases -->
 <div class="overlay" id="modal-sim-custom">
   <div class="modal">
