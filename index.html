@@ -6,6 +6,7 @@
 <title>StudySpace</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -417,6 +418,7 @@ select option { background: #1a1a2e; color: var(--text); }
 .quiz-result-card { background:#0d1028; border:0.5px solid var(--border); border-radius:20px; padding:40px 32px; text-align:center; max-width:400px; width:90%; animation:pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
 @keyframes pop-in { 0%{transform:scale(0.5);opacity:0} 100%{transform:scale(1);opacity:1} }
 .feedback-item { background:var(--surface3); border:0.5px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+
 </style>
 </head>
 <body>
@@ -429,16 +431,13 @@ select option { background: #1a1a2e; color: var(--text); }
 <div class="planet-deco planet-3"></div>
 
 <div class="topbar">
-  <div class="logo">
-    <div class="logo-mark">🚀</div>
-    StudySpace
-  </div>
+  <div class="logo"><div class="logo-mark">🚀</div>StudySpace</div>
   <div class="nav-tabs">
     <button class="tab active" onclick="goTab('cursos')">Cursos</button>
     <button class="tab" onclick="goTab('quiz')">Quizzes</button>
     <button class="tab" onclick="goTab('flash')">Flashcards</button>
     <button class="tab" onclick="goTab('bitacora')">Bitácora</button>
-    <button class="tab" onclick="goTab('simulacro')">Simulacro 🧪</button>
+    <button class="tab" onclick="goTab('simulacro')">Simulacro 🔬</button>
     <button class="tab" onclick="goTab('progreso')">Progreso</button>
   </div>
 </div>
@@ -500,25 +499,15 @@ select option { background: #1a1a2e; color: var(--text); }
 <div id="tab-bitacora" class="page">
   <div class="page-title">Bitácora de Viaje 🪐</div>
   <div class="page-sub">Registra cada sesión como un planeta por descubrir.</div>
-
   <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-    <button class="btn btn-primary" onclick="showBitaForm();resetBitaForm()">+ Nueva bitácora</button>
+    <button class="btn btn-primary" onclick="showBitaForm()">+ Nueva bitácora</button>
     <button class="btn btn-sm" onclick="showBitaList()">Ver mis bitácoras</button>
     <button class="btn btn-sm" onclick="confirmClearBita()" style="border-color:rgba(255,180,80,0.4);color:var(--amber);">🧹 Limpiar plantilla</button>
   </div>
-
-  <!-- SAVED BANNER -->
   <div class="saved-banner" id="saved-banner">✓ Bitácora guardada correctamente</div>
-
-  <!-- FORM -->
   <div id="bita-form">
-
-    <!-- DATOS DEL PLANETA -->
     <div class="bita-section">
-      <div class="bita-header">
-        <div class="bita-icon bi-purple">🛸</div>
-        <div><div class="bita-sec-title">Datos del Planeta</div><div class="bita-sec-sub">Identificación de la misión</div></div>
-      </div>
+      <div class="bita-header"><div class="bita-icon bi-purple">🛸</div><div><div class="bita-sec-title">Datos del Planeta</div><div class="bita-sec-sub">Identificación de la misión</div></div></div>
       <div class="field-row">
         <div class="field"><label>Curso / Materia</label><input type="text" id="b-curso" placeholder="Ej: Filosofía, Biología..."></div>
         <div class="field"><label>Nombre del planeta (tema)</label><input type="text" id="b-planeta" placeholder="Ej: Planeta Mitosis"></div>
@@ -541,35 +530,20 @@ select option { background: #1a1a2e; color: var(--text); }
         </div>
       </div>
     </div>
-
-    <!-- DESCRIPCIÓN -->
     <div class="bita-section">
-      <div class="bita-header">
-        <div class="bita-icon bi-blue">🌐</div>
-        <div><div class="bita-sec-title">Descripción del Planeta</div><div class="bita-sec-sub">Resumen de la sesión</div></div>
-      </div>
+      <div class="bita-header"><div class="bita-icon bi-blue">🌐</div><div><div class="bita-sec-title">Descripción del Planeta</div><div class="bita-sec-sub">Resumen de la sesión</div></div></div>
       <div class="field field-row single"><label>¿De qué trató la clase?</label><textarea id="b-resumen" placeholder="Narra con tus propias palabras de qué trató la sesión..."></textarea></div>
       <div class="field field-row single"><label>¿Qué fue lo más importante?</label><textarea id="b-importante" placeholder="Los 2 o 3 puntos clave que no puedes olvidar..."></textarea></div>
       <div class="field field-row single"><label>¿Algo que te sorprendió o costó entender?</label><textarea id="b-sorpresa" placeholder="Lo que te generó curiosidad, dudas o confusión..."></textarea></div>
     </div>
-
-    <!-- HABITANTES -->
     <div class="bita-section">
-      <div class="bita-header">
-        <div class="bita-icon bi-teal">🧬</div>
-        <div><div class="bita-sec-title">Habitantes y Ecosistema</div><div class="bita-sec-sub">Conceptos y términos clave</div></div>
-      </div>
+      <div class="bita-header"><div class="bita-icon bi-teal">🧬</div><div><div class="bita-sec-title">Habitantes y Ecosistema</div><div class="bita-sec-sub">Conceptos y términos clave</div></div></div>
       <div class="field field-row single"><label>Conceptos y términos principales</label><textarea id="b-conceptos" placeholder="Lista los conceptos clave de esta sesión..."></textarea></div>
       <div class="field field-row single"><label>¿Cómo se relacionan entre sí?</label><textarea id="b-relaciones" placeholder="Conexiones entre conceptos, como un mini mapa mental..."></textarea></div>
       <div class="field field-row single"><label>Ejemplo o aplicación real</label><textarea id="b-ejemplo" placeholder="¿Dónde se ve esto en la vida real?"></textarea></div>
     </div>
-
-    <!-- CLIMA -->
     <div class="bita-section">
-      <div class="bita-header">
-        <div class="bita-icon bi-amber">🌤️</div>
-        <div><div class="bita-sec-title">El Clima del Planeta</div><div class="bita-sec-sub">Tu experiencia en la sesión</div></div>
-      </div>
+      <div class="bita-header"><div class="bita-icon bi-amber">🌤️</div><div><div class="bita-sec-title">El Clima del Planeta</div><div class="bita-sec-sub">Tu experiencia en la sesión</div></div></div>
       <div class="field-row">
         <div class="field"><label>¿Cómo te sentiste?</label>
           <div class="rating-row" id="feeling-stars">
@@ -589,7 +563,7 @@ select option { background: #1a1a2e; color: var(--text); }
         </div>
       </div>
       <div class="divider"></div>
-      <div class="field field-row single"><label>¿Qué podrías mejorar para la próxima?</label><textarea id="b-mejora" placeholder="Reflexión personal: atención, repaso previo, preguntar más..."></textarea></div>
+      <div class="field field-row single"><label>¿Qué podrías mejorar para la próxima?</label><textarea id="b-mejora" placeholder="Reflexión personal..."></textarea></div>
       <div class="field"><label>Etiquetas de estado</label>
         <div class="tags-area">
           <span class="etag" onclick="this.classList.toggle('sel')">Bien entendido ✅</span>
@@ -601,13 +575,8 @@ select option { background: #1a1a2e; color: var(--text); }
         </div>
       </div>
     </div>
-
-    <!-- MISIÓN PENDIENTE -->
     <div class="bita-section">
-      <div class="bita-header">
-        <div class="bita-icon bi-pink">🎯</div>
-        <div><div class="bita-sec-title">Misión Pendiente</div><div class="bita-sec-sub">Tareas y próximos pasos</div></div>
-      </div>
+      <div class="bita-header"><div class="bita-icon bi-pink">🎯</div><div><div class="bita-sec-title">Misión Pendiente</div><div class="bita-sec-sub">Tareas y próximos pasos</div></div></div>
       <div id="mission-list">
         <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar los conceptos de la sesión..."></div>
         <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz de esta sesión..."></div>
@@ -617,75 +586,36 @@ select option { background: #1a1a2e; color: var(--text); }
       <div class="divider"></div>
       <div class="field field-row single"><label>¿Qué viene en la próxima sesión?</label><input type="text" id="b-proxima" placeholder="Tema de la próxima clase..."></div>
     </div>
-
-    <!-- ACCIONES -->
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button class="btn btn-green" style="flex:1;justify-content:center;padding:14px;" onclick="saveBitacora()">💾 Guardar bitácora</button>
       <button class="btn" style="padding:14px 18px;" onclick="printBitacora()">🖨️ Exportar PDF</button>
     </div>
-    <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:10px;font-family:'Space Mono',monospace;">Los datos se guardan automáticamente en tu navegador</p>
+    <p style="font-size:11px;color:var(--hint);text-align:center;margin-top:10px;font-family:'Space Mono',monospace;">Los datos se guardan en tu navegador automáticamente</p>
   </div>
-
-  <!-- LISTA DE BITÁCORAS -->
   <div id="bita-list" style="display:none;">
     <div class="section-label">Bitácoras guardadas</div>
     <div id="bita-saved-list"></div>
-    <div id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
-      <div style="font-size:36px;margin-bottom:10px">🪐</div>
-      Aún no tienes bitácoras guardadas. ¡Crea una nueva!
-    </div>
-    <div class="empty" id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
-      <div style="font-size:36px;margin-bottom:10px">🪐</div>
-      Aún no tienes bitácoras guardadas. ¡Crea una nueva!
-    </div>
+    <div id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;"><div style="font-size:36px;margin-bottom:10px">🪐</div>Aún no tienes bitácoras guardadas.</div>
   </div>
 </div>
-
-<!-- PROGRESO -->
 
 <!-- SIMULACRO -->
 <div id="tab-simulacro" class="page">
   <div class="page-title">Simulacro de Examen 🔬</div>
   <div class="page-sub">Practica con cronómetro, casos clínicos y calificación real con IA.</div>
-
-  <!-- SETUP -->
   <div id="sim-setup">
-
-    <!-- PROMPT HELPER -->
     <div class="card" style="border-color:rgba(255,180,80,0.3);margin-bottom:20px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <span style="font-size:20px;">🤖</span>
-        <div style="font-size:14px;font-weight:600;">Prompt para generar preguntas con IA</div>
-      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:20px;">🤖</span><div style="font-size:14px;font-weight:600;">Prompt para generar preguntas con IA</div></div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Copia este prompt, pégalo en Claude o ChatGPT junto con tus apuntes y te dará el JSON listo para subir a la biblioteca.</div>
-      <div id="prompt-box" style="background:rgba(255,255,255,0.04);border:0.5px solid var(--border2);border-radius:8px;padding:12px;font-size:12px;font-family:'Space Mono',monospace;line-height:1.7;color:#c8b0ff;max-height:180px;overflow-y:auto;"></div>
+      <div id="prompt-box" style="background:rgba(255,255,255,0.04);border:0.5px solid var(--border2);border-radius:8px;padding:12px;font-size:11px;font-family:'Space Mono',monospace;line-height:1.7;color:#c8b0ff;max-height:160px;overflow-y:auto;white-space:pre-wrap;"></div>
       <button class="btn btn-sm" style="margin-top:10px;border-color:var(--amber);color:var(--amber);" onclick="copyPrompt()">📋 Copiar prompt</button>
     </div>
-
-    <!-- FORMAT -->
     <div class="section-label">Formato del examen</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:20px;">
-      <div class="card sim-mode-card selected" onclick="selectSimMode('4x10',this)" id="smode-4x10">
-        <div style="font-size:24px;margin-bottom:6px;">⏱️</div>
-        <div style="font-size:13px;font-weight:600;">Examen corto</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">4 preguntas · 10 min</div>
-        <div style="font-size:11px;color:var(--hint);">c/u vale 5 pts</div>
-      </div>
-      <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="smode-5x30">
-        <div style="font-size:24px;margin-bottom:6px;">📋</div>
-        <div style="font-size:13px;font-weight:600;">Examen mediano</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">10 preg. · 30 min</div>
-        <div style="font-size:11px;color:var(--hint);">5 casos, 2 preg. c/u</div>
-      </div>
-      <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="smode-20x60">
-        <div style="font-size:24px;margin-bottom:6px;">🎓</div>
-        <div style="font-size:13px;font-weight:600;">Examen final</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">20 preguntas · 1 hora</div>
-        <div style="font-size:11px;color:var(--hint);">Mezcla total</div>
-      </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px;">
+      <div class="card sim-mode-card selected" onclick="selectSimMode('4x10',this)" id="smode-4x10"><div style="font-size:24px;margin-bottom:6px;">⏱️</div><div style="font-size:13px;font-weight:600;">Examen corto</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">4 preguntas · 10 min</div><div style="font-size:11px;color:var(--hint);">c/u vale 5 pts</div></div>
+      <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="smode-5x30"><div style="font-size:24px;margin-bottom:6px;">📋</div><div style="font-size:13px;font-weight:600;">Examen mediano</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">10 preg. · 30 min</div><div style="font-size:11px;color:var(--hint);">5 casos, 2 preg. c/u</div></div>
+      <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="smode-20x60"><div style="font-size:24px;margin-bottom:6px;">🎓</div><div style="font-size:13px;font-weight:600;">Examen final</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">20 preguntas · 1 hora</div><div style="font-size:11px;color:var(--hint);">Mezcla total</div></div>
     </div>
-
-    <!-- TYPE FILTERS -->
     <div class="section-label">Tipo de preguntas (puedes mezclar)</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
       <button class="sim-type-btn active" id="stype-libre" onclick="toggleSimType('libre',this)">✍️ Respuesta libre</button>
@@ -694,33 +624,23 @@ select option { background: #1a1a2e; color: var(--text); }
       <button class="sim-type-btn active" id="stype-caso" onclick="toggleSimType('caso',this)">🏥 Caso clínico</button>
     </div>
     <div style="font-size:12px;color:var(--hint);margin-bottom:20px;font-family:'Space Mono',monospace;">Los activos se mezclarán aleatoriamente en cada simulacro.</div>
-
-    <!-- DIFFICULTY -->
     <div class="section-label">Dificultad</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
       <button class="sim-type-btn active" id="sdiff-basica" onclick="toggleSimDiff('basica',this)">🟢 Básica</button>
       <button class="sim-type-btn active" id="sdiff-regular" onclick="toggleSimDiff('regular',this)">🟡 Regular</button>
       <button class="sim-type-btn active" id="sdiff-dificil" onclick="toggleSimDiff('dificil',this)">🔴 Difícil</button>
     </div>
-
-    <!-- COURSE + SESSIONS -->
     <div class="section-label">Curso</div>
     <select id="sim-course-sel" style="margin-bottom:16px;" onchange="renderSimLibrary()"></select>
-
     <div class="section-label">Biblioteca de sesiones</div>
-    <div class="hint-box" style="margin-bottom:12px;">Usa el prompt de arriba para generar las preguntas con IA, luego agrégalas aquí por sesión. Cuantas más preguntas, mejor variedad en cada simulacro.</div>
+    <div class="hint-box" style="margin-bottom:12px;">Usa el prompt de arriba para generar las preguntas. Cuantas más preguntas, mejor variedad.</div>
     <div id="sim-library-list"></div>
     <button class="btn btn-primary btn-sm" style="margin-bottom:20px;" onclick="openModal('modal-add-sim-session')">+ Agregar sesión a biblioteca</button>
-
-    <!-- CUSTOM EXAM -->
     <div class="section-label">O crea tu propio examen</div>
     <button class="btn" style="margin-bottom:20px;" onclick="openModal('modal-sim-custom')">✏️ Editor de examen personalizado</button>
-
     <div style="height:0.5px;background:var(--border);margin-bottom:20px;"></div>
     <button class="btn btn-green" style="width:100%;justify-content:center;padding:14px;font-size:15px;font-weight:600;" onclick="startSimulacro()">🚀 Iniciar simulacro</button>
   </div>
-
-  <!-- EXAM -->
   <div id="sim-exam" style="display:none;">
     <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -739,7 +659,7 @@ select option { background: #1a1a2e; color: var(--text); }
       <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;line-height:1.7;"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
         <span style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;" id="sim-q-num">Pregunta 1</span>
-        <span class="badge" id="sim-q-type-badge" style="font-size:10px;"></span>
+        <span class="badge badge-blue" id="sim-q-type-badge" style="font-size:10px;"></span>
         <span class="badge" id="sim-q-diff-badge" style="font-size:10px;"></span>
       </div>
       <div style="font-size:15px;font-weight:500;line-height:1.5;margin-bottom:16px;" id="sim-q-text"></div>
@@ -749,7 +669,7 @@ select option { background: #1a1a2e; color: var(--text); }
       </div>
       <div id="sim-direct-area" style="display:none;">
         <input type="text" id="sim-answer-direct" placeholder="Escribe el término, concepto o dato específico que pide la pregunta..." style="margin-bottom:0;">
-        <div style="font-size:11px;color:var(--hint);margin-top:4px;font-family:'Space Mono',monospace;">Respuesta directa y precisa — una palabra, término o frase corta.</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;font-family:'Space Mono',monospace;">Respuesta directa y precisa.</div>
       </div>
       <div id="sim-choice-area" style="display:none;">
         <div id="sim-choices-list"></div>
@@ -757,10 +677,8 @@ select option { background: #1a1a2e; color: var(--text); }
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:16px;" onclick="simNextQuestion()" id="sim-next-btn">Siguiente →</button>
     </div>
   </div>
-
-  <!-- RESULTS -->
   <div id="sim-results" style="display:none;">
-    <div class="card" style="text-align:center;padding:36px 20px;position:relative;overflow:hidden;">
+    <div class="card" style="text-align:center;padding:36px 20px;">
       <div style="font-size:64px;margin-bottom:10px;" id="sim-res-emoji">🎉</div>
       <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:4px;">CALIFICACIÓN FINAL</div>
       <div style="font-size:56px;font-weight:700;letter-spacing:-0.04em;margin-bottom:4px;" id="sim-res-score">—</div>
@@ -770,12 +688,11 @@ select option { background: #1a1a2e; color: var(--text); }
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px;">
       <div class="section-label" style="margin:0;">Retroalimentación detallada</div>
-      <div style="font-size:12px;color:var(--hint);" id="sim-eval-status">Evaluando con IA...</div>
+      <div style="font-size:12px;color:var(--hint);" id="sim-eval-status">Evaluando...</div>
     </div>
-    <div id="sim-feedback-list"><div style="text-align:center;padding:24px;color:var(--muted);">⏳ Evaluando tus respuestas...</div></div>
+    <div id="sim-feedback-list"><div style="text-align:center;padding:24px;color:var(--muted);">Evaluando tus respuestas...</div></div>
   </div>
 </div>
-
 
 <!-- PROGRESO -->
 <div id="tab-progreso" class="page">
@@ -811,7 +728,7 @@ select option { background: #1a1a2e; color: var(--text); }
 <div class="overlay" id="modal-paste-quiz">
   <div class="modal">
     <div class="modal-title">Pegar quiz generado por IA</div>
-    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code><br><br><code>ans</code> = índice de la opción correcta (0 = primera).</div>
+    <div class="hint-box">Formato JSON:<br><code>[{"q":"Pregunta","opts":["A","B","C","D"],"ans":0}]</code><br><br><code>ans</code> = índice de la opción correcta.</div>
     <label>Curso</label><select id="quiz-paste-course"></select>
     <label>Nombre de la sesión</label><input type="text" id="quiz-session-name" placeholder="Ej: Sesión 3 — Mitosis">
     <label>JSON del quiz</label><textarea id="quiz-json" placeholder='[{"q":"¿Cuántas fases tiene la mitosis?","opts":["2","4","6","8"],"ans":1}]'></textarea>
@@ -828,12 +745,9 @@ select option { background: #1a1a2e; color: var(--text); }
     <div class="modal-title">Agregar flashcards</div>
     <div class="hint-box">Formato JSON:<br><code>[{"front":"Concepto","back":"Definición"}]</code></div>
     <label>Curso</label><select id="flash-paste-course"></select>
-    <label>Número de sesión</label>
-    <input type="text" id="flash-session-num" placeholder="Ej: Sesión 01">
-    <label>Nombre de la sesión</label>
-    <input type="text" id="flash-session-name-inp" placeholder="Ej: Bioseguridad — Niveles BSL">
-    <label>Fecha</label>
-    <input type="date" id="flash-session-date">
+    <label>Número de sesión</label><input type="text" id="flash-session-num" placeholder="Ej: Sesión 01">
+    <label>Nombre de la sesión</label><input type="text" id="flash-session-name-inp" placeholder="Ej: Bioseguridad">
+    <label>Fecha</label><input type="date" id="flash-session-date">
     <label>JSON de las tarjetas</label><textarea id="flash-json" placeholder='[{"front":"Mitosis","back":"División celular que produce 2 células idénticas"}]'></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-paste-flash')">Cancelar</button>
@@ -842,7 +756,40 @@ select option { background: #1a1a2e; color: var(--text); }
   </div>
 </div>
 
+<!-- MODAL: add sim session -->
+<div class="overlay" id="modal-add-sim-session">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">Agregar sesión a biblioteca</div>
+    <div class="hint-box" style="font-size:12px;">Usa el prompt para generar el JSON. Formato:<br><code>[{"q":"...","tipo":"libre","dificultad":"basica","respuesta_ideal":"...","porque":"..."}]</code><br><br><strong>tipo:</strong> libre | marcada | directa | caso &nbsp;|&nbsp; <strong>dificultad:</strong> basica | regular | dificil<br>Para marcada agrega: <code>"opts":["A","B","C","D"],"ans":0</code><br>Para caso agrega: <code>"caso":"Texto del caso..."</code></div>
+    <label>Número de sesión</label><input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
+    <label>Nombre / tema</label><input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos de Bioseguridad">
+    <label>JSON de preguntas</label>
+    <textarea id="sim-lib-json" style="min-height:120px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","dificultad":"basica","respuesta_ideal":"Conjunto de normas...","porque":"Porque la OMS la define como..."}]'></textarea>
+    <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sin límite de preguntas. Más preguntas = más variedad.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar en biblioteca</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: custom sim -->
+<div class="overlay" id="modal-sim-custom">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">Editor de examen personalizado</div>
+    <div class="hint-box" style="font-size:12px;">Crea tu propio examen. Incluye siempre <strong>respuesta_ideal</strong> y <strong>porque</strong> para que la IA pueda calificar.</div>
+    <label>Nombre del examen</label><input type="text" id="sim-custom-name" placeholder="Ej: Mi examen de bioseguridad">
+    <label>JSON de preguntas</label>
+    <textarea id="sim-custom-json" style="min-height:140px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"Pregunta...","tipo":"libre","dificultad":"regular","respuesta_ideal":"Respuesta correcta...","porque":"Se puntúa así porque..."}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
+      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+
 // ── STATE SEGURO PARA GITHUB PAGES ──
 let state = {
   courses: [
@@ -1831,54 +1778,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCourses();
   document.getElementById('b-fecha').valueAsDate = new Date();
 });
+
 </script>
-<!-- MODAL: add sim session to library -->
-<div class="overlay" id="modal-add-sim-session">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-title">Agregar sesión a biblioteca</div>
-    <div class="hint-box" style="font-size:12px;">
-      Usa el prompt de la app para generar el JSON con IA. Formato:<br>
-      <code>[{"q":"...","tipo":"libre","dificultad":"basica","caso":"...opcional...","respuesta_ideal":"...","porque":"...","opts":["A","B","C","D"],"ans":0}]</code><br><br>
-      <strong>tipo:</strong> "libre" | "marcada" | "directa" | "caso"<br>
-      <strong>dificultad:</strong> "basica" | "regular" | "dificil"<br>
-      <strong>caso:</strong> texto del caso clínico (solo si aplica)<br>
-      <strong>opts/ans:</strong> solo para tipo "marcada" (ans = índice 0,1,2,3)
-    </div>
-    <label>Número de sesión</label>
-    <input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
-    <label>Nombre / tema de la sesión</label>
-    <input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos de Bioseguridad">
-    <label>JSON de preguntas</label>
-    <textarea id="sim-lib-json" style="min-height:120px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","dificultad":"basica","respuesta_ideal":"Conjunto de normas...","porque":"Porque la OMS la define como..."}]'></textarea>
-    <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sin límite de preguntas. Más preguntas = más variedad de simulacros.</div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar en biblioteca</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: custom sim exam -->
-<div class="overlay" id="modal-sim-custom">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-title">Editor de examen personalizado</div>
-    <div class="hint-box" style="font-size:12px;">
-      Crea tu propio examen con el tipo y cantidad de preguntas que quieras. Mismo formato JSON.<br><br>
-      Puedes cambiar el tipo de cualquier pregunta: libre, marcada, directa o caso.<br>
-      <strong>Incluye siempre respuesta_ideal y porque</strong> para que la IA pueda calificar.
-    </div>
-    <label>Nombre del examen personalizado</label>
-    <input type="text" id="sim-custom-name" placeholder="Ej: Mi examen de bioseguridad semana 2">
-    <label>JSON de preguntas</label>
-    <textarea id="sim-custom-json" style="min-height:140px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"Pregunta...","tipo":"libre","dificultad":"regular","respuesta_ideal":"Respuesta correcta completa...","porque":"Se puntúa así porque...","caso":"Texto del caso si aplica..."}]'></textarea>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
-      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar ahora</button>
-    </div>
-  </div>
-</div>
-
-div>
-
 </body>
 </html>
