@@ -646,6 +646,141 @@ select option { background: #1a1a2e; color: var(--text); }
 <!-- SIMULACRO -->
 <div id="tab-simulacro" class="page">
   <div class="page-title">Simulacro de Examen 🔬</div>
+  <div class="page-sub">Practica con cronómetro, casos clínicos y calificación real con IA.</div>
+
+  <!-- SETUP -->
+  <div id="sim-setup">
+
+    <!-- PROMPT HELPER -->
+    <div class="card" style="border-color:rgba(255,180,80,0.3);margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="font-size:20px;">🤖</span>
+        <div style="font-size:14px;font-weight:600;">Prompt para generar preguntas con IA</div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Copia este prompt, pégalo en Claude o ChatGPT junto con tus apuntes y te dará el JSON listo para subir a la biblioteca.</div>
+      <div id="prompt-box" style="background:rgba(255,255,255,0.04);border:0.5px solid var(--border2);border-radius:8px;padding:12px;font-size:12px;font-family:'Space Mono',monospace;line-height:1.7;color:#c8b0ff;max-height:180px;overflow-y:auto;"></div>
+      <button class="btn btn-sm" style="margin-top:10px;border-color:var(--amber);color:var(--amber);" onclick="copyPrompt()">📋 Copiar prompt</button>
+    </div>
+
+    <!-- FORMAT -->
+    <div class="section-label">Formato del examen</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:20px;">
+      <div class="card sim-mode-card selected" onclick="selectSimMode('4x10',this)" id="smode-4x10">
+        <div style="font-size:24px;margin-bottom:6px;">⏱️</div>
+        <div style="font-size:13px;font-weight:600;">Examen corto</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">4 preguntas · 10 min</div>
+        <div style="font-size:11px;color:var(--hint);">c/u vale 5 pts</div>
+      </div>
+      <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="smode-5x30">
+        <div style="font-size:24px;margin-bottom:6px;">📋</div>
+        <div style="font-size:13px;font-weight:600;">Examen mediano</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">10 preg. · 30 min</div>
+        <div style="font-size:11px;color:var(--hint);">5 casos, 2 preg. c/u</div>
+      </div>
+      <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="smode-20x60">
+        <div style="font-size:24px;margin-bottom:6px;">🎓</div>
+        <div style="font-size:13px;font-weight:600;">Examen final</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">20 preguntas · 1 hora</div>
+        <div style="font-size:11px;color:var(--hint);">Mezcla total</div>
+      </div>
+    </div>
+
+    <!-- TYPE FILTERS -->
+    <div class="section-label">Tipo de preguntas (puedes mezclar)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="sim-type-btn active" id="stype-libre" onclick="toggleSimType('libre',this)">✍️ Respuesta libre</button>
+      <button class="sim-type-btn active" id="stype-marcada" onclick="toggleSimType('marcada',this)">🔘 Opción múltiple</button>
+      <button class="sim-type-btn active" id="stype-directa" onclick="toggleSimType('directa',this)">🎯 Respuesta directa</button>
+      <button class="sim-type-btn active" id="stype-caso" onclick="toggleSimType('caso',this)">🏥 Caso clínico</button>
+    </div>
+    <div style="font-size:12px;color:var(--hint);margin-bottom:20px;font-family:'Space Mono',monospace;">Los activos se mezclarán aleatoriamente en cada simulacro.</div>
+
+    <!-- DIFFICULTY -->
+    <div class="section-label">Dificultad</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="sim-type-btn active" id="sdiff-basica" onclick="toggleSimDiff('basica',this)">🟢 Básica</button>
+      <button class="sim-type-btn active" id="sdiff-regular" onclick="toggleSimDiff('regular',this)">🟡 Regular</button>
+      <button class="sim-type-btn active" id="sdiff-dificil" onclick="toggleSimDiff('dificil',this)">🔴 Difícil</button>
+    </div>
+
+    <!-- COURSE + SESSIONS -->
+    <div class="section-label">Curso</div>
+    <select id="sim-course-sel" style="margin-bottom:16px;" onchange="renderSimLibrary()"></select>
+
+    <div class="section-label">Biblioteca de sesiones</div>
+    <div class="hint-box" style="margin-bottom:12px;">Usa el prompt de arriba para generar las preguntas con IA, luego agrégalas aquí por sesión. Cuantas más preguntas, mejor variedad en cada simulacro.</div>
+    <div id="sim-library-list"></div>
+    <button class="btn btn-primary btn-sm" style="margin-bottom:20px;" onclick="openModal('modal-add-sim-session')">+ Agregar sesión a biblioteca</button>
+
+    <!-- CUSTOM EXAM -->
+    <div class="section-label">O crea tu propio examen</div>
+    <button class="btn" style="margin-bottom:20px;" onclick="openModal('modal-sim-custom')">✏️ Editor de examen personalizado</button>
+
+    <div style="height:0.5px;background:var(--border);margin-bottom:20px;"></div>
+    <button class="btn btn-green" style="width:100%;justify-content:center;padding:14px;font-size:15px;font-weight:600;" onclick="startSimulacro()">🚀 Iniciar simulacro</button>
+  </div>
+
+  <!-- EXAM -->
+  <div id="sim-exam" style="display:none;">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;" id="sim-exam-label">Examen corto</div>
+        <div style="font-size:13px;font-weight:600;margin-top:2px;" id="sim-q-indicator">Pregunta 1/4</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:26px;font-weight:700;font-family:'Space Mono',monospace;" id="sim-clock">10:00</div>
+        <button class="btn btn-sm btn-danger" onclick="endSimulacro()">Terminar</button>
+      </div>
+    </div>
+    <div style="height:5px;background:var(--surface2);border-radius:3px;margin-bottom:20px;overflow:hidden;">
+      <div id="sim-timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:3px;width:100%;transition:width 1s linear;"></div>
+    </div>
+    <div class="card" id="sim-q-card">
+      <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;line-height:1.7;"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;" id="sim-q-num">Pregunta 1</span>
+        <span class="badge" id="sim-q-type-badge" style="font-size:10px;"></span>
+        <span class="badge" id="sim-q-diff-badge" style="font-size:10px;"></span>
+      </div>
+      <div style="font-size:15px;font-weight:500;line-height:1.5;margin-bottom:16px;" id="sim-q-text"></div>
+      <div id="sim-free-area">
+        <textarea id="sim-answer-free" style="min-height:130px;" placeholder="Escribe tu respuesta con los conceptos y términos correctos del tema..."></textarea>
+        <div style="font-size:11px;color:var(--hint);margin-top:-8px;font-family:'Space Mono',monospace;">Sé precisa. Usa la terminología correcta.</div>
+      </div>
+      <div id="sim-direct-area" style="display:none;">
+        <input type="text" id="sim-answer-direct" placeholder="Escribe el término, concepto o dato específico que pide la pregunta..." style="margin-bottom:0;">
+        <div style="font-size:11px;color:var(--hint);margin-top:4px;font-family:'Space Mono',monospace;">Respuesta directa y precisa — una palabra, término o frase corta.</div>
+      </div>
+      <div id="sim-choice-area" style="display:none;">
+        <div id="sim-choices-list"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:16px;" onclick="simNextQuestion()" id="sim-next-btn">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="sim-results" style="display:none;">
+    <div class="card" style="text-align:center;padding:36px 20px;position:relative;overflow:hidden;">
+      <div style="font-size:64px;margin-bottom:10px;" id="sim-res-emoji">🎉</div>
+      <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:4px;">CALIFICACIÓN FINAL</div>
+      <div style="font-size:56px;font-weight:700;letter-spacing:-0.04em;margin-bottom:4px;" id="sim-res-score">—</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px;" id="sim-res-pts"></div>
+      <div style="font-size:14px;margin-bottom:24px;line-height:1.5;" id="sim-res-msg"></div>
+      <button class="btn btn-primary" onclick="resetSimulacro()">🔄 Nuevo simulacro</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px;">
+      <div class="section-label" style="margin:0;">Retroalimentación detallada</div>
+      <div style="font-size:12px;color:var(--hint);" id="sim-eval-status">Evaluando con IA...</div>
+    </div>
+    <div id="sim-feedback-list"><div style="text-align:center;padding:24px;color:var(--muted);">⏳ Evaluando tus respuestas...</div></div>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+
+<!-- SIMULACRO -->
+<div id="tab-simulacro" class="page">
+  <div class="page-title">Simulacro de Examen 🔬</div>
   <div class="page-sub">Practica con cronómetro, casos clínicos y evaluación por IA.</div>
 
   <div id="sim-setup">
@@ -1489,19 +1624,74 @@ function closeModal(id) {
 
 // ── SIMULACRO ──
 let simMode = '4x10';
-let simTypes = ['libre'];
+let simActiveTypes = ['libre','marcada','directa','caso'];
+let simActiveDiffs = ['basica','regular','dificil'];
 let simQuestions = [];
 let simCurrentQ = 0;
 let simAnswers = [];
-let simTimer = null;
+let simTimerInterval = null;
 let simTotalSecs = 600;
 let simSecsLeft = 600;
-let simCustomQuestions = null;
+let simCustomPool = null;
+
+const SIM_PROMPT = `Eres un generador de preguntas de examen universitario para la carrera de Medicina Humana.
+
+Necesito que generes preguntas de examen sobre el tema que te voy a indicar. Devuelve ÚNICAMENTE un array JSON válido, sin texto adicional, sin backticks, sin comentarios.
+
+Cada pregunta debe tener esta estructura EXACTA:
+{
+  "q": "Texto de la pregunta",
+  "tipo": "libre" | "marcada" | "directa" | "caso",
+  "dificultad": "basica" | "regular" | "dificil",
+  "caso": "Texto del caso clínico SOLO si tipo es caso, sino omite este campo",
+  "respuesta_ideal": "Respuesta completa y correcta que daría un estudiante para obtener el máximo puntaje",
+  "porque": "Explicación de por qué esa es la respuesta correcta y qué criterios se evalúan",
+  "opts": ["Opción A", "Opción B", "Opción C", "Opción D"],
+  "ans": 0
+}
+
+REGLAS IMPORTANTES:
+- "tipo" libre: respuesta redactada explicando un concepto o proceso
+- "tipo" marcada: 4 opciones (opts) y "ans" = índice de la correcta (0=A,1=B,2=C,3=D). SIEMPRE incluir opts y ans
+- "tipo" directa: se pide un término, concepto, nombre o dato específico y preciso
+- "tipo" caso: incluir "caso" con un párrafo clínico real, luego la pregunta deriva del caso
+- "dificultad" basica: definiciones, conceptos simples
+- "dificultad" regular: aplicación de conceptos, relaciones entre temas
+- "dificultad" dificil: análisis, casos complejos, preguntas retadoras que exigen dominio total
+- SIEMPRE incluir "respuesta_ideal" y "porque" en TODAS las preguntas
+- Para tipo "libre" y "directa" omite opts y ans
+- Genera al menos: 4 básicas, 4 regulares, 4 difíciles por cada tipo que te pida
+- Total mínimo: 16 preguntas si pides un tipo, más si pides varios
+
+TEMA Y APUNTES:
+[PEGA AQUÍ EL TEMA Y TUS APUNTES DE CLASE]`;
 
 function populateSimCourse() {
   const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
   const el = document.getElementById('sim-course-sel');
-  if(el) { el.innerHTML = opts; renderSimLibrary(); }
+  if(el) { el.innerHTML = opts; }
+  renderSimLibrary();
+  renderPromptBox();
+}
+
+function renderPromptBox() {
+  const el = document.getElementById('prompt-box');
+  if(el) el.textContent = SIM_PROMPT;
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(SIM_PROMPT).then(()=>{
+    const btn = event.target;
+    btn.textContent = '✅ Copiado!';
+    setTimeout(()=>btn.textContent='📋 Copiar prompt', 2000);
+  }).catch(()=>{
+    const el = document.getElementById('prompt-box');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    alert('Texto seleccionado. Usa Ctrl+C para copiar.');
+  });
 }
 
 function selectSimMode(mode, el) {
@@ -1512,243 +1702,317 @@ function selectSimMode(mode, el) {
 
 function toggleSimType(type, el) {
   el.classList.toggle('active');
-  if(el.classList.contains('active')) { if(!simTypes.includes(type)) simTypes.push(type); }
-  else { simTypes = simTypes.filter(t=>t!==type); if(!simTypes.length){simTypes.push(type);el.classList.add('active');} }
+  if(el.classList.contains('active')) { if(!simActiveTypes.includes(type)) simActiveTypes.push(type); }
+  else { simActiveTypes = simActiveTypes.filter(t=>t!==type); if(!simActiveTypes.length){simActiveTypes.push(type);el.classList.add('active');} }
+}
+
+function toggleSimDiff(diff, el) {
+  el.classList.toggle('active');
+  if(el.classList.contains('active')) { if(!simActiveDiffs.includes(diff)) simActiveDiffs.push(diff); }
+  else { simActiveDiffs = simActiveDiffs.filter(d=>d!==diff); if(!simActiveDiffs.length){simActiveDiffs.push(diff);el.classList.add('active');} }
 }
 
 function renderSimLibrary() {
   const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
-  const acc = document.getElementById('sim-library-accordion');
+  const acc = document.getElementById('sim-library-list');
   if(!acc) return;
   const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
   if(!sessions.length) {
-    acc.innerHTML = '<div style="text-align:center;padding:24px;color:var(--hint);font-size:13px;">Sin sesiones en la biblioteca. Agrega una con el botón de abajo.</div>';
+    acc.innerHTML = '<div style="text-align:center;padding:20px;color:var(--hint);font-size:13px;">Sin sesiones. Agrega una usando el prompt de arriba.</div>';
     return;
   }
-  acc.innerHTML = sessions.map((s,i)=>`
-    <div class="sim-lib-item">
+  acc.innerHTML = sessions.map((s,i)=>{
+    const total = (s.questions||[]).length;
+    const byType = {};
+    const byDiff = {};
+    (s.questions||[]).forEach(q=>{ byType[q.tipo||'libre']=(byType[q.tipo||'libre']||0)+1; byDiff[q.dificultad||'regular']=(byDiff[q.dificultad||'regular']||0)+1; });
+    return `<div class="sim-lib-item">
       <div class="sim-lib-header" onclick="toggleSimLib(${i})">
-        <div>
-          <div style="font-size:14px;font-weight:600;">${s.num||''} ${s.name||''}</div>
-          <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;">${(s.questions||[]).length} preguntas guardadas</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">${s.num||''} — ${s.name||'Sin nombre'}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace;">${total} preguntas · 🟢${byDiff.basica||0} 🟡${byDiff.regular||0} 🔴${byDiff.dificil||0}</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span class="badge badge-purple">${(s.questions||[]).length} preg.</span>
+        <div style="display:flex;gap:6px;align-items:center;">
           <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteSimSession('${s.id}')">🗑️</button>
-          <span id="slib-arrow-${i}" style="color:var(--muted);font-size:12px;">▼</span>
+          <span id="slib-arr-${i}" style="color:var(--muted);font-size:11px;">▼</span>
         </div>
       </div>
-      <div class="sim-lib-body" id="slib-body-${i}">
-        <div style="padding-top:12px;font-size:13px;color:var(--muted);">
-          ${(s.questions||[]).slice(0,3).map((q,qi)=>`<div style="padding:4px 0;border-bottom:0.5px solid var(--border);">${qi+1}. ${q.q||''}</div>`).join('')}
-          ${(s.questions||[]).length>3?`<div style="color:var(--hint);font-size:12px;margin-top:4px;">...y ${(s.questions||[]).length-3} más</div>`:''}
+      <div class="sim-lib-body" id="slib-b-${i}">
+        <div style="padding-top:12px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            ${byType.libre?`<span class="badge badge-purple">✍️ ${byType.libre} libres</span>`:''}
+            ${byType.marcada?`<span class="badge badge-blue">🔘 ${byType.marcada} marcadas</span>`:''}
+            ${byType.directa?`<span class="badge badge-amber">🎯 ${byType.directa} directas</span>`:''}
+            ${byType.caso?`<span class="badge badge-green">🏥 ${byType.caso} casos</span>`:''}
+          </div>
+          ${(s.questions||[]).slice(0,4).map((q,qi)=>`
+            <div style="font-size:12px;padding:6px 0;border-bottom:0.5px solid var(--border);color:var(--muted);">
+              ${qi+1}. <span style="color:var(--text);">${(q.q||'').substring(0,80)}${(q.q||'').length>80?'...':''}</span>
+              <span style="color:var(--hint);margin-left:6px;">[${q.tipo||'libre'}·${q.dificultad||'regular'}]</span>
+            </div>`).join('')}
+          ${total>4?`<div style="font-size:11px;color:var(--hint);margin-top:6px;">...y ${total-4} preguntas más</div>`:''}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleSimLib(i) {
-  const body = document.getElementById('slib-body-'+i);
-  const arrow = document.getElementById('slib-arrow-'+i);
-  if(body) body.classList.toggle('open');
-  if(arrow) arrow.textContent = body&&body.classList.contains('open')?'▲':'▼';
+  const b=document.getElementById('slib-b-'+i);
+  const a=document.getElementById('slib-arr-'+i);
+  if(b) b.classList.toggle('open');
+  if(a) a.textContent=b&&b.classList.contains('open')?'▲':'▼';
 }
 
 function saveSimLibSession() {
-  const num = document.getElementById('sim-lib-num').value.trim();
-  const name = document.getElementById('sim-lib-name').value.trim();
-  const raw = document.getElementById('sim-lib-json').value.trim();
-  if(!name&&!num) { alert('Agrega al menos el nombre de la sesión.'); return; }
-  if(!raw) { alert('Agrega las preguntas en formato JSON.'); return; }
-  let questions;
-  try { questions = JSON.parse(raw); } catch(e) { alert('JSON inválido. Revisa el formato.'); return; }
-  if(!Array.isArray(questions)||!questions[0].q) { alert('Cada pregunta necesita al menos "q" y "tipo".'); return; }
-  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
-  if(!state.simLibrary) state.simLibrary = [];
-  state.simLibrary.push({id:'sl'+Date.now(), courseId:cid, num, name, questions});
+  const num=document.getElementById('sim-lib-num').value.trim();
+  const name=document.getElementById('sim-lib-name').value.trim();
+  const raw=document.getElementById('sim-lib-json').value.trim();
+  if(!name&&!num){alert('Agrega el nombre o número de sesión.');return;}
+  if(!raw){alert('Agrega las preguntas en JSON.');return;}
+  let qs;
+  try{qs=JSON.parse(raw);}catch(e){alert('JSON inválido. Verifica el formato con el prompt.');return;}
+  if(!Array.isArray(qs)||!qs[0]||!qs[0].q){alert('Formato incorrecto. Cada pregunta debe tener al menos "q".');return;}
+  const cid=document.getElementById('sim-course-sel')?document.getElementById('sim-course-sel').value:'';
+  if(!state.simLibrary)state.simLibrary=[];
+  state.simLibrary.push({id:'sl'+Date.now(),courseId:cid,num,name,questions:qs});
   save();
   document.getElementById('sim-lib-num').value='';
   document.getElementById('sim-lib-name').value='';
   document.getElementById('sim-lib-json').value='';
   closeModal('modal-add-sim-session');
   renderSimLibrary();
-  alert('Sesión agregada a la biblioteca con '+questions.length+' preguntas.');
+  alert('✅ Sesión agregada con '+qs.length+' preguntas.');
 }
 
 function deleteSimSession(id) {
-  if(!confirm('¿Eliminar esta sesión de la biblioteca?')) return;
-  state.simLibrary = (state.simLibrary||[]).filter(s=>s.id!==id);
-  save(); renderSimLibrary();
+  if(!confirm('¿Eliminar esta sesión?'))return;
+  state.simLibrary=(state.simLibrary||[]).filter(s=>s.id!==id);
+  save();renderSimLibrary();
 }
 
 function loadCustomSimExam() {
-  const raw = document.getElementById('sim-custom-json').value.trim();
-  if(!raw) { alert('Agrega las preguntas.'); return; }
+  const raw=document.getElementById('sim-custom-json').value.trim();
+  if(!raw){alert('Agrega las preguntas.');return;}
   let qs;
-  try { qs = JSON.parse(raw); } catch(e) { alert('JSON inválido.'); return; }
-  if(!Array.isArray(qs)||!qs[0].q) { alert('Formato incorrecto.'); return; }
-  simCustomQuestions = qs;
+  try{qs=JSON.parse(raw);}catch(e){alert('JSON inválido.');return;}
+  if(!Array.isArray(qs)||!qs[0]||!qs[0].q){alert('Formato incorrecto.');return;}
+  simCustomPool=qs;
   closeModal('modal-sim-custom');
   buildAndStartExam(qs);
 }
 
 function startSimulacro() {
-  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
-  const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
-  if(!sessions.length && !simCustomQuestions) {
-    alert('Agrega sesiones a tu biblioteca primero, o crea un examen personalizado.');
-    return;
-  }
-  // Build question pool from all sessions
-  let pool = [];
-  sessions.forEach(s => { if(s.questions) pool.push(...s.questions); });
-  if(!pool.length) pool = simCustomQuestions || [];
+  const cid=document.getElementById('sim-course-sel')?document.getElementById('sim-course-sel').value:'';
+  const sessions=(state.simLibrary||[]).filter(s=>s.courseId===cid);
+  let pool=[];
+  sessions.forEach(s=>{if(s.questions)pool.push(...s.questions);});
+  if(!pool.length&&!simCustomPool){alert('Agrega sesiones a tu biblioteca primero, o usa el editor personalizado.');return;}
+  if(simCustomPool&&!pool.length){buildAndStartExam(simCustomPool);return;}
+  // Filter by active types and difficulties
+  let filtered=pool.filter(q=>{
+    const t=q.tipo||'libre';
+    const d=q.dificultad||'regular';
+    return simActiveTypes.includes(t)&&simActiveDiffs.includes(d);
+  });
+  if(!filtered.length){alert('No hay preguntas con los filtros seleccionados. Cambia los filtros o agrega más preguntas a la biblioteca.');return;}
   // Shuffle
-  pool = pool.sort(()=>Math.random()-0.5);
-  // Filter by type
-  const filtered = pool.filter(q => simTypes.includes(q.tipo||'libre'));
-  const finalPool = filtered.length >= 2 ? filtered : pool;
-  buildAndStartExam(finalPool);
+  filtered=filtered.sort(()=>Math.random()-0.5);
+  buildAndStartExam(filtered);
 }
 
 function buildAndStartExam(pool) {
-  const maxQ = simMode==='4x10'?4:simMode==='5x30'?10:20;
-  const totalSecs = simMode==='4x10'?600:simMode==='5x30'?1800:3600;
-  simQuestions = pool.slice(0, maxQ);
-  if(!simQuestions.length) { alert('No hay preguntas disponibles.'); return; }
-  simCurrentQ = 0;
-  simAnswers = new Array(simQuestions.length).fill('');
-  simTotalSecs = totalSecs;
-  simSecsLeft = totalSecs;
-  document.getElementById('sim-setup').style.display = 'none';
-  document.getElementById('sim-results').style.display = 'none';
-  document.getElementById('sim-exam').style.display = 'block';
-  const labels = {'4x10':'Examen corto · 10 min','5x30':'Examen mediano · 30 min','20x60':'Examen final · 1 hora'};
-  document.getElementById('sim-exam-label').textContent = labels[simMode]||'Simulacro';
+  const maxQ=simMode==='4x10'?4:simMode==='5x30'?10:20;
+  const totalSecs=simMode==='4x10'?600:simMode==='5x30'?1800:3600;
+  simQuestions=pool.slice(0,maxQ);
+  if(!simQuestions.length){alert('No hay preguntas disponibles.');return;}
+  simCurrentQ=0;
+  simAnswers=new Array(simQuestions.length).fill('');
+  simTotalSecs=totalSecs;
+  simSecsLeft=totalSecs;
+  document.getElementById('sim-setup').style.display='none';
+  document.getElementById('sim-results').style.display='none';
+  document.getElementById('sim-exam').style.display='block';
+  const labels={'4x10':'Examen corto · 4 preg · 10 min','5x30':'Examen mediano · 10 preg · 30 min','20x60':'Examen final · 20 preg · 1 hora'};
+  document.getElementById('sim-exam-label').textContent=labels[simMode]||'Simulacro';
   startSimTimer();
-  renderSimQuestion();
+  renderSimQ();
 }
 
-function renderSimQuestion() {
-  const q = simQuestions[simCurrentQ];
-  document.getElementById('sim-q-indicator').textContent = 'Pregunta '+(simCurrentQ+1)+' de '+simQuestions.length;
-  document.getElementById('sim-q-num').textContent = 'Pregunta '+(simCurrentQ+1);
-  document.getElementById('sim-q-text').textContent = q.q||'';
-  const casoBox = document.getElementById('sim-caso-box');
-  if(q.caso&&q.caso.trim()) { casoBox.style.display='block'; casoBox.textContent=q.caso; }
-  else { casoBox.style.display='none'; }
-  const freeArea = document.getElementById('sim-free-area');
-  const choiceArea = document.getElementById('sim-choice-area');
-  if(q.tipo==='marcada'&&q.opts) {
-    freeArea.style.display='none'; choiceArea.style.display='block';
-    document.getElementById('sim-choices-list').innerHTML = q.opts.map((o,i)=>
+const TYPE_LABELS={'libre':'✍️ Libre','marcada':'🔘 Marcada','directa':'🎯 Directa','caso':'🏥 Caso'};
+const DIFF_LABELS={'basica':'🟢 Básica','regular':'🟡 Regular','dificil':'🔴 Difícil'};
+const DIFF_COLORS={'basica':'badge-green','regular':'badge-amber','dificil':'badge-purple'};
+
+function renderSimQ() {
+  const q=simQuestions[simCurrentQ];
+  document.getElementById('sim-q-indicator').textContent='Pregunta '+(simCurrentQ+1)+'/'+simQuestions.length;
+  document.getElementById('sim-q-num').textContent='Pregunta '+(simCurrentQ+1);
+  document.getElementById('sim-q-text').textContent=q.q||'';
+  const tb=document.getElementById('sim-q-type-badge');
+  const db=document.getElementById('sim-q-diff-badge');
+  if(tb){tb.textContent=TYPE_LABELS[q.tipo||'libre']||q.tipo;tb.className='badge badge-blue';}
+  if(db){db.textContent=DIFF_LABELS[q.dificultad||'regular']||q.dificultad;db.className='badge '+( DIFF_COLORS[q.dificultad||'regular']||'badge-purple');}
+  const casoBox=document.getElementById('sim-caso-box');
+  if(q.caso&&q.caso.trim()){casoBox.style.display='block';casoBox.textContent=q.caso;}
+  else casoBox.style.display='none';
+  const freeArea=document.getElementById('sim-free-area');
+  const directArea=document.getElementById('sim-direct-area');
+  const choiceArea=document.getElementById('sim-choice-area');
+  freeArea.style.display='none';directArea.style.display='none';choiceArea.style.display='none';
+  if(q.tipo==='marcada'&&q.opts){
+    choiceArea.style.display='block';
+    document.getElementById('sim-choices-list').innerHTML=q.opts.map((o,i)=>
       `<div class="option" onclick="simSelectChoice(${i},this)"><div class="opt-circle">${String.fromCharCode(65+i)}</div>${o}</div>`
     ).join('');
+  } else if(q.tipo==='directa'){
+    directArea.style.display='block';
+    document.getElementById('sim-answer-direct').value=simAnswers[simCurrentQ]||'';
   } else {
-    freeArea.style.display='block'; choiceArea.style.display='none';
-    document.getElementById('sim-answer-free').value = simAnswers[simCurrentQ]||'';
+    freeArea.style.display='block';
+    document.getElementById('sim-answer-free').value=simAnswers[simCurrentQ]||'';
   }
-  const nextBtn = document.getElementById('sim-next-btn');
-  if(nextBtn) nextBtn.textContent = simCurrentQ===simQuestions.length-1 ? 'Finalizar y ver resultados →' : 'Siguiente →';
+  const btn=document.getElementById('sim-next-btn');
+  if(btn)btn.textContent=simCurrentQ===simQuestions.length-1?'Finalizar y calificar →':'Siguiente →';
 }
 
-function simSelectChoice(idx, el) {
-  document.querySelectorAll('#sim-choices-list .option').forEach(o=>o.classList.remove('correct'));
+function simSelectChoice(idx,el) {
+  document.querySelectorAll('#sim-choices-list .option').forEach(o=>o.classList.remove('correct','wrong'));
   el.classList.add('correct');
-  simAnswers[simCurrentQ] = idx;
+  simAnswers[simCurrentQ]=idx;
 }
 
 function simNextQuestion() {
-  const q = simQuestions[simCurrentQ];
-  if(q.tipo!=='marcada') simAnswers[simCurrentQ] = document.getElementById('sim-answer-free').value.trim();
+  const q=simQuestions[simCurrentQ];
+  if(q.tipo==='marcada'){/* already saved on click */}
+  else if(q.tipo==='directa'){const el=document.getElementById('sim-answer-direct');if(el)simAnswers[simCurrentQ]=el.value.trim();}
+  else{const el=document.getElementById('sim-answer-free');if(el)simAnswers[simCurrentQ]=el.value.trim();}
   simCurrentQ++;
-  if(simCurrentQ>=simQuestions.length) endSimulacro();
-  else renderSimQuestion();
+  if(simCurrentQ>=simQuestions.length)endSimulacro();
+  else renderSimQ();
 }
 
 function startSimTimer() {
-  if(simTimer) clearInterval(simTimer);
-  simTimer = setInterval(()=>{
+  if(simTimerInterval)clearInterval(simTimerInterval);
+  simTimerInterval=setInterval(()=>{
     simSecsLeft--;
-    const m=Math.floor(simSecsLeft/60); const s=simSecsLeft%60;
-    const el=document.getElementById('sim-clock');
-    if(el) el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const m=Math.floor(simSecsLeft/60),s=simSecsLeft%60;
+    const clk=document.getElementById('sim-clock');
+    if(clk){clk.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');clk.style.color=simSecsLeft<=60?'#ff6464':'';}
     const bar=document.getElementById('sim-timer-bar');
-    if(bar) bar.style.width=(simSecsLeft/simTotalSecs*100)+'%';
-    const clockEl=document.getElementById('sim-clock');
-    if(clockEl) clockEl.style.color=simSecsLeft<=60?'#ff6464':'';
-    if(simSecsLeft<=0) endSimulacro();
+    if(bar)bar.style.width=(Math.max(0,simSecsLeft)/simTotalSecs*100)+'%';
+    if(simSecsLeft<=0)endSimulacro();
   },1000);
 }
 
 async function endSimulacro() {
-  if(simTimer) clearInterval(simTimer);
+  if(simTimerInterval)clearInterval(simTimerInterval);
+  // Save current answer
   const q=simQuestions[simCurrentQ];
-  if(q&&q.tipo!=='marcada') {
-    const el=document.getElementById('sim-answer-free');
-    if(el) simAnswers[simCurrentQ]=el.value.trim();
+  if(q){
+    if(q.tipo==='directa'){const el=document.getElementById('sim-answer-direct');if(el)simAnswers[simCurrentQ]=el.value.trim();}
+    else if(q.tipo!=='marcada'){const el=document.getElementById('sim-answer-free');if(el)simAnswers[simCurrentQ]=el.value.trim();}
   }
   document.getElementById('sim-exam').style.display='none';
   document.getElementById('sim-results').style.display='block';
   document.getElementById('sim-res-emoji').textContent='⏳';
   document.getElementById('sim-res-score').textContent='...';
+  document.getElementById('sim-res-pts').textContent='';
   document.getElementById('sim-res-msg').textContent='La IA está evaluando tus respuestas...';
-  document.getElementById('sim-feedback-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);">Evaluando 🧠...</div>';
-  await evaluateSimulacro();
+  document.getElementById('sim-eval-status').textContent='Evaluando con IA ⏳';
+  document.getElementById('sim-feedback-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);">Analizando cada respuesta 🧠...</div>';
+  await evalSimulacro();
 }
 
-async function evaluateSimulacro() {
-  const ptsPerQ = 20/simQuestions.length;
-  let total=0; let feedbackHTML='';
+async function evalSimulacro() {
+  const ptsPerQ=20/simQuestions.length;
+  let total=0;let fbHTML='';
   for(let i=0;i<simQuestions.length;i++){
-    const q=simQuestions[i]; const ans=simAnswers[i];
-    let score=0; let fb=''; let missing='';
+    const q=simQuestions[i];const ans=simAnswers[i];
+    let score=0;let fb='';let correctAns='';let porque='';
     if(q.tipo==='marcada'){
-      score=(ans===q.ans)?ptsPerQ:0;
-      fb=ans===q.ans?'Respuesta correcta ✓':'Respuesta incorrecta. La correcta era: '+(q.opts?q.opts[q.ans]:'');
+      const isCorrect=ans===q.ans;
+      score=isCorrect?ptsPerQ:0;
+      const correctLetter=q.opts?String.fromCharCode(65+(q.ans||0)):'?';
+      const correctText=q.opts&&q.opts[q.ans]?q.opts[q.ans]:'';
+      fb=isCorrect?'Respuesta correcta ✓':'La respuesta correcta era '+correctLetter+': '+correctText+'.';
+      correctAns=q.respuesta_ideal||(correctLetter+': '+correctText);
+      porque=q.porque||'La opción '+correctLetter+' es correcta según los fundamentos del tema.';
     } else {
-      try {
-        const prompt='Eres profesor universitario de medicina evaluando un examen.\nPregunta: "'+q.q+'"\nRespuesta ideal: "'+(q.respuesta_ideal||'No especificada')+'"\nRespuesta del estudiante: "'+(ans||'(sin respuesta)')+'"\n\nEvalúa en escala 0 a '+ptsPerQ.toFixed(1)+'. Considera precisión, terminología y completitud.\nResponde SOLO en JSON: {"puntaje":<número>,"feedback":"<2-3 oraciones>","falto":"<conceptos clave omitidos o incorrecto, o N/A>"}';
-        const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+      // AI evaluation
+      const tipoLabel=q.tipo==='directa'?'respuesta directa (término o concepto específico)':'respuesta libre';
+      const prompt='Eres profesor universitario de medicina. Evalúa la siguiente respuesta de un estudiante.
+
+Pregunta ('+tipoLabel+'): '+q.q+'
+Respuesta ideal para máximo puntaje: '+(q.respuesta_ideal||'No especificada')+'
+Porqué esa es la respuesta correcta: '+(q.porque||'No especificado')+'
+Respuesta del estudiante: '+(ans||'(sin respuesta)')+'
+
+Evalúa en escala 0 a '+ptsPerQ.toFixed(2)+' pts.
+Considera: terminología correcta, completitud, precisión conceptual.
+Responde SOLO JSON: {"puntaje":<número>,"feedback":"<2-3 oraciones evaluando la respuesta>","porque_correcto":"<explicación del criterio de evaluación>","respuesta_correcta":"<cómo debería haber respondido para máximo puntaje>","falta":"<qué conceptos o términos faltaron, o N/A>"}';
+      try{
+        const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
         const data=await resp.json();
-        const text=data.content[0].text.replace(/```json|```/g,'').trim();
-        const res=JSON.parse(text);
-        score=Math.min(parseFloat(res.puntaje)||0,ptsPerQ);
-        fb=res.feedback||''; missing=res.falto&&res.falto!=='N/A'?res.falto:'';
-      } catch(e){score=ans&&ans.length>15?ptsPerQ*0.4:0;fb='No se pudo evaluar automáticamente.';}
+        const txt=data.content[0].text.replace(/```json|```/g,'').trim();
+        const res=JSON.parse(txt);
+        score=Math.min(Math.max(parseFloat(res.puntaje)||0,0),ptsPerQ);
+        fb=res.feedback||'';
+        porque=res.porque_correcto||'';
+        correctAns=res.respuesta_correcta||q.respuesta_ideal||'';
+        const falta=res.falta&&res.falta!=='N/A'?res.falta:'';
+        if(falta)fb+=' <span style="color:var(--amber)">Faltó mencionar: '+falta+'</span>';
+      }catch(e){
+        score=ans&&ans.length>15?ptsPerQ*0.4:0;
+        fb='No se pudo evaluar automáticamente.';
+        correctAns=q.respuesta_ideal||'Ver apuntes de clase.';
+        porque=q.porque||'';
+      }
     }
     total+=score;
-    const cls=score>=ptsPerQ*0.75?'#9fefd4':score>=ptsPerQ*0.4?'#ffb450':'#ff9090';
-    feedbackHTML+=`<div class="feedback-item">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;font-family:'Space Mono',monospace;">Pregunta ${i+1}</div>
-        <div style="font-size:18px;font-weight:700;color:${cls};">${score.toFixed(1)}/${ptsPerQ.toFixed(1)}</div>
+    const scoreColor=score>=ptsPerQ*0.8?'#9fefd4':score>=ptsPerQ*0.5?'#ffb450':'#ff9090';
+    const ansDisplay=q.tipo==='marcada'?(typeof ans==='number'?String.fromCharCode(65+ans)+': '+(q.opts&&q.opts[ans]?q.opts[ans]:''):'Sin respuesta'):ans||'Sin respuesta';
+    fbHTML+=`<div style="background:var(--surface3);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;font-family:'Space Mono',monospace;">Pregunta ${i+1}</span>
+          <span class="badge badge-blue" style="font-size:10px;">${TYPE_LABELS[q.tipo||'libre']||q.tipo}</span>
+          <span class="badge ${DIFF_COLORS[q.dificultad||'regular']||'badge-purple'}" style="font-size:10px;">${DIFF_LABELS[q.dificultad||'regular']||''}</span>
+        </div>
+        <div style="font-size:20px;font-weight:700;color:${scoreColor};">${score.toFixed(1)}/${ptsPerQ.toFixed(1)}</div>
       </div>
-      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">${q.q}</div>
-      ${ans?`<div style="font-size:13px;color:var(--muted);padding:8px 12px;background:var(--surface2);border-radius:6px;margin-bottom:8px;"><strong>Tu respuesta:</strong> ${ans}</div>`:'<div style="font-size:13px;color:var(--red);margin-bottom:8px;">Sin respuesta</div>'}
-      <div style="font-size:13px;line-height:1.5;">${fb}${missing?` <span style="color:var(--amber);">Faltó: ${missing}</span>`:''}</div>
+      ${q.caso?`<div style="font-size:12px;color:var(--muted);padding:8px 10px;background:rgba(144,96,255,0.06);border-left:2px solid var(--purple);border-radius:4px;margin-bottom:8px;line-height:1.5;">${q.caso.substring(0,200)}${q.caso.length>200?'...':''}</div>`:''}
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px;line-height:1.5;">${q.q}</div>
+      <div style="font-size:13px;padding:8px 12px;background:var(--surface2);border-radius:6px;margin-bottom:10px;"><strong style="color:var(--muted);">Tu respuesta:</strong> <span>${ansDisplay}</span></div>
+      <div style="font-size:13px;margin-bottom:8px;line-height:1.5;">${fb}</div>
+      ${porque?`<div style="font-size:12px;color:var(--blue);padding:8px 10px;background:var(--blue-light);border-radius:6px;margin-bottom:8px;line-height:1.5;"><strong>¿Por qué?</strong> ${porque}</div>`:''}
+      ${correctAns?`<div style="font-size:12px;color:#9fefd4;padding:8px 10px;background:var(--green-light);border-radius:6px;line-height:1.5;"><strong>Respuesta correcta:</strong> ${correctAns}</div>`:''}
     </div>`;
   }
   const final=Math.min(parseFloat(total.toFixed(1)),20);
   const emoji=final>=18?'🏆':final>=15?'🌟':final>=11?'💪':final>=7?'📚':'😅';
-  const msg=final>=18?'¡Perfecto! Dominas el tema completamente.':final>=15?'¡Muy bien! Estás lista para el examen.':final>=11?'Aprobado. Repasa los conceptos que fallaste.':final>=7?'Sigue practicando, vas mejorando.':'Necesitas repasar más. ¡No te rindas!';
+  const msgs={'🏆':'¡Perfecto! Dominas el tema. Listo para el examen real.','🌟':'¡Muy bien! Repasa los detalles que fallaste.','💪':'Aprobado. Refuerza los conceptos débiles.','📚':'Necesitas repasar más. ¡Cada intento suma!','😅':'No te rindas. Revisa el material y vuelve a intentarlo.'};
+  const correctCount=simQuestions.filter((q,i)=>{ const p=20/simQuestions.length; return simAnswers[i]!==''&&(q.tipo==='marcada'?simAnswers[i]===q.ans:true);}).length;
   document.getElementById('sim-res-emoji').textContent=emoji;
   document.getElementById('sim-res-score').textContent=final+'/20';
-  document.getElementById('sim-res-msg').textContent=msg;
-  document.getElementById('sim-feedback-list').innerHTML=feedbackHTML;
+  document.getElementById('sim-res-pts').textContent=total.toFixed(1)+' puntos acumulados de '+simQuestions.length+' preguntas';
+  document.getElementById('sim-res-msg').textContent=msgs[emoji]||'';
+  document.getElementById('sim-feedback-list').innerHTML=fbHTML;
+  document.getElementById('sim-eval-status').textContent='Evaluación completa ✓';
 }
 
 function resetSimulacro() {
-  simMode='4x10'; simTypes=['libre']; simCustomQuestions=null;
-  simQuestions=[]; simCurrentQ=0; simAnswers=[];
+  simMode='4x10';simActiveTypes=['libre','marcada','directa','caso'];simActiveDiffs=['basica','regular','dificil'];
+  simCustomPool=null;simQuestions=[];simCurrentQ=0;simAnswers=[];
+  if(simTimerInterval)clearInterval(simTimerInterval);
   document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected'));
-  document.querySelectorAll('.sim-type-btn').forEach(b=>{ b.classList.remove('active'); if(b.id==='stype-libre') b.classList.add('active'); });
-  if(simTimer) clearInterval(simTimer);
+  document.getElementById('smode-4x10').classList.add('selected');
+  ['libre','marcada','directa','caso'].forEach(t=>{const el=document.getElementById('stype-'+t);if(el)el.classList.add('active');});
+  ['basica','regular','dificil'].forEach(d=>{const el=document.getElementById('sdiff-'+d);if(el)el.classList.add('active');});
+  const clk=document.getElementById('sim-clock');if(clk){clk.textContent='10:00';clk.style.color='';}
   document.getElementById('sim-setup').style.display='block';
   document.getElementById('sim-exam').style.display='none';
   document.getElementById('sim-results').style.display='none';
-  const clockEl=document.getElementById('sim-clock');
-  if(clockEl) clockEl.style.color='';
+  renderSimLibrary();
 }
 
 // ── INIT ──
@@ -1761,19 +2025,23 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <!-- MODAL: add sim session to library -->
 <div class="overlay" id="modal-add-sim-session">
-  <div class="modal">
+  <div class="modal" style="max-width:520px;">
     <div class="modal-title">Agregar sesión a biblioteca</div>
-    <div class="hint-box">
-      Formato JSON para preguntas:<br>
-      <code>[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta...","caso":"Texto del caso (opcional)","opts":["A","B","C"],"ans":0}]</code><br><br>
-      <code>tipo</code>: "libre" o "marcada" &nbsp;|&nbsp; <code>caso</code>: solo para casos clínicos
+    <div class="hint-box" style="font-size:12px;">
+      Usa el prompt de la app para generar el JSON con IA. Formato:<br>
+      <code>[{"q":"...","tipo":"libre","dificultad":"basica","caso":"...opcional...","respuesta_ideal":"...","porque":"...","opts":["A","B","C","D"],"ans":0}]</code><br><br>
+      <strong>tipo:</strong> "libre" | "marcada" | "directa" | "caso"<br>
+      <strong>dificultad:</strong> "basica" | "regular" | "dificil"<br>
+      <strong>caso:</strong> texto del caso clínico (solo si aplica)<br>
+      <strong>opts/ans:</strong> solo para tipo "marcada" (ans = índice 0,1,2,3)
     </div>
     <label>Número de sesión</label>
     <input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
-    <label>Nombre / tema</label>
+    <label>Nombre / tema de la sesión</label>
     <input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos de Bioseguridad">
-    <label>JSON de preguntas (mínimo 10 para 4 modelos)</label>
-    <textarea id="sim-lib-json" style="min-height:100px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","respuesta_ideal":"Conjunto de normas..."}]'></textarea>
+    <label>JSON de preguntas</label>
+    <textarea id="sim-lib-json" style="min-height:120px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","dificultad":"basica","respuesta_ideal":"Conjunto de normas...","porque":"Porque la OMS la define como..."}]'></textarea>
+    <div style="font-size:12px;color:var(--hint);margin-top:-8px;margin-bottom:12px;">Sin límite de preguntas. Más preguntas = más variedad de simulacros.</div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar en biblioteca</button>
@@ -1783,16 +2051,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- MODAL: custom sim exam -->
 <div class="overlay" id="modal-sim-custom">
-  <div class="modal">
-    <div class="modal-title">Crear examen personalizado</div>
-    <div class="hint-box">Mismo formato JSON. Puedes mezclar preguntas libres, marcadas y con casos.</div>
-    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta ideal..."}]'></textarea>
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">Editor de examen personalizado</div>
+    <div class="hint-box" style="font-size:12px;">
+      Crea tu propio examen con el tipo y cantidad de preguntas que quieras. Mismo formato JSON.<br><br>
+      Puedes cambiar el tipo de cualquier pregunta: libre, marcada, directa o caso.<br>
+      <strong>Incluye siempre respuesta_ideal y porque</strong> para que la IA pueda calificar.
+    </div>
+    <label>Nombre del examen personalizado</label>
+    <input type="text" id="sim-custom-name" placeholder="Ej: Mi examen de bioseguridad semana 2">
+    <label>JSON de preguntas</label>
+    <textarea id="sim-custom-json" style="min-height:140px;font-family:'Space Mono',monospace;font-size:12px;" placeholder='[{"q":"Pregunta...","tipo":"libre","dificultad":"regular","respuesta_ideal":"Respuesta correcta completa...","porque":"Se puntúa así porque...","caso":"Texto del caso si aplica..."}]'></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
-      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar</button>
+      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar ahora</button>
     </div>
   </div>
 </div>
+
+div>
 
 </body>
 </html>
