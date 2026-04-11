@@ -1108,12 +1108,12 @@ function loadFlash() {
 
 // ── BITÁCORA ──
 function showBitaForm() {
-  document.getElementById('bita-form').style.display='block';
-  document.getElementById('bita-list').style.display='none';
+  document.getElementById('bita-form').style.display = 'block';
+  document.getElementById('bita-list').style.display = 'none';
 }
 function showBitaList() {
-  document.getElementById('bita-form').style.display='none';
-  document.getElementById('bita-list').style.display='block';
+  document.getElementById('bita-form').style.display = 'none';
+  document.getElementById('bita-list').style.display = 'block';
   renderBitaList();
 }
 
@@ -1149,22 +1149,27 @@ function addMission() {
 function saveBitacora() {
   const curso = document.getElementById('b-curso').value.trim();
   const planeta = document.getElementById('b-planeta').value.trim();
-  if(!curso || !planeta) {
-    alert('Completa Curso y Nombre del planeta');
+  
+  if (!curso || !planeta) {
+    alert('❌ Completa al menos "Curso" y "Nombre del planeta"');
     return;
   }
   const missions = [];
   document.querySelectorAll('#mission-list .mission-item').forEach(item => {
-    const t = item.querySelector('.mission-text');
-    const c = item.querySelector('.mission-check');
-    if(t && t.value.trim()) missions.push({text: t.value.trim(), done: c ? c.classList.contains('done') : false});
+    const textEl = item.querySelector('.mission-text');
+    const check = item.querySelector('.mission-check');
+    if (textEl && textEl.value.trim()) {
+      missions.push({
+        text: textEl.value.trim(),
+        done: check ? check.classList.contains('done') : false
+      });
+    }
   });
-  const tags = [];
-  document.querySelectorAll('.etag.sel').forEach(t => tags.push(t.textContent.trim()));
+ const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t => t.textContent.trim());
 
   const bita = {
     id: editingBitaId || 'b' + Date.now(),
-    planeta: planetEmoji,
+    planeta: planetEmoji || '🪐',
     curso,
     planeta_nombre: planeta,
     fecha: document.getElementById('b-fecha').value,
@@ -1179,46 +1184,79 @@ function saveBitacora() {
     feeling: feelingVal,
     diff: diffVal,
     mejora: document.getElementById('b-mejora').value,
-    tags,
-    missions,
+    tags: tags,
+    missions: missions,
     proxima: document.getElementById('b-proxima').value,
     savedAt: new Date().toISOString()
   };
 
-  if(editingBitaId) {
+  if (editingBitaId) {
     const idx = state.bitacoras.findIndex(b => b.id === editingBitaId);
-    if(idx >= 0) state.bitacoras[idx] = bita;
+    if (idx >= 0) state.bitacoras[idx] = bita;
   } else {
     state.bitacoras.unshift(bita);
   }
+
   save();
   editingBitaId = null;
-  const banner = document.getElementById('saved-banner');
-  if(banner) { banner.style.display = 'block'; setTimeout(() => banner.style.display = 'none', 3000); }
-}
 
+  const banner = document.getElementById('saved-banner');
+  banner.style.display = 'block';
+  setTimeout(() => banner.style.display = 'none', 3000);
+
+  alert('✅ Bitácora guardada correctamente');
+}
+function confirmClearBita() {
+  if (confirm('¿Estás seguro de limpiar TODA la plantilla?')) {
+    resetBitaForm();
+  }
+}
 function resetBitaForm() {
   editingBitaId = null;
-  document.querySelectorAll('#bita-form input[type=text], #bita-form textarea').forEach(el => el.value = '');
+  document.querySelectorAll('#bita-form input, #bita-form textarea').forEach(el => el.value = '');
   document.getElementById('b-fecha').valueAsDate = new Date();
   planetEmoji = '🪐';
-  document.querySelectorAll('#planet-pick .ep-btn').forEach((b,i) => b.classList.toggle('picked', i===0));
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((b, i) => b.classList.toggle('picked', i === 0));
   feelingVal = 0;
-  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
   diffVal = '';
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.diff-btn').forEach(b => b.className = 'diff-btn');
   document.querySelectorAll('.etag').forEach(t => t.classList.remove('sel'));
+
+  const ml = document.getElementById('mission-list');
+  ml.innerHTML = `
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Repasar los conceptos de la sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Hacer el quiz de esta sesión..."></div>
+    <div class="mission-item"><div class="mission-check" onclick="toggleMission(this)"></div><input class="mission-text" type="text" placeholder="Ej: Investigar más sobre..."></div>`;
 }
 
-function renderBitaList() {
-  // ... (puedes dejarla como estaba o pedirla si la necesitas completa)
-}
-
-// ── PRINT BITACORA ──
+// ── EXPORTAR PDF (ahora sí funciona) ──
 function printBitacora() {
-  alert("Exportar PDF estará disponible pronto");
+  const getVal = id => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
+  
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html><head><meta charset="UTF-8"><title>Bitácora - ${getVal('b-planeta')}</title>
+    <style>body{font-family:Arial,sans-serif;margin:40px auto;max-width:700px;line-height:1.6;} h1{color:#3a1a8a;} .meta{background:#f5f3ff;padding:15px;border-radius:8px;margin:20px 0;}</style>
+    </head><body>
+      <h1>${planetEmoji} ${getVal('b-planeta')}</h1>
+      <div class="meta">
+        <strong>Curso:</strong> ${getVal('b-curso')} | 
+        <strong>Fecha:</strong> ${getVal('b-fecha')} | 
+        <strong>Sesión:</strong> ${getVal('b-sesion')}
+      </div>
+      <h2>Resumen</h2><p>${getVal('b-resumen')}</p>
+      <h2>Lo más importante</h2><p>${getVal('b-importante')}</p>
+      <h2>Conceptos clave</h2><p>${getVal('b-conceptos')}</p>
+      <p style="margin-top:50px;font-size:11px;color:#888;text-align:center;">
+        StudySpace • ${new Date().toLocaleDateString('es-PE')}
+      </p>
+    </body></html>
+  `);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
 }
-
 // ── MODALS ──
 function openModal(id) {
   if(id==='modal-curso') buildEmojiRow();
