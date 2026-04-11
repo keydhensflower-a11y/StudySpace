@@ -71,6 +71,38 @@ body {
   pointer-events: none; z-index: 0;
   animation: nebula-pulse 12s ease-in-out infinite alternate;
 }
+.planet-deco {
+  position: fixed; pointer-events: none; z-index: 0; border-radius: 50%;
+  animation: float-planet 20s ease-in-out infinite alternate;
+}
+.planet-1 {
+  width: 80px; height: 80px; top: 15%; right: 5%;
+  background: radial-gradient(circle at 35% 35%, #9060ff, #4a1a8a);
+  box-shadow: 0 0 30px rgba(144,96,255,0.3), inset -10px -10px 20px rgba(0,0,0,0.4);
+  animation-duration: 18s;
+}
+.planet-1::after {
+  content:''; position:absolute; inset:-8px; border-radius:50%;
+  border: 2px solid rgba(144,96,255,0.2);
+  transform: rotateX(70deg);
+}
+.planet-2 {
+  width: 45px; height: 45px; bottom: 20%; left: 3%;
+  background: radial-gradient(circle at 35% 35%, #1D9E75, #085041);
+  box-shadow: 0 0 20px rgba(29,158,117,0.25);
+  animation-duration: 25s; animation-delay: -5s;
+}
+.planet-3 {
+  width: 25px; height: 25px; top: 60%; right: 8%;
+  background: radial-gradient(circle at 35% 35%, #ffb450, #8a5200);
+  box-shadow: 0 0 15px rgba(255,180,80,0.3);
+  animation-duration: 30s; animation-delay: -10s;
+}
+@keyframes float-planet {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+  100% { transform: translateY(10px) rotate(-3deg); }
+}
 @keyframes nebula-pulse {
   0% { opacity: 0.6; transform: scale(1); }
   100% { opacity: 1; transform: scale(1.08); }
@@ -369,6 +401,22 @@ select option { background: #1a1a2e; color: var(--text); }
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+.sim-mode-card { cursor:pointer; transition:all 0.2s; }
+.sim-mode-card:hover { border-color:var(--purple); }
+.sim-mode-card.selected { border:1.5px solid var(--purple); box-shadow:0 0 16px var(--purple-glow); }
+.sim-type-btn { padding:8px 16px; border-radius:99px; font-size:13px; font-weight:500; cursor:pointer; border:0.5px solid var(--border2); background:transparent; color:var(--muted); transition:all 0.15s; font-family:'DM Sans',sans-serif; }
+.sim-type-btn.active { background:var(--purple-light); border-color:var(--purple); color:#c8b0ff; }
+.sim-type-btn:hover:not(.active) { background:var(--surface2); color:var(--text); }
+.sim-lib-item { background:var(--surface3); border:0.5px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+.sim-lib-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; cursor:pointer; }
+.sim-lib-header:hover { background:var(--surface2); }
+.sim-lib-body { display:none; padding:0 16px 14px; border-top:0.5px solid var(--border); }
+.sim-lib-body.open { display:block; }
+.quiz-result-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:flex; align-items:center; justify-content:center; z-index:300; backdrop-filter:blur(8px); }
+.quiz-result-card { background:#0d1028; border:0.5px solid var(--border); border-radius:20px; padding:40px 32px; text-align:center; max-width:400px; width:90%; animation:pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes pop-in { 0%{transform:scale(0.5);opacity:0} 100%{transform:scale(1);opacity:1} }
+.feedback-item { background:var(--surface3); border:0.5px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
 </style>
 </head>
 <body>
@@ -376,6 +424,9 @@ select option { background: #1a1a2e; color: var(--text); }
 <div class="nebula"></div>
 <div class="nebula2"></div>
 <div class="nebula3"></div>
+<div class="planet-deco planet-1"></div>
+<div class="planet-deco planet-2"></div>
+<div class="planet-deco planet-3"></div>
 
 <div class="topbar">
   <div class="logo">
@@ -579,10 +630,106 @@ select option { background: #1a1a2e; color: var(--text); }
   <div id="bita-list" style="display:none;">
     <div class="section-label">Bitácoras guardadas</div>
     <div id="bita-saved-list"></div>
+    <div id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
+      <div style="font-size:36px;margin-bottom:10px">🪐</div>
+      Aún no tienes bitácoras guardadas. ¡Crea una nueva!
+    </div>
     <div class="empty" id="bita-empty" style="display:none;text-align:center;padding:40px;color:var(--hint);font-size:14px;">
       <div style="font-size:36px;margin-bottom:10px">🪐</div>
       Aún no tienes bitácoras guardadas. ¡Crea una nueva!
     </div>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+
+<!-- SIMULACRO -->
+<div id="tab-simulacro" class="page">
+  <div class="page-title">Simulacro de Examen 🔬</div>
+  <div class="page-sub">Practica con cronómetro, casos clínicos y evaluación por IA.</div>
+
+  <div id="sim-setup">
+    <div class="section-label">Formato de examen</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+      <div class="card sim-mode-card" onclick="selectSimMode('4x10',this)" id="mode-4x10">
+        <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
+        <div style="font-size:14px;font-weight:600;">Examen corto</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">4 preguntas · 10 min · c/u vale 5 pts</div>
+      </div>
+      <div class="card sim-mode-card" onclick="selectSimMode('5x30',this)" id="mode-5x30">
+        <div style="font-size:28px;margin-bottom:8px;">📋</div>
+        <div style="font-size:14px;font-weight:600;">Examen mediano</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">5 casos · 2 preg. c/u · 30 min</div>
+      </div>
+      <div class="card sim-mode-card" onclick="selectSimMode('20x60',this)" id="mode-20x60">
+        <div style="font-size:28px;margin-bottom:8px;">🎓</div>
+        <div style="font-size:14px;font-weight:600;">Examen final</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">20 preguntas · 1 hora</div>
+      </div>
+    </div>
+
+    <div class="section-label">Tipo de preguntas</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="sim-type-btn active" id="stype-libre" onclick="toggleSimType('libre',this)">✍️ Respuesta libre</button>
+      <button class="sim-type-btn" id="stype-marcada" onclick="toggleSimType('marcada',this)">🔘 Alternativas</button>
+      <button class="sim-type-btn" id="stype-caso" onclick="toggleSimType('caso',this)">🏥 Caso clínico</button>
+    </div>
+
+    <div class="section-label">Curso</div>
+    <select id="sim-course-sel" style="margin-bottom:16px;" onchange="renderSimLibrary()"></select>
+
+    <div class="section-label">Biblioteca de sesiones</div>
+    <div class="hint-box" style="margin-bottom:12px;">Agrega preguntas por sesión. La IA usará estas para generar tu examen.</div>
+    <div id="sim-library-accordion"></div>
+    <button class="btn btn-primary" style="margin-bottom:20px;" onclick="openModal('modal-add-sim-session')">+ Agregar sesión a biblioteca</button>
+
+    <div class="section-label">O ingresa tu propio examen</div>
+    <button class="btn" onclick="openModal('modal-sim-custom')" style="margin-bottom:20px;">✏️ Crear examen personalizado</button>
+
+    <button class="btn btn-green" style="width:100%;justify-content:center;padding:14px;font-size:15px;" onclick="startSimulacro()">🚀 Iniciar simulacro</button>
+  </div>
+
+  <!-- EXAM SCREEN -->
+  <div id="sim-exam" style="display:none;">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;" id="sim-exam-label">Examen corto</div>
+        <div style="font-size:13px;font-weight:600;" id="sim-q-indicator">Pregunta 1 de 4</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:24px;font-weight:700;font-family:'Space Mono',monospace;color:var(--text);" id="sim-clock">10:00</div>
+        <button class="btn btn-sm btn-danger" onclick="endSimulacro()">Terminar</button>
+      </div>
+    </div>
+    <div style="height:5px;background:var(--surface2);border-radius:3px;margin-bottom:20px;overflow:hidden;">
+      <div id="sim-timer-bar" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--green));border-radius:3px;width:100%;transition:width 1s linear;"></div>
+    </div>
+    <div class="card" id="sim-q-card">
+      <div id="sim-caso-box" style="display:none;background:rgba(144,96,255,0.08);border-left:3px solid var(--purple);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:14px;line-height:1.7;"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;margin-bottom:6px;" id="sim-q-num">Pregunta 1</div>
+      <div style="font-size:15px;font-weight:500;line-height:1.5;margin-bottom:16px;" id="sim-q-text"></div>
+      <div id="sim-free-area">
+        <textarea id="sim-answer-free" style="min-height:120px;" placeholder="Escribe tu respuesta con los conceptos y términos correctos..."></textarea>
+        <div style="font-size:11px;color:var(--hint);margin-top:-8px;">Sé precisa. Usa la terminología correcta del tema.</div>
+      </div>
+      <div id="sim-choice-area" style="display:none;">
+        <div id="sim-choices-list"></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:16px;" onclick="simNextQuestion()" id="sim-next-btn">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="sim-results" style="display:none;">
+    <div class="card" style="text-align:center;padding:36px 20px;">
+      <div style="font-size:60px;margin-bottom:10px;" id="sim-res-emoji">🎉</div>
+      <div style="font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px;">CALIFICACIÓN FINAL</div>
+      <div style="font-size:54px;font-weight:700;letter-spacing:-0.03em;" id="sim-res-score">—</div>
+      <div style="font-size:14px;color:var(--muted);margin:10px 0 24px;" id="sim-res-msg"></div>
+      <button class="btn btn-primary" onclick="resetSimulacro()">Nuevo simulacro</button>
+    </div>
+    <div class="section-label" style="margin-top:20px;">Retroalimentación detallada</div>
+    <div id="sim-feedback-list"></div>
   </div>
 </div>
 
@@ -809,7 +956,7 @@ function goTab(name) {
   if(name==='quiz') renderQuizTab();
   if(name==='flash') renderFlashTab();
   if(name==='progreso') renderProgreso();
-  if(name==='bitacora') { showBitaForm(); resetBitaForm(); }
+  if(name==='bitacora') { showBitaForm(); }
   if(name==='simulacro') populateSimCourse();
 }
   // ── COURSES ──
@@ -1107,14 +1254,76 @@ function loadFlash() {
 }
 
 // ── BITÁCORA ──
-function showBitaForm() {
-  document.getElementById('bita-form').style.display = 'block';
-  document.getElementById('bita-list').style.display = 'none';
-}
+
 function showBitaList() {
   document.getElementById('bita-form').style.display = 'none';
   document.getElementById('bita-list').style.display = 'block';
   renderBitaList();
+}
+
+function showBitaForm() {
+  document.getElementById('bita-form').style.display = 'block';
+  document.getElementById('bita-list').style.display = 'none';
+}
+
+function renderBitaList() {
+  const list = document.getElementById('bita-saved-list');
+  const empty = document.getElementById('bita-empty');
+  if(!list) return;
+  if(!state.bitacoras || !state.bitacoras.length) {
+    list.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  list.innerHTML = state.bitacoras.map(b => {
+    const tagHtml = b.tags && b.tags.length ? b.tags.map(t=>`<span class="etag sel" style="font-size:11px;padding:2px 8px;pointer-events:none;">${t}</span>`).join('') : '';
+    return `<div class="bita-list-item" onclick="loadBitacora('${b.id}')">
+      <div class="bita-planet">${b.planeta||'🪐'}</div>
+      <div class="bita-info">
+        <div class="bita-name">${b.planeta_nombre||'Sin nombre'}</div>
+        <div class="bita-meta">${b.curso||''} · ${b.sesion||'Sin sesión'} · ${b.fecha||'Sin fecha'}</div>
+        ${tagHtml ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${tagHtml}</div>` : ''}
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteBita('${b.id}')">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteBita(id) {
+  if(!confirm('¿Eliminar esta bitácora?')) return;
+  state.bitacoras = state.bitacoras.filter(b => b.id !== id);
+  save(); renderBitaList();
+}
+
+function loadBitacora(id) {
+  const b = state.bitacoras.find(x => x.id === id);
+  if(!b) return;
+  editingBitaId = id;
+  showBitaForm();
+  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val||''; };
+  set('b-curso', b.curso); set('b-planeta', b.planeta_nombre);
+  set('b-fecha', b.fecha); set('b-sesion', b.sesion); set('b-duracion', b.duracion);
+  set('b-resumen', b.resumen); set('b-importante', b.importante); set('b-sorpresa', b.sorpresa);
+  set('b-conceptos', b.conceptos); set('b-relaciones', b.relaciones); set('b-ejemplo', b.ejemplo);
+  set('b-mejora', b.mejora); set('b-proxima', b.proxima);
+  const planets = ['🪐','🌍','🌙','⭐','🌌','☄️','🔭','🚀'];
+  planetEmoji = b.planeta || '🪐';
+  document.querySelectorAll('#planet-pick .ep-btn').forEach((el,i) => el.classList.toggle('picked', planets[i]===planetEmoji));
+  if(b.feeling) setStar(b.feeling);
+  if(b.diff) {
+    document.querySelectorAll('.diff-btn').forEach(btn => btn.className='diff-btn');
+    const diffBtn = document.querySelector('.diff-btn[onclick*="'+b.diff+'"]');
+    if(diffBtn) diffBtn.classList.add('sel-'+b.diff);
+  }
+  document.querySelectorAll('.etag').forEach(t => t.classList.toggle('sel', b.tags && b.tags.includes(t.textContent.trim())));
+  if(b.missions && b.missions.length) {
+    const ml = document.getElementById('mission-list');
+    if(ml) ml.innerHTML = b.missions.map(m => `<div class="mission-item">
+      <div class="mission-check${m.done?' done':''}" onclick="toggleMission(this)">${m.done?'✓':''}</div>
+      <input class="mission-text" type="text" value="${(m.text||'').replace(/"/g,'&quot;')}">
+    </div>`).join('');
+  }
 }
 
 function pickPlanet(e,el) {
@@ -1207,7 +1416,7 @@ function saveBitacora() {
   alert('✅ Bitácora guardada correctamente');
 }
 function confirmClearBita() {
-  if (confirm('¿Estás seguro de limpiar TODA la plantilla?')) {
+  if (confirm('¿Limpiar todos los campos de la plantilla? Las bitácoras guardadas no se perderán.')) {
     resetBitaForm();
   }
 }
@@ -1232,30 +1441,40 @@ function resetBitaForm() {
 
 // ── EXPORTAR PDF (ahora sí funciona) ──
 function printBitacora() {
-  const getVal = id => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
-  
-  const w = window.open('', '_blank');
-  w.document.write(`
-    <!DOCTYPE html>
-    <html><head><meta charset="UTF-8"><title>Bitácora - ${getVal('b-planeta')}</title>
-    <style>body{font-family:Arial,sans-serif;margin:40px auto;max-width:700px;line-height:1.6;} h1{color:#3a1a8a;} .meta{background:#f5f3ff;padding:15px;border-radius:8px;margin:20px 0;}</style>
-    </head><body>
-      <h1>${planetEmoji} ${getVal('b-planeta')}</h1>
-      <div class="meta">
-        <strong>Curso:</strong> ${getVal('b-curso')} | 
-        <strong>Fecha:</strong> ${getVal('b-fecha')} | 
-        <strong>Sesión:</strong> ${getVal('b-sesion')}
-      </div>
-      <h2>Resumen</h2><p>${getVal('b-resumen')}</p>
-      <h2>Lo más importante</h2><p>${getVal('b-importante')}</p>
-      <h2>Conceptos clave</h2><p>${getVal('b-conceptos')}</p>
-      <p style="margin-top:50px;font-size:11px;color:#888;text-align:center;">
-        StudySpace • ${new Date().toLocaleDateString('es-PE')}
-      </p>
-    </body></html>
-  `);
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const curso = get('b-curso'); const planeta = get('b-planeta');
+  if(!curso && !planeta) { alert('Llena al menos el curso y nombre del planeta antes de exportar.'); return; }
+  const fecha = get('b-fecha'); const sesion = get('b-sesion'); const duracion = get('b-duracion');
+  const resumen = get('b-resumen'); const importante = get('b-importante'); const sorpresa = get('b-sorpresa');
+  const conceptos = get('b-conceptos'); const relaciones = get('b-relaciones'); const ejemplo = get('b-ejemplo');
+  const mejora = get('b-mejora'); const proxima = get('b-proxima');
+  const feelingEmojis = ['','😴','😕','😐','🙂','🤩'];
+  const diffLabel = diffVal==='easy'?'Fácil 🟢':diffVal==='mid'?'Regular 🟡':diffVal==='hard'?'Difícil 🔴':'—';
+  const tags = Array.from(document.querySelectorAll('.etag.sel')).map(t=>t.textContent.trim()).join(' · ');
+  const missions = Array.from(document.querySelectorAll('#mission-list .mission-item')).map(item => {
+    const t = item.querySelector('.mission-text'); const c = item.querySelector('.mission-check');
+    return t && t.value.trim() ? '<li style="margin-bottom:5px">'+(c&&c.classList.contains('done')?'✅ ':'⬜ ')+t.value.trim()+'</li>' : '';
+  }).join('');
+  const sec = (icon, title, body) => body ? '<div class="sec"><div class="sec-t">'+icon+' '+title+'</div><div class="sec-b">'+body.replace(/\n/g,'<br>')+'</div></div>' : '';
+  const w = window.open('','_blank','width=800,height=900');
+  if(!w) { alert('Activa las ventanas emergentes para exportar el PDF.'); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  w.document.write('<title>Bitácora — '+planeta+'</title>');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#fff;color:#1a1a2e;max-width:720px;margin:0 auto;padding:32px 28px;font-size:14px;line-height:1.6}.header{text-align:center;margin-bottom:28px;border-bottom:2px solid #3a1a8a;padding-bottom:20px}.planet{font-size:52px;display:block;margin-bottom:10px}.title{font-size:24px;font-weight:700;color:#3a1a8a;margin-bottom:4px}.subtitle{font-size:13px;color:#666}.meta-row{display:flex;flex-wrap:wrap;gap:10px;background:#f5f3ff;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px}.meta-item strong{color:#3a1a8a}.sec{border:1px solid #ddd;border-radius:8px;padding:14px 16px;margin-bottom:14px;break-inside:avoid}.sec-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#3a1a8a;margin-bottom:8px}.sec-b{font-size:14px;color:#222;white-space:pre-wrap}.tags{font-size:13px;color:#5a3a9a;padding:10px 14px;background:#f5f3ff;border-radius:8px;margin-top:14px}.footer{text-align:center;font-size:11px;color:#aaa;margin-top:24px;padding-top:14px;border-top:1px solid #eee}@media print{body{padding:20px}}</style>');
+  w.document.write('</head><body>');
+  w.document.write('<div class="header"><span class="planet">'+(planetEmoji||'🪐')+'</span><div class="title">'+(planeta||'Bitácora')+'</div><div class="subtitle">Bitácora de Viaje · StudySpace</div></div>');
+  w.document.write('<div class="meta-row"><span class="meta-item"><strong>Curso:</strong> '+(curso||'—')+'</span><span class="meta-item"><strong>Sesión:</strong> '+(sesion||'—')+'</span><span class="meta-item"><strong>Fecha:</strong> '+(fecha||'—')+'</span><span class="meta-item"><strong>Duración:</strong> '+(duracion||'—')+'</span><span class="meta-item"><strong>Ánimo:</strong> '+(feelingEmojis[feelingVal]||'—')+'</span><span class="meta-item"><strong>Dificultad:</strong> '+diffLabel+'</span></div>');
+  w.document.write(sec('📝','Resumen de la sesión',resumen));
+  w.document.write(sec('⭐','Lo más importante',importante));
+  w.document.write(sec('💡','Sorpresas y dudas',sorpresa));
+  if(conceptos||relaciones||ejemplo) w.document.write(sec('🧬','Conceptos clave',(conceptos?'Términos: '+conceptos:'')+(relaciones?'\n\nRelaciones: '+relaciones:'')+(ejemplo?'\n\nEjemplo real: '+ejemplo:'')));
+  if(missions) w.document.write('<div class="sec"><div class="sec-t">🎯 Misiones pendientes</div><ul style="padding-left:20px;margin-top:4px">'+missions+'</ul></div>');
+  if(mejora||proxima) w.document.write(sec('🚀','Próximos pasos',(mejora?'A mejorar: '+mejora:'')+(proxima?'\n\nPróxima sesión: '+proxima:'')));
+  if(tags) w.document.write('<div class="tags">🏷️ '+tags+'</div>');
+  w.document.write('<div class="footer">StudySpace · '+new Date().toLocaleDateString("es-PE")+' · Cada sesión es un planeta por descubrir 🚀</div>');
+  w.document.write('</body></html>');
   w.document.close();
-  setTimeout(() => w.print(), 500);
+  setTimeout(()=>w.print(), 700);
 }
 // ── MODALS ──
 function openModal(id) {
@@ -1267,6 +1486,271 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open'); 
 }
 
+
+// ── SIMULACRO ──
+let simMode = '4x10';
+let simTypes = ['libre'];
+let simQuestions = [];
+let simCurrentQ = 0;
+let simAnswers = [];
+let simTimer = null;
+let simTotalSecs = 600;
+let simSecsLeft = 600;
+let simCustomQuestions = null;
+
+function populateSimCourse() {
+  const opts = state.courses.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  const el = document.getElementById('sim-course-sel');
+  if(el) { el.innerHTML = opts; renderSimLibrary(); }
+}
+
+function selectSimMode(mode, el) {
+  simMode = mode;
+  document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+}
+
+function toggleSimType(type, el) {
+  el.classList.toggle('active');
+  if(el.classList.contains('active')) { if(!simTypes.includes(type)) simTypes.push(type); }
+  else { simTypes = simTypes.filter(t=>t!==type); if(!simTypes.length){simTypes.push(type);el.classList.add('active');} }
+}
+
+function renderSimLibrary() {
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  const acc = document.getElementById('sim-library-accordion');
+  if(!acc) return;
+  const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
+  if(!sessions.length) {
+    acc.innerHTML = '<div style="text-align:center;padding:24px;color:var(--hint);font-size:13px;">Sin sesiones en la biblioteca. Agrega una con el botón de abajo.</div>';
+    return;
+  }
+  acc.innerHTML = sessions.map((s,i)=>`
+    <div class="sim-lib-item">
+      <div class="sim-lib-header" onclick="toggleSimLib(${i})">
+        <div>
+          <div style="font-size:14px;font-weight:600;">${s.num||''} ${s.name||''}</div>
+          <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;">${(s.questions||[]).length} preguntas guardadas</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="badge badge-purple">${(s.questions||[]).length} preg.</span>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteSimSession('${s.id}')">🗑️</button>
+          <span id="slib-arrow-${i}" style="color:var(--muted);font-size:12px;">▼</span>
+        </div>
+      </div>
+      <div class="sim-lib-body" id="slib-body-${i}">
+        <div style="padding-top:12px;font-size:13px;color:var(--muted);">
+          ${(s.questions||[]).slice(0,3).map((q,qi)=>`<div style="padding:4px 0;border-bottom:0.5px solid var(--border);">${qi+1}. ${q.q||''}</div>`).join('')}
+          ${(s.questions||[]).length>3?`<div style="color:var(--hint);font-size:12px;margin-top:4px;">...y ${(s.questions||[]).length-3} más</div>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSimLib(i) {
+  const body = document.getElementById('slib-body-'+i);
+  const arrow = document.getElementById('slib-arrow-'+i);
+  if(body) body.classList.toggle('open');
+  if(arrow) arrow.textContent = body&&body.classList.contains('open')?'▲':'▼';
+}
+
+function saveSimLibSession() {
+  const num = document.getElementById('sim-lib-num').value.trim();
+  const name = document.getElementById('sim-lib-name').value.trim();
+  const raw = document.getElementById('sim-lib-json').value.trim();
+  if(!name&&!num) { alert('Agrega al menos el nombre de la sesión.'); return; }
+  if(!raw) { alert('Agrega las preguntas en formato JSON.'); return; }
+  let questions;
+  try { questions = JSON.parse(raw); } catch(e) { alert('JSON inválido. Revisa el formato.'); return; }
+  if(!Array.isArray(questions)||!questions[0].q) { alert('Cada pregunta necesita al menos "q" y "tipo".'); return; }
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  if(!state.simLibrary) state.simLibrary = [];
+  state.simLibrary.push({id:'sl'+Date.now(), courseId:cid, num, name, questions});
+  save();
+  document.getElementById('sim-lib-num').value='';
+  document.getElementById('sim-lib-name').value='';
+  document.getElementById('sim-lib-json').value='';
+  closeModal('modal-add-sim-session');
+  renderSimLibrary();
+  alert('Sesión agregada a la biblioteca con '+questions.length+' preguntas.');
+}
+
+function deleteSimSession(id) {
+  if(!confirm('¿Eliminar esta sesión de la biblioteca?')) return;
+  state.simLibrary = (state.simLibrary||[]).filter(s=>s.id!==id);
+  save(); renderSimLibrary();
+}
+
+function loadCustomSimExam() {
+  const raw = document.getElementById('sim-custom-json').value.trim();
+  if(!raw) { alert('Agrega las preguntas.'); return; }
+  let qs;
+  try { qs = JSON.parse(raw); } catch(e) { alert('JSON inválido.'); return; }
+  if(!Array.isArray(qs)||!qs[0].q) { alert('Formato incorrecto.'); return; }
+  simCustomQuestions = qs;
+  closeModal('modal-sim-custom');
+  buildAndStartExam(qs);
+}
+
+function startSimulacro() {
+  const cid = document.getElementById('sim-course-sel') ? document.getElementById('sim-course-sel').value : '';
+  const sessions = (state.simLibrary||[]).filter(s=>s.courseId===cid);
+  if(!sessions.length && !simCustomQuestions) {
+    alert('Agrega sesiones a tu biblioteca primero, o crea un examen personalizado.');
+    return;
+  }
+  // Build question pool from all sessions
+  let pool = [];
+  sessions.forEach(s => { if(s.questions) pool.push(...s.questions); });
+  if(!pool.length) pool = simCustomQuestions || [];
+  // Shuffle
+  pool = pool.sort(()=>Math.random()-0.5);
+  // Filter by type
+  const filtered = pool.filter(q => simTypes.includes(q.tipo||'libre'));
+  const finalPool = filtered.length >= 2 ? filtered : pool;
+  buildAndStartExam(finalPool);
+}
+
+function buildAndStartExam(pool) {
+  const maxQ = simMode==='4x10'?4:simMode==='5x30'?10:20;
+  const totalSecs = simMode==='4x10'?600:simMode==='5x30'?1800:3600;
+  simQuestions = pool.slice(0, maxQ);
+  if(!simQuestions.length) { alert('No hay preguntas disponibles.'); return; }
+  simCurrentQ = 0;
+  simAnswers = new Array(simQuestions.length).fill('');
+  simTotalSecs = totalSecs;
+  simSecsLeft = totalSecs;
+  document.getElementById('sim-setup').style.display = 'none';
+  document.getElementById('sim-results').style.display = 'none';
+  document.getElementById('sim-exam').style.display = 'block';
+  const labels = {'4x10':'Examen corto · 10 min','5x30':'Examen mediano · 30 min','20x60':'Examen final · 1 hora'};
+  document.getElementById('sim-exam-label').textContent = labels[simMode]||'Simulacro';
+  startSimTimer();
+  renderSimQuestion();
+}
+
+function renderSimQuestion() {
+  const q = simQuestions[simCurrentQ];
+  document.getElementById('sim-q-indicator').textContent = 'Pregunta '+(simCurrentQ+1)+' de '+simQuestions.length;
+  document.getElementById('sim-q-num').textContent = 'Pregunta '+(simCurrentQ+1);
+  document.getElementById('sim-q-text').textContent = q.q||'';
+  const casoBox = document.getElementById('sim-caso-box');
+  if(q.caso&&q.caso.trim()) { casoBox.style.display='block'; casoBox.textContent=q.caso; }
+  else { casoBox.style.display='none'; }
+  const freeArea = document.getElementById('sim-free-area');
+  const choiceArea = document.getElementById('sim-choice-area');
+  if(q.tipo==='marcada'&&q.opts) {
+    freeArea.style.display='none'; choiceArea.style.display='block';
+    document.getElementById('sim-choices-list').innerHTML = q.opts.map((o,i)=>
+      `<div class="option" onclick="simSelectChoice(${i},this)"><div class="opt-circle">${String.fromCharCode(65+i)}</div>${o}</div>`
+    ).join('');
+  } else {
+    freeArea.style.display='block'; choiceArea.style.display='none';
+    document.getElementById('sim-answer-free').value = simAnswers[simCurrentQ]||'';
+  }
+  const nextBtn = document.getElementById('sim-next-btn');
+  if(nextBtn) nextBtn.textContent = simCurrentQ===simQuestions.length-1 ? 'Finalizar y ver resultados →' : 'Siguiente →';
+}
+
+function simSelectChoice(idx, el) {
+  document.querySelectorAll('#sim-choices-list .option').forEach(o=>o.classList.remove('correct'));
+  el.classList.add('correct');
+  simAnswers[simCurrentQ] = idx;
+}
+
+function simNextQuestion() {
+  const q = simQuestions[simCurrentQ];
+  if(q.tipo!=='marcada') simAnswers[simCurrentQ] = document.getElementById('sim-answer-free').value.trim();
+  simCurrentQ++;
+  if(simCurrentQ>=simQuestions.length) endSimulacro();
+  else renderSimQuestion();
+}
+
+function startSimTimer() {
+  if(simTimer) clearInterval(simTimer);
+  simTimer = setInterval(()=>{
+    simSecsLeft--;
+    const m=Math.floor(simSecsLeft/60); const s=simSecsLeft%60;
+    const el=document.getElementById('sim-clock');
+    if(el) el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const bar=document.getElementById('sim-timer-bar');
+    if(bar) bar.style.width=(simSecsLeft/simTotalSecs*100)+'%';
+    const clockEl=document.getElementById('sim-clock');
+    if(clockEl) clockEl.style.color=simSecsLeft<=60?'#ff6464':'';
+    if(simSecsLeft<=0) endSimulacro();
+  },1000);
+}
+
+async function endSimulacro() {
+  if(simTimer) clearInterval(simTimer);
+  const q=simQuestions[simCurrentQ];
+  if(q&&q.tipo!=='marcada') {
+    const el=document.getElementById('sim-answer-free');
+    if(el) simAnswers[simCurrentQ]=el.value.trim();
+  }
+  document.getElementById('sim-exam').style.display='none';
+  document.getElementById('sim-results').style.display='block';
+  document.getElementById('sim-res-emoji').textContent='⏳';
+  document.getElementById('sim-res-score').textContent='...';
+  document.getElementById('sim-res-msg').textContent='La IA está evaluando tus respuestas...';
+  document.getElementById('sim-feedback-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);">Evaluando 🧠...</div>';
+  await evaluateSimulacro();
+}
+
+async function evaluateSimulacro() {
+  const ptsPerQ = 20/simQuestions.length;
+  let total=0; let feedbackHTML='';
+  for(let i=0;i<simQuestions.length;i++){
+    const q=simQuestions[i]; const ans=simAnswers[i];
+    let score=0; let fb=''; let missing='';
+    if(q.tipo==='marcada'){
+      score=(ans===q.ans)?ptsPerQ:0;
+      fb=ans===q.ans?'Respuesta correcta ✓':'Respuesta incorrecta. La correcta era: '+(q.opts?q.opts[q.ans]:'');
+    } else {
+      try {
+        const prompt='Eres profesor universitario de medicina evaluando un examen.\nPregunta: "'+q.q+'"\nRespuesta ideal: "'+(q.respuesta_ideal||'No especificada')+'"\nRespuesta del estudiante: "'+(ans||'(sin respuesta)')+'"\n\nEvalúa en escala 0 a '+ptsPerQ.toFixed(1)+'. Considera precisión, terminología y completitud.\nResponde SOLO en JSON: {"puntaje":<número>,"feedback":"<2-3 oraciones>","falto":"<conceptos clave omitidos o incorrecto, o N/A>"}';
+        const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+        const data=await resp.json();
+        const text=data.content[0].text.replace(/```json|```/g,'').trim();
+        const res=JSON.parse(text);
+        score=Math.min(parseFloat(res.puntaje)||0,ptsPerQ);
+        fb=res.feedback||''; missing=res.falto&&res.falto!=='N/A'?res.falto:'';
+      } catch(e){score=ans&&ans.length>15?ptsPerQ*0.4:0;fb='No se pudo evaluar automáticamente.';}
+    }
+    total+=score;
+    const cls=score>=ptsPerQ*0.75?'#9fefd4':score>=ptsPerQ*0.4?'#ffb450':'#ff9090';
+    feedbackHTML+=`<div class="feedback-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;font-family:'Space Mono',monospace;">Pregunta ${i+1}</div>
+        <div style="font-size:18px;font-weight:700;color:${cls};">${score.toFixed(1)}/${ptsPerQ.toFixed(1)}</div>
+      </div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">${q.q}</div>
+      ${ans?`<div style="font-size:13px;color:var(--muted);padding:8px 12px;background:var(--surface2);border-radius:6px;margin-bottom:8px;"><strong>Tu respuesta:</strong> ${ans}</div>`:'<div style="font-size:13px;color:var(--red);margin-bottom:8px;">Sin respuesta</div>'}
+      <div style="font-size:13px;line-height:1.5;">${fb}${missing?` <span style="color:var(--amber);">Faltó: ${missing}</span>`:''}</div>
+    </div>`;
+  }
+  const final=Math.min(parseFloat(total.toFixed(1)),20);
+  const emoji=final>=18?'🏆':final>=15?'🌟':final>=11?'💪':final>=7?'📚':'😅';
+  const msg=final>=18?'¡Perfecto! Dominas el tema completamente.':final>=15?'¡Muy bien! Estás lista para el examen.':final>=11?'Aprobado. Repasa los conceptos que fallaste.':final>=7?'Sigue practicando, vas mejorando.':'Necesitas repasar más. ¡No te rindas!';
+  document.getElementById('sim-res-emoji').textContent=emoji;
+  document.getElementById('sim-res-score').textContent=final+'/20';
+  document.getElementById('sim-res-msg').textContent=msg;
+  document.getElementById('sim-feedback-list').innerHTML=feedbackHTML;
+}
+
+function resetSimulacro() {
+  simMode='4x10'; simTypes=['libre']; simCustomQuestions=null;
+  simQuestions=[]; simCurrentQ=0; simAnswers=[];
+  document.querySelectorAll('.sim-mode-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.sim-type-btn').forEach(b=>{ b.classList.remove('active'); if(b.id==='stype-libre') b.classList.add('active'); });
+  if(simTimer) clearInterval(simTimer);
+  document.getElementById('sim-setup').style.display='block';
+  document.getElementById('sim-exam').style.display='none';
+  document.getElementById('sim-results').style.display='none';
+  const clockEl=document.getElementById('sim-clock');
+  if(clockEl) clockEl.style.color='';
+}
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
@@ -1275,20 +1759,37 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('b-fecha').valueAsDate = new Date();
 });
 </script>
-<!-- MODAL: custom sim cases -->
+<!-- MODAL: add sim session to library -->
+<div class="overlay" id="modal-add-sim-session">
+  <div class="modal">
+    <div class="modal-title">Agregar sesión a biblioteca</div>
+    <div class="hint-box">
+      Formato JSON para preguntas:<br>
+      <code>[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta...","caso":"Texto del caso (opcional)","opts":["A","B","C"],"ans":0}]</code><br><br>
+      <code>tipo</code>: "libre" o "marcada" &nbsp;|&nbsp; <code>caso</code>: solo para casos clínicos
+    </div>
+    <label>Número de sesión</label>
+    <input type="text" id="sim-lib-num" placeholder="Ej: Sesión 01">
+    <label>Nombre / tema</label>
+    <input type="text" id="sim-lib-name" placeholder="Ej: Fundamentos de Bioseguridad">
+    <label>JSON de preguntas (mínimo 10 para 4 modelos)</label>
+    <textarea id="sim-lib-json" style="min-height:100px;" placeholder='[{"q":"¿Qué es la bioseguridad?","tipo":"libre","respuesta_ideal":"Conjunto de normas..."}]'></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-add-sim-session')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSimLibSession()">Guardar en biblioteca</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: custom sim exam -->
 <div class="overlay" id="modal-sim-custom">
   <div class="modal">
-    <div class="modal-title">Ingresar mis casos</div>
-    <div class="hint-box">
-      Formato JSON. Ejemplo caso clínico con preguntas de respuesta libre:<br>
-      <code>[{"caso":"Paciente de 45 años...","preguntas":[{"q":"¿Qué tipo de agente de riesgo...?","tipo":"libre","respuesta_ideal":"Agente biológico porque..."},{"q":"¿Qué medida de bioseguridad...?","tipo":"libre","respuesta_ideal":"Uso de barreras..."}]}]</code><br><br>
-      Para respuesta marcada agrega: <code>"opts":["A","B","C","D"],"ans":0</code>
-    </div>
-    <label>JSON de tus casos</label>
-    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","preguntas":[{"q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta ideal..."}]}]'></textarea>
+    <div class="modal-title">Crear examen personalizado</div>
+    <div class="hint-box">Mismo formato JSON. Puedes mezclar preguntas libres, marcadas y con casos.</div>
+    <textarea id="sim-custom-json" style="min-height:120px;" placeholder='[{"caso":"Texto del caso...","q":"Pregunta...","tipo":"libre","respuesta_ideal":"Respuesta ideal..."}]'></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-sim-custom')">Cancelar</button>
-      <button class="btn btn-primary" onclick="loadCustomCases()">Cargar casos</button>
+      <button class="btn btn-primary" onclick="loadCustomSimExam()">Cargar y empezar</button>
     </div>
   </div>
 </div>
